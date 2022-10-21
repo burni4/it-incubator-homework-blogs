@@ -1,4 +1,4 @@
-type registredUserType = { "login": string, "password": string }
-type registredUsersType = registredUserType[]
+export type registredUserType = { "login": string, "password": string }
+export type registredUsersType = registredUserType[]
 
-const registredUsers: registredUsersType = [{login: "admin", password: "qwerty"}];
+export const registredUsers: registredUsersType = [{login: "admin", password: "qwerty"}];
