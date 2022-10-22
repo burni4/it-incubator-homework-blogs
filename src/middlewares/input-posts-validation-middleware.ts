@@ -10,7 +10,7 @@ export const postTypeValidation = [
         .bail().isLength({max: 1000}).withMessage('Content length should be max 1000 symbols'),
     body('blogId').exists({checkFalsy: true}).withMessage('The field [blogId] must exist')
         .bail().custom((value, { req }) => {
-        if (blogsRepository.findBlogByID(value)) {
+        if (!blogsRepository.findBlogByID(value)) {
             throw new Error('BlogID does not exist');
         }
         return true;
