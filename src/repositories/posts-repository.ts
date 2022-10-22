@@ -10,13 +10,13 @@ type postType = {
 const posts: postType[] = [];
 
 export const postsRepository = {
-    findAllPosts(){
+    findAllPosts(): postType[]{
         return posts;
     },
-    findPostByID(id: string){
+    findPostByID(id: string): postType | undefined{
         return posts.find(p => p.id === id);
     },
-    deleteAllPosts(){
+    deleteAllPosts(): void{
         posts.length = 0;
     }
 }

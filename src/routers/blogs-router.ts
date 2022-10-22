@@ -1,5 +1,4 @@
 import {Request, Response, Router} from "express";
-import {body} from "express-validator";
 import {inputValidationMiddleware} from "../middlewares/input-validation-middleware"
 import {blogsRepository} from "../repositories/blogs-repository"
 import {blogTypeValidation} from "../middlewares/input-blogs-validation-middleware"
@@ -31,8 +30,36 @@ blogsRouter.post('/',
     inputValidationMiddleware,
     (req: Request, res: Response) => {
 
-    const newBlog = blogsRepository.createBlog(req.body);
+    const newBlog = blogsRepository.createBlog(req.body)
 
     res.status(201).send(newBlog);
 
+})
+
+blogsRouter.put('/:id',
+    authorizationMiddleware,
+    blogTypeValidation,
+    inputValidationMiddleware,
+    (req: Request, res: Response) => {
+
+        const isUpdated = blogsRepository.updateBlogByID(req.params.id, req.body)
+
+        if (isUpdated) {
+            res.sendStatus(204);
+        } else {
+            res.sendStatus(404);
+        }
+
+})
+
+blogsRouter.delete('/:id',
+    authorizationMiddleware,
+    (req: Request, res: Response) => {
+
+    const isDeleted = blogsRepository.deleteBlogByID(req.params.id)
+    if (isDeleted) {
+        res.sendStatus(204);
+    } else {
+        res.sendStatus(404);
+    }
 })
