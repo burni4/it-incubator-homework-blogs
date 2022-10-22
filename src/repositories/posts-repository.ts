@@ -15,5 +15,8 @@ export const postsRepository = {
     },
     findPostByID(id: string){
         return posts.find(p => p.id === id);
+    },
+    deleteAllPosts(){
+        posts.length = 0;
     }
 }

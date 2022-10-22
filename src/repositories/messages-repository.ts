@@ -1,4 +1,4 @@
-type messageType = {message: string, field: string}
+type messageType = {message: string | null, field: string | null}
 type errorsMessagesType = { errorsMessages: messageType[]}
 
 const errorsMessages: errorsMessagesType = {errorsMessages:[]};
