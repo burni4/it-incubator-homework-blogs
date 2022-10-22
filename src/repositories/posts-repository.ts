@@ -31,8 +31,8 @@ export const postsRepository = {
             title: data.title,
             shortDescription: data.shortDescription,
             content: data.content,
-            blogId: "",
-            blogName: ""
+            blogId: data.blogId,
+            blogName: "Test"
         }
         posts.push(newPost)
         return newPost
