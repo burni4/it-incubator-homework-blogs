@@ -9,6 +9,8 @@ const app = express()
 const port = process.env.PORT || 3000
 const parserMiddleware = bodyParser()
 
+app.use(parserMiddleware);
+
 app.use('/api/blogs', blogsRouter);
 app.use('/api/posts', postsRouter);
 
