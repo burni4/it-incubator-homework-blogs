@@ -1,4 +1,5 @@
 import {body} from "express-validator";
+import {blogsRepository} from "../repositories/blogs-repository";
 
 export const postTypeValidation = [
     body('title').trim().exists({checkFalsy: true}).withMessage('The field [title] must exist')
@@ -8,6 +9,12 @@ export const postTypeValidation = [
     body('content').trim().exists({checkFalsy: true}).withMessage('The field [content] must exist')
         .bail().isLength({max: 1000}).withMessage('Content length should be max 1000 symbols'),
     body('blogId').exists({checkFalsy: true}).withMessage('The field [blogId] must exist')
+        .bail().custom((value, { req }) => {
+        if (blogsRepository.findBlogByID(value)) {
+            throw new Error('BlogID does not exist');
+        }
+        return true;
+    })
 ]
 
 
