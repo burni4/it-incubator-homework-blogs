@@ -12,8 +12,14 @@ export const messageRepository = {
     },
     clearErrorsMessages(): void{
         errorsMessages.errorsMessages = [];
+    },
+    convertErrorMessagesFromValidationResult(obj: any): errorsMessagesType{
+        this.clearErrorsMessages();
+
+        obj.errors.forEach((e:any)=>{
+            this.addMessage(e.param, e.msg);
+        })
+
+        return errorsMessages;
     }
 }
-
-
-

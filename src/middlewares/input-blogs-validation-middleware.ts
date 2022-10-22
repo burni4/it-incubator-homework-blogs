@@ -1,6 +1,4 @@
-import {Request,Response,NextFunction} from "express";
 import {body} from "express-validator";
-import {messageRepository} from "../repositories/messages-repository";
 
 export const blogTypeValidation = [
     body('name').trim().exists({checkFalsy: true}).withMessage('The field [Name] must exist')
