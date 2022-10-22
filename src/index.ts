@@ -11,20 +11,20 @@ const parserMiddleware = bodyParser()
 
 app.use(parserMiddleware);
 
-app.use('/api/blogs', blogsRouter);
-app.use('/api/posts', postsRouter);
+app.use('/blogs', blogsRouter);
+app.use('/posts', postsRouter);
 
 app.get("/", (req: Request, res: Response) => {
     res.send("Hello Homework [Blogs] from Artem Narchuk");
 })
 
 
-app.delete("/api/testing/all-data", (req: Request, res: Response) => {
+app.delete("/testing/all-data", (req: Request, res: Response) => {
 
     blogsRepository.deleteAllBlogs()
     postsRepository.deleteAllPosts()
 
-    res.status(204)
+    res.sendStatus(204)
 
 })
 
