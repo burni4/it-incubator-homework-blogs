@@ -9,7 +9,10 @@ type postType = {
 
 const posts: postType[] = [];
 
-export const blogsRepository = {
+export const postsRepository = {
+    findAllPosts(){
+        return posts;
+    },
     findPostByID(id: string){
         return posts.find(p => p.id === id);
     }
