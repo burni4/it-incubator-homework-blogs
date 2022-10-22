@@ -25,6 +25,30 @@ export const postsRepository = {
         }
         return false;
     },
+    createPost(data: postType): postType{
+        const newPost: postType = {
+            id: String(+new Date()),
+            title: data.title,
+            shortDescription: data.shortDescription,
+            content: data.content,
+            blogId: "",
+            blogName: ""
+        }
+        posts.push(newPost)
+        return newPost
+    },
+    updatePostByID(id: string, body: postType): boolean{
+        const post = posts.find(bl => bl.id === id);
+        if(post){
+            post.title = body.title;
+            post.shortDescription = body.shortDescription;
+            post.content = body.content;
+            post.blogId = body.blogId;
+            return true
+        }else{
+            return false
+        }
+    },
     deleteAllPosts(): void{
         posts.length = 0;
     }
