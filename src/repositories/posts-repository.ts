@@ -32,7 +32,7 @@ export const postsRepository = {
             shortDescription: data.shortDescription,
             content: data.content,
             blogId: data.blogId,
-            blogName: "Test"
+            blogName: ""
         }
         posts.push(newPost)
         return newPost
