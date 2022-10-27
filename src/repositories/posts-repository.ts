@@ -1,22 +1,15 @@
-import {postType} from "./db";
-
-const posts: postType[] = [];
+import {postsCollection, postType} from "./db";
 
 export const postsRepository = {
     async findAllPosts(): Promise<postType[]>{
-        return posts;
+        return postsCollection.find({}).toArray();
     },
-    async findPostByID(id: string): Promise<postType | undefined>{
-        return posts.find(p => p.id === id);
+    async findPostByID(id: string): Promise<postType | null | void> {
+        return await postsCollection.findOne({id: id})
     },
     async deletePostByID(id: string): Promise<boolean>{
-        for (let i =  0; i < posts.length; i++){
-            if(posts[i].id === id){
-                posts.splice(i, 1);
-                return true;
-            }
-        }
-        return false;
+            const result = await postsCollection.deleteOne({id: id})
+            return result.deletedCount === 1
     },
     async createPost(data: postType): Promise<postType>{
         const newPost: postType = {
@@ -28,23 +21,20 @@ export const postsRepository = {
             blogName: "",
             createdAt: new Date().toISOString()
         }
-        posts.push(newPost)
+        const result = await postsCollection.insertOne(newPost)
         return newPost
     },
     async updatePostByID(id: string, body: postType): Promise<boolean>{
-        const post = posts.find(bl => bl.id === id);
-        if(post){
-            post.title = body.title;
-            post.shortDescription = body.shortDescription;
-            post.content = body.content;
-            post.blogId = body.blogId;
-            return true
-        }else{
-            return false
-        }
+        const result = await postsCollection.updateOne({id: id}, {$set: {
+            title: body.title,
+            shortDescription: body.shortDescription,
+            content: body.content,
+            blogId: body.blogId}})
+
+        return result.matchedCount === 1
     },
     async deleteAllPosts(): Promise<boolean>{
-        posts.length = 0;
-        return true
+        const result = await postsCollection.deleteMany({})
+        return !!result.deletedCount
     }
 }

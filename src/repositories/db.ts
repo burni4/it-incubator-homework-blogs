@@ -30,7 +30,7 @@ export const client = new MongoClient(mongoUri)
 
 export const db = client.db("it-incubator-homework-blogs")
 export const blogsCollection = db.collection<blogType>("blogs");
-export const postsCollection = db.collection<blogType>("posts");
+export const postsCollection = db.collection<postType>("posts");
 
 export async function runDb(){
 

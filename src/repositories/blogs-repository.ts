@@ -1,13 +1,15 @@
-import {blogType} from "./db";
-
-const blogs: blogType[] = [];
+import {blogsCollection, blogType} from "./db";
 
 export const blogsRepository = {
     async findAllBlogs(): Promise<blogType[]>{
-        return blogs;
+        return blogsCollection.find({}).toArray();
     },
-    async findBlogByID(id: string): Promise<blogType | undefined>{
-        return blogs.find(bl => bl.id === id)
+    async findBlogByID(id: string): Promise<blogType | null | void>{
+        return await blogsCollection.findOne({id: id})
+    },
+    async deleteBlogByID(id: string): Promise<boolean>{
+        const result = await blogsCollection.deleteOne({id: id})
+        return result.deletedCount === 1
     },
     async createBlog(data: blogType): Promise<blogType>{
         const newBlog: blogType = {
@@ -16,30 +18,17 @@ export const blogsRepository = {
             youtubeUrl: data.youtubeUrl,
             createdAt: new Date().toISOString()
         }
-        blogs.push(newBlog)
+        const result = await blogsCollection.insertOne(newBlog)
         return newBlog
     },
-    async deleteBlogByID(id: string): Promise<boolean>{
-        for (let i =  0; i < blogs.length; i++){
-            if(blogs[i].id === id){
-                blogs.splice(i, 1);
-                return true;
-            }
-        }
-        return false;
-    },
     async updateBlogByID(id: string, body: blogType): Promise<boolean>{
-        const blog = blogs.find(bl => bl.id === id);
-        if(blog){
-            blog.name = body.name;
-            blog.youtubeUrl = body.youtubeUrl;
-            return true
-        }else{
-            return false
-        }
+        const result = await blogsCollection.updateOne({id: id}, {$set: {
+            name: body.name,
+            youtubeUrl: body.youtubeUrl}})
+        return result.matchedCount === 1
     },
     async deleteAllBlogs(): Promise<boolean>{
-        blogs.length = 0;
-        return true
+        const result = await blogsCollection.deleteMany({})
+        return !!result.deletedCount
     }
 }

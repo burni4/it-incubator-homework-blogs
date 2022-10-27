@@ -6,16 +6,16 @@ import {authorizationMiddleware} from "../middlewares/authorization-middleware";
 
 export const blogsRouter = Router({});
 
-blogsRouter.get('/', (req: Request, res: Response) => {
+blogsRouter.get('/', async (req: Request, res: Response) => {
 
-    const foundProducts = blogsRepository.findAllBlogs();
+    const foundProducts = await blogsRepository.findAllBlogs();
     res.send(foundProducts);
 
 })
 
-blogsRouter.get('/:id', (req: Request, res: Response) => {
+blogsRouter.get('/:id', async (req: Request, res: Response) => {
 
-    const blog = blogsRepository.findBlogByID(req.params.id)
+    const blog = await blogsRepository.findBlogByID(req.params.id)
     if (blog) {
         res.send(blog);
     } else {
@@ -28,21 +28,21 @@ blogsRouter.post('/',
     authorizationMiddleware,
     blogTypeValidation,
     inputValidationMiddleware,
-    (req: Request, res: Response) => {
+    async (req: Request, res: Response) => {
 
-    const newBlog = blogsRepository.createBlog(req.body)
+        const newBlog = await blogsRepository.createBlog(req.body)
 
-    res.status(201).send(newBlog);
+        res.status(201).send(newBlog);
 
-})
+    })
 
 blogsRouter.put('/:id',
     authorizationMiddleware,
     blogTypeValidation,
     inputValidationMiddleware,
-    (req: Request, res: Response) => {
+    async (req: Request, res: Response) => {
 
-        const isUpdated = blogsRepository.updateBlogByID(req.params.id, req.body)
+        const isUpdated = await blogsRepository.updateBlogByID(req.params.id, req.body)
 
         if (isUpdated) {
             res.sendStatus(204);
@@ -50,16 +50,16 @@ blogsRouter.put('/:id',
             res.sendStatus(404);
         }
 
-})
+    })
 
 blogsRouter.delete('/:id',
     authorizationMiddleware,
-    (req: Request, res: Response) => {
+    async (req: Request, res: Response) => {
 
-    const isDeleted = blogsRepository.deleteBlogByID(req.params.id)
-    if (isDeleted) {
-        res.sendStatus(204);
-    } else {
-        res.sendStatus(404);
-    }
-})
+        const isDeleted = await blogsRepository.deleteBlogByID(req.params.id)
+        if (isDeleted) {
+            res.sendStatus(204);
+        } else {
+            res.sendStatus(404);
+        }
+    })
