@@ -1,28 +1,25 @@
-type blogType = {
-    "id"?: string,
-    "name": string,
-    "youtubeUrl": string
-}
+import {blogType} from "./db";
 
 const blogs: blogType[] = [];
 
 export const blogsRepository = {
-    findAllBlogs(): blogType[]{
+    async findAllBlogs(): Promise<blogType[]>{
         return blogs;
     },
-    findBlogByID(id: string): blogType | undefined{
+    async findBlogByID(id: string): Promise<blogType | undefined>{
         return blogs.find(bl => bl.id === id)
     },
-    createBlog(data: blogType): blogType{
+    async createBlog(data: blogType): Promise<blogType>{
         const newBlog: blogType = {
             id: String(+new Date()),
             name: data.name,
-            youtubeUrl: data.youtubeUrl
+            youtubeUrl: data.youtubeUrl,
+            createdAt: new Date().toISOString()
         }
         blogs.push(newBlog)
         return newBlog
     },
-    deleteBlogByID(id: string): boolean{
+    async deleteBlogByID(id: string): Promise<boolean>{
         for (let i =  0; i < blogs.length; i++){
             if(blogs[i].id === id){
                 blogs.splice(i, 1);
@@ -31,7 +28,7 @@ export const blogsRepository = {
         }
         return false;
     },
-    updateBlogByID(id: string, body: blogType): boolean{
+    async updateBlogByID(id: string, body: blogType): Promise<boolean>{
         const blog = blogs.find(bl => bl.id === id);
         if(blog){
             blog.name = body.name;
@@ -41,7 +38,8 @@ export const blogsRepository = {
             return false
         }
     },
-    deleteAllBlogs(): void{
+    async deleteAllBlogs(): Promise<boolean>{
         blogs.length = 0;
+        return true
     }
 }
