@@ -1,4 +1,5 @@
-import {postsCollection, postType} from "./db";
+import {blogType, postsCollection, postType} from "./db";
+import {blogsRepository} from "./blogs-repository";
 
 export const postsRepository = {
     async findAllPosts(): Promise<postType[]>{
@@ -12,13 +13,16 @@ export const postsRepository = {
             return result.deletedCount === 1
     },
     async createPost(data: postType): Promise<postType>{
+
+        const blog = await blogsRepository.findBlogByID(data.blogId)
+
         const newPost: postType = {
             id: String(+new Date()),
             title: data.title,
             shortDescription: data.shortDescription,
             content: data.content,
             blogId: data.blogId,
-            blogName: "",
+            blogName:  String(blog?.name),
             createdAt: new Date().toISOString()
         }
         const result = await postsCollection.insertOne(newPost)
