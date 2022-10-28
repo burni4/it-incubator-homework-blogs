@@ -1,4 +1,4 @@
-import {body} from "express-validator";
+import {body, param} from "express-validator";
 
 export const blogTypeValidation = [
     body('name').trim().exists({checkFalsy: true}).withMessage('The field [Name] must exist')
@@ -8,6 +8,9 @@ export const blogTypeValidation = [
         .bail().matches('^https://([a-zA-Z0-9_-]+\\.)+[a-zA-Z0-9_-]+(\\/[a-zA-Z0-9_-]+)*\\/?$').withMessage('URL not valid')
 ]
 
+export const blogParamsValidation = [
+    param('id').exists({checkFalsy: true}).withMessage('Param [id] not found')
+]
 
 
 

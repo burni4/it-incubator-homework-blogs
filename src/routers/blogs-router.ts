@@ -1,8 +1,8 @@
 import {Request, Response, Router} from "express";
 import {inputValidationMiddleware} from "../middlewares/input-validation-middleware"
 import {blogsRepository} from "../repositories/blogs-repository"
-import {blogTypeValidation} from "../middlewares/input-blogs-validation-middleware"
-import {authorizationMiddleware} from "../middlewares/authorization-middleware";
+import {blogParamsValidation, blogTypeValidation} from "../middlewares/input-blogs-validation-middleware"
+import {authorizationMiddleware, basicAuthMiddleware} from "../middlewares/authorization-middleware";
 
 export const blogsRouter = Router({});
 
@@ -25,7 +25,7 @@ blogsRouter.get('/:id', async (req: Request, res: Response) => {
 })
 
 blogsRouter.post('/',
-    authorizationMiddleware,
+    basicAuthMiddleware,
     blogTypeValidation,
     inputValidationMiddleware,
     async (req: Request, res: Response) => {
@@ -37,7 +37,7 @@ blogsRouter.post('/',
     })
 
 blogsRouter.put('/:id',
-    authorizationMiddleware,
+    basicAuthMiddleware,
     blogTypeValidation,
     inputValidationMiddleware,
     async (req: Request, res: Response) => {
@@ -53,7 +53,8 @@ blogsRouter.put('/:id',
     })
 
 blogsRouter.delete('/:id',
-    authorizationMiddleware,
+    basicAuthMiddleware,
+    blogParamsValidation,
     async (req: Request, res: Response) => {
 
         const isDeleted = await blogsRepository.deleteBlogByID(req.params.id)

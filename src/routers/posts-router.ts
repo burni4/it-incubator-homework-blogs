@@ -2,7 +2,7 @@ import {Request, Response, Router} from "express";
 import {postsRepository} from "../repositories/posts-repository";
 import {authorizationMiddleware, basicAuthMiddleware} from "../middlewares/authorization-middleware";
 import {inputValidationMiddleware} from "../middlewares/input-validation-middleware";
-import {postTypeValidation} from "../middlewares/input-posts-validation-middleware";
+import {postParamsValidation, postTypeValidation} from "../middlewares/input-posts-validation-middleware";
 
 export const postsRouter = Router({});
 
@@ -26,6 +26,7 @@ postsRouter.get('/:id', async (req: Request, res: Response) => {
 
 postsRouter.delete('/:id',
     basicAuthMiddleware,
+    postParamsValidation,
     async (req: Request, res: Response) => {
 
         const isDeleted = await postsRepository.deletePostByID(req.params.id)

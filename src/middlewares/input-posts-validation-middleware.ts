@@ -1,4 +1,4 @@
-import {body} from "express-validator";
+import {body, param} from "express-validator";
 import {blogsRepository} from "../repositories/blogs-repository";
 
 export const postTypeValidation = [
@@ -16,7 +16,9 @@ export const postTypeValidation = [
         return true;
     })
 ]
-
+export const postParamsValidation = [
+    param('id').exists({checkFalsy: true}).withMessage('Param [id] not found')
+]
 
 
 
