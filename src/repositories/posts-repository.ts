@@ -3,10 +3,19 @@ import {blogsRepository} from "./blogs-repository";
 
 export const postsRepository = {
     async findAllPosts(): Promise<postType[]>{
-        return postsCollection.find({}).toArray();
+        return postsCollection.find({}, {projection:{_id:0}}).toArray();
     },
     async findPostByID(id: string): Promise<postType | null | void> {
-        return await postsCollection.findOne({id: id})
+        const post = await postsCollection.findOne({id: id})
+        return {
+            id: post?.id || "",
+            title: post?.id || "",
+            shortDescription: post?.id || "",
+            content: post?.id || "",
+            blogId: post?.id || "",
+            blogName: post?.id || "",
+            createdAt: post?.id || "",
+        }
     },
     async deletePostByID(id: string): Promise<boolean>{
             const result = await postsCollection.deleteOne({id: id})

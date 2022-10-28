@@ -2,7 +2,7 @@ import {blogsCollection, blogType} from "./db";
 
 export const blogsRepository = {
     async findAllBlogs(): Promise<blogType[]>{
-        return blogsCollection.find({}).toArray();
+        return blogsCollection.find({}, {projection:{_id:0}}).toArray();
     },
     async findBlogByID(id: string): Promise<blogType | null | void>{
         const blog = await blogsCollection.findOne({id: id})
