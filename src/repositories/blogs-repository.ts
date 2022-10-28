@@ -6,8 +6,12 @@ export const blogsRepository = {
     },
     async findBlogByID(id: string): Promise<blogType | null | void>{
         const blog = await blogsCollection.findOne({id: id})
-        const newObjectBlog: blogType = Object.assign({}, blog);
-        return newObjectBlog
+        return {
+            id: blog?.id || "",
+            name : blog?.name || "",
+            youtubeUrl: blog?.youtubeUrl || "",
+            createdAt: blog?.createdAt || "",
+        }
     },
     async deleteBlogByID(id: string): Promise<boolean>{
         const result = await blogsCollection.deleteOne({id: id})
