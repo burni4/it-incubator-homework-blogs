@@ -7,15 +7,18 @@ export const postsRepository = {
     },
     async findPostByID(id: string): Promise<postType | null | void> {
         const post = await postsCollection.findOne({id: id})
-        return {
-            id: post?.id || "",
-            title: post?.title|| "",
-            shortDescription: post?.shortDescription || "",
-            content: post?.content || "",
-            blogId: post?.blogId || "",
-            blogName: post?.blogName|| "",
-            createdAt: post?.createdAt || "",
+        if (post) {
+            return {
+                id: post?.id || "",
+                title: post?.title || "",
+                shortDescription: post?.shortDescription || "",
+                content: post?.content || "",
+                blogId: post?.blogId || "",
+                blogName: post?.blogName || "",
+                createdAt: post?.createdAt || "",
+            }
         }
+        return null
     },
     async deletePostByID(id: string): Promise<boolean>{
             const result = await postsCollection.deleteOne({id: id})
