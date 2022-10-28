@@ -1,5 +1,7 @@
-import "dotenv/config"
+import * as dotenv from 'dotenv'
 import {MongoClient} from "mongodb";
+
+dotenv.config()
 
 export type postType = {
     id: string,
@@ -21,6 +23,8 @@ export type blogType = {
 const mongoURILocalhost: string = "mongodb://0.0.0.0:27017"
 
 const mongoUri = process.env.mongoURIAtlas || mongoURILocalhost;
+
+console.log(mongoUri, 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa')
 
 export const client = new MongoClient(mongoUri)
 
