@@ -19,13 +19,8 @@ export const blogsRepository = {
             createdAt: new Date().toISOString()
         }
         const result = await blogsCollection.insertOne(newBlog)
-
-        return {
-            id: newBlog.id,
-            name: newBlog.createdAt,
-            youtubeUrl: newBlog.youtubeUrl,
-            createdAt: newBlog.createdAt
-        }
+        const newObjectBlog = Object.assign({}, newBlog);
+        return newObjectBlog
     },
     async updateBlogByID(id: string, body: blogType): Promise<boolean>{
         const result = await blogsCollection.updateOne({id: id}, {$set: {

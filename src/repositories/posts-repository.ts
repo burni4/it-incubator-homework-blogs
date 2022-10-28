@@ -1,4 +1,4 @@
-import {postsCollection, postType, blogType} from "./db";
+import {postsCollection, postType} from "./db";
 import {blogsRepository} from "./blogs-repository";
 
 export const postsRepository = {
@@ -26,15 +26,10 @@ export const postsRepository = {
             createdAt: new Date().toISOString()
         }
         const result = await postsCollection.insertOne(newPost)
-        return {
-            id: newPost.id,
-            title: newPost.title,
-            shortDescription: newPost.shortDescription,
-            content: newPost.content,
-            blogId: newPost.blogId,
-            blogName: newPost.blogName,
-            createdAt: newPost.createdAt
-        }
+
+        const newObjectPost = Object.assign({}, newPost);
+
+        return newObjectPost
     },
     async updatePostByID(id: string, body: postType): Promise<boolean>{
         const result = await postsCollection.updateOne({id: id}, {$set: {
