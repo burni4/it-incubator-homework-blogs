@@ -27,7 +27,7 @@ export const postsRepository = {
         }
         const result = await postsCollection.insertOne(newPost)
 
-        const newObjectPost = Object.assign({}, newPost);
+        const newObjectPost: postType = Object.assign({}, newPost);
 
         return newObjectPost
     },
