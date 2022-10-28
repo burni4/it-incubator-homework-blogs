@@ -5,7 +5,9 @@ export const blogsRepository = {
         return blogsCollection.find({}).toArray();
     },
     async findBlogByID(id: string): Promise<blogType | null | void>{
-        return await blogsCollection.findOne({id: id})
+        const blog = await blogsCollection.findOne({id: id})
+        const newObjectBlog: blogType = Object.assign({}, blog);
+        return newObjectBlog
     },
     async deleteBlogByID(id: string): Promise<boolean>{
         const result = await blogsCollection.deleteOne({id: id})
