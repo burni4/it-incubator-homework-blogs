@@ -18,8 +18,9 @@ export const blogsRepository = {
             youtubeUrl: data.youtubeUrl,
             createdAt: new Date().toISOString()
         }
-        const result = await blogsCollection.insertOne(newBlog)
         const newObjectBlog: blogType = Object.assign({}, newBlog);
+        await blogsCollection.insertOne(newBlog)
+
         return newObjectBlog
     },
     async updateBlogByID(id: string, body: blogType): Promise<boolean>{
