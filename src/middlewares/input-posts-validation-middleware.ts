@@ -5,8 +5,9 @@ export const postTypeValidation = [
     body('title').trim().exists({checkFalsy: true}).withMessage('The field [title] must exist')
         .bail().isLength({max: 30}).withMessage('Title length should be max 30 symbols'),
     body('blogId').exists({checkFalsy: true}).withMessage('The field [blogId] must exist')
-        .bail().custom((value) => {
-        if (!blogsRepository.findBlogByID(value)) {
+        .bail().custom(async (value) => {
+        const blog = await blogsRepository.findBlogByID(value)
+        if (!blog) {
             throw new Error('BlogID does not exist');
         }
         return true;
