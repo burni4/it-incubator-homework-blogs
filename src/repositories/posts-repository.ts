@@ -9,12 +9,12 @@ export const postsRepository = {
         const post = await postsCollection.findOne({id: id})
         return {
             id: post?.id || "",
-            title: post?.id || "",
-            shortDescription: post?.id || "",
-            content: post?.id || "",
-            blogId: post?.id || "",
-            blogName: post?.id || "",
-            createdAt: post?.id || "",
+            title: post?.title|| "",
+            shortDescription: post?.shortDescription || "",
+            content: post?.content || "",
+            blogId: post?.blogId || "",
+            blogName: post?.blogName|| "",
+            createdAt: post?.createdAt || "",
         }
     },
     async deletePostByID(id: string): Promise<boolean>{
