@@ -8,10 +8,10 @@ export const blogsRepository = {
         const blog = await blogsCollection.findOne({id: id})
         if(blog){
             return {
-                id: blog?.id || "",
-                name : blog?.name || "",
-                youtubeUrl: blog?.youtubeUrl || "",
-                createdAt: blog?.createdAt || "",
+                id: blog.id,
+                name : blog.name,
+                youtubeUrl: blog.youtubeUrl,
+                createdAt: blog.createdAt,
             }
         }
         return null
