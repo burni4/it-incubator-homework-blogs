@@ -11,35 +11,35 @@ describe('/blogs', ()=>{
 
     let createdBlog: any = null;
 
-    it('should return 200 and empty blogs array',async () => {
+    it('return 200 Empty blogs array',async () => {
         await request(app)
             .get('/blogs')
             .expect(200, [])
     })
 
-    it('should return 404 for not existing blog',async () => {
+    it('return 401 Unauthorized user',async () => {
+        await request(app)
+            .post('/blogs')
+            .expect(401)
+    })
+
+    it('return 404 blog not existing ',async () => {
         await request(app)
             .get('/blogs/1')
             .expect(404)
     })
 
-    it('should return 401 Unauthorized user',async () => {
+    it('return 400 blog not create with empty input data',async () => {
         await request(app)
-            .post('/blogs/')
-            .expect(401)
-    })
-
-    it('should not create blog with empty input data, return 400',async () => {
-        await request(app)
-            .post('/blogs/')
+            .post('/blogs')
             .auth('admin', 'qwerty')
             .send({})
             .expect(400)
     })
 
-    it('should create blog with correct input data',async () => {
+    it('return 201 create blog with correct input data',async () => {
         const createResponse = await request(app)
-            .post('/blogs/')
+            .post('/blogs')
             .auth('admin', 'qwerty')
             .send({
                 name: "1Craft",
@@ -60,7 +60,7 @@ describe('/blogs', ()=>{
             .expect(200, [createdBlog])
     })
 
-    it('should not update blog with incorrect input data, and return 404 (not exist)',async () => {
+    it('return 404 (not exist), blog not update with incorrect input data',async () => {
         await request(app)
             .put('/blogs/1')
             .auth('admin', 'qwerty')
@@ -71,7 +71,7 @@ describe('/blogs', ()=>{
             .expect(404)
     })
 
-    it('should not update blog with incorrect input data, and return 400',async () => {
+    it('return 400 blog not update with incorrect input data',async () => {
         await request(app)
             .put('/blogs/' + createdBlog.id)
             .auth('admin', 'qwerty')
@@ -86,7 +86,7 @@ describe('/blogs', ()=>{
             .expect(200, [createdBlog])
     })
 
-    it('should update blog with correct input data, and return 204',async () => {
+    it('return 204 update blog with correct input data',async () => {
         await request(app)
             .put('/blogs/' + createdBlog.id)
             .auth('admin', 'qwerty')
@@ -105,7 +105,7 @@ describe('/blogs', ()=>{
             })
     })
 
-    it('should delete blog return 204',async () => {
+    it('return 204 delete blog',async () => {
         await request(app)
             .delete('/blogs/' + createdBlog.id)
             .auth('admin', 'qwerty')
@@ -113,9 +113,9 @@ describe('/blogs', ()=>{
             .expect(204)
     })
 
-    it('should not delete blog (not exist) return 404',async () => {
+    it('return 404 blog not deleted (not exist)',async () => {
         await request(app)
-            .delete('/delete/'+ createdBlog.id)
+            .delete('/blogs'+ createdBlog.id)
             .auth('admin', 'qwerty')
             .send()
             .expect(404)
@@ -126,34 +126,161 @@ describe('/blogs', ()=>{
 
 describe('/posts', ()=>{
 
+    let createdPost: any = null;
+    let createdBlogForPost: any = null;
+
     beforeAll(async () => {
+
         await postsRepository.deleteAllPosts()
+
+        const createResponseBlog = await request(app)
+            .post('/blogs')
+            .auth('admin', 'qwerty')
+            .send({
+                name: "1Craft",
+                youtubeUrl: "https://www.youtube.com/channel/UCh0J99rt9U7MHt8-LGCy93A"
+            })
+            .expect(201)
+
+        createdBlogForPost = createResponseBlog.body;
+
+        expect(createdBlogForPost).toEqual({
+            id: expect.any(String),
+            name: "1Craft",
+            youtubeUrl: "https://www.youtube.com/channel/UCh0J99rt9U7MHt8-LGCy93A",
+            createdAt: expect.any(String)
+        })
+        await request(app)
+            .get('/blogs')
+            .expect(200, [createdBlogForPost])
     })
 
-    it('should return 200 and empty posts array',async () => {
+
+    it('return 200 Empty posts array',async () => {
         await request(app)
             .get('/posts')
             .expect(200, [])
     })
 
-    it('should return 404 for not existing post',async () => {
+    it('return 401 Unauthorized user',async () => {
         await request(app)
-            .get('/post/1')
-            .expect(404)
-    })
-
-    it('should return 401 Unauthorized user',async () => {
-        await request(app)
-            .post('/posts/')
+            .post('/posts')
             .expect(401)
     })
 
-    it('should not create post with incorrect input data',async () => {
+    it('return 404 post not existing ',async () => {
         await request(app)
-            .post('/posts/')
+            .get('/posts/1')
+            .expect(404)
+    })
+
+    it('return 400 post not create with empty input data',async () => {
+        await request(app)
+            .post('/posts')
             .auth('admin', 'qwerty')
             .send({})
             .expect(400)
     })
 
+    it('return 201 create post with correct input data',async () => {
+
+        const createResponse = await request(app)
+            .post('/posts')
+            .auth('admin', 'qwerty')
+            .send({
+                title: "First comment",
+                shortDescription: "First comment shortDescription",
+                content: "First comment content",
+                blogId: createdBlogForPost.id
+            })
+            .expect(201)
+
+        createdPost = createResponse.body;
+
+        expect(createdPost).toEqual({
+            id: expect.any(String),
+            title: "First comment",
+            shortDescription: "First comment shortDescription",
+            content: "First comment content",
+            blogId: createdBlogForPost.id,
+            blogName: createdBlogForPost.name,
+            createdAt: expect.any(String)
+        })
+        await request(app)
+            .get('/posts')
+            .expect(200, [createdPost])
+    })
+
+    it('return 404, post not exist',async () => {
+        await request(app)
+            .put('/posts/1')
+            .auth('admin', 'qwerty')
+            .send({
+                title: "First comment",
+                shortDescription: "First comment shortDescription",
+                content: "First comment content",
+                blogId: createdBlogForPost.id
+            })
+            .expect(404)
+    })
+
+    it('return 400 post not update with incorrect input data',async () => {
+        await request(app)
+            .put('/posts/' + createdPost.id)
+            .auth('admin', 'qwerty')
+            .send({
+                title: "",
+            })
+            .expect(400)
+
+        await request(app)
+            .get('/posts')
+            .expect(200, [createdPost])
+    })
+
+    it('return 204 update post with correct input data',async () => {
+        await request(app)
+            .put('/posts/' + createdPost.id)
+            .auth('admin', 'qwerty')
+            .send({
+                title: "First comment (Update)",
+                shortDescription: "First comment shortDescription (Update)",
+                content: "First comment content (Update)",
+                blogId: createdBlogForPost.id
+            })
+            .expect(204)
+
+        await request(app)
+            .get('/posts/'+ createdPost.id)
+            .expect(200, {
+                ...createdPost,
+                title: "First comment (Update)",
+                shortDescription: "First comment shortDescription (Update)",
+                content: "First comment content (Update)"
+            })
+    })
+
+    it('return 204 delete post',async () => {
+        await request(app)
+            .delete('/posts/' + createdPost.id)
+            .auth('admin', 'qwerty')
+            .send()
+            .expect(204)
+    })
+
+    it('return 404 post not deleted (not exist)',async () => {
+        await request(app)
+            .delete('/posts'+ createdPost.id)
+            .auth('admin', 'qwerty')
+            .send()
+            .expect(404)
+    })
+
+    afterAll(async () => {
+        await request(app)
+            .delete('/blogs/' + createdBlogForPost.id)
+            .auth('admin', 'qwerty')
+            .send()
+            .expect(204)
+    })
 })
