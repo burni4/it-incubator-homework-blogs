@@ -6,7 +6,7 @@ import {blogsRepository} from "./repositories/blogs-repository";
 import {postsRepository} from "./repositories/posts-repository";
 import {runDb} from "./repositories/db";
 
-const app = express()
+export const app = express()
 const port = process.env.PORT || 3000
 const parserMiddleware = bodyParser()
 
@@ -20,10 +20,10 @@ app.get("/", (req: Request, res: Response) => {
 })
 
 
-app.delete("/testing/all-data", (req: Request, res: Response) => {
+app.delete("/testing/all-data", async (req: Request, res: Response) => {
 
-    blogsRepository.deleteAllBlogs()
-    postsRepository.deleteAllPosts()
+    await blogsRepository.deleteAllBlogs()
+    await postsRepository.deleteAllPosts()
 
     res.sendStatus(204)
 
