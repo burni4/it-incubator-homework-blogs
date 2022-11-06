@@ -1,9 +1,9 @@
 import {blogsRepositoryInDB} from "../repositories/blogs-repository";
-import {blogType} from "../projectTypes";
+import {blogType, queryBlogParams} from "../projectTypes";
 
 export const blogsService = {
-    async findAllBlogs(): Promise<blogType[]>{
-        return blogsRepositoryInDB.findAllBlogs();
+    async findAllBlogs(queryParams: queryBlogParams): Promise<blogType[]>{
+        return blogsRepositoryInDB.findAllBlogs(queryBlogParamsPaginator(queryParams));
     },
     async findBlogByID(id: string): Promise<blogType | null>{
         return blogsRepositoryInDB.findBlogByID(id)
@@ -26,5 +26,14 @@ export const blogsService = {
     },
     async deleteAllBlogs(): Promise<boolean>{
         return blogsRepositoryInDB.deleteAllBlogs()
+    }
+}
+const queryBlogParamsPaginator = (queryParams: queryBlogParams):queryBlogParams => {
+    return {
+        searchNameTerm: typeof queryParams.searchNameTerm === "string" ? queryParams.searchNameTerm : null,
+        pageNumber: typeof queryParams.pageNumber === "string" ? +queryParams.pageNumber : 1,
+        pageSize: typeof queryParams.pageSize === "string" ? +queryParams.pageSize : 10,
+        sortBy: typeof queryParams.sortBy === "string" ? queryParams.sortBy : 'createdAt',
+        sortDirection: queryParams.sortDirection === 'asc' ? 'asc' : 'desc'
     }
 }

@@ -40,7 +40,3 @@ export const postsService = {
         return postsRepositoryInDB.deleteAllPosts()
     }
 }
-
-// const paginator = (qury: any) => {
-//     const page = typeof query.pageNumber === "string" ? +query.pageNumber : 1
-// }

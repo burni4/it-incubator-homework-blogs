@@ -1,9 +1,28 @@
 import {blogsCollection} from "./db";
-import {blogType} from "../projectTypes";
+import {blogType, outputBlogType, queryBlogParams} from "../projectTypes";
 
 export const blogsRepositoryInDB = {
-    async findAllBlogs(): Promise<blogType[]>{
-        return blogsCollection.find({}, {projection:{_id:0}}).toArray();
+    async findAllBlogs(paginator: queryBlogParams): Promise<outputBlogType>{
+        let filter = {}
+        if(paginator.searchNameTerm){
+            filter = {name: { $regex: paginator.searchNameTerm}}
+        }
+        const foundBlogsInDB = await blogsCollection.find(filter, {projection:{_id:0}}).toArray();
+        const outputBlogs: outputBlogType = {
+            pagesCount: 0,
+            page: 0,
+            pageSize: 0,
+            totalCount: 0,
+            items: [
+                {
+                    id: "string",
+                    name: "string",
+                    youtubeUrl: "string",
+                    createdAt: "2022-11-06T14:17:28.774Z"
+                }
+            ]
+        }
+        return outputBlogs
     },
     async findBlogByID(id: string): Promise<blogType | null>{
         const blog = await blogsCollection.findOne({id: id})

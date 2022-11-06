@@ -3,13 +3,14 @@ import {inputValidationMiddleware} from "../middlewares/input-validation-middlew
 import {blogParamsValidation, blogTypeValidation} from "../middlewares/input-blogs-validation-middleware"
 import {basicAuthMiddleware} from "../middlewares/authorization-middleware";
 import {blogsService} from "../domain/blogs-service";
+import {queryBlogParams} from "../projectTypes";
 
 export const blogsRouter = Router({});
 
-blogsRouter.get('/', async (req: Request, res: Response) => {
+blogsRouter.get('/', async (req: Request<{},{},{}, queryBlogParams>, res: Response) => {
 
-    const foundProducts = await blogsService.findAllBlogs();
-    res.send(foundProducts);
+    const foundBlogs= await blogsService.findAllBlogs(req.query);
+    res.send(foundBlogs);
 
 })
 
