@@ -1,5 +1,5 @@
-import {blogType} from "../repositories/db";
 import {blogsRepositoryInDB} from "../repositories/blogs-repository";
+import {blogType} from "../projectTypes";
 
 export const blogsService = {
     async findAllBlogs(): Promise<blogType[]>{

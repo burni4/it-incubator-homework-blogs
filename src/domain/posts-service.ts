@@ -1,6 +1,6 @@
 import {postsRepositoryInDB} from "../repositories/posts-repository";
 import {blogsRepositoryInDB} from "../repositories/blogs-repository";
-import {postType} from "../repositories/db";
+import {postType} from "../projectTypes";
 
 
 export const postsService = {
