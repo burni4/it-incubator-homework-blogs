@@ -5,7 +5,7 @@ export const blogsRepositoryInDB = {
     async findAllBlogs(paginator: queryBlogParams): Promise<outputBlogType>{
         let filter = {}
         if(paginator.searchNameTerm){
-            filter = {name: { $regex: new RegExp(`^${paginator.searchNameTerm}$`)}}
+            filter = {name: { $regex: paginator.searchNameTerm, $options: "i" }}
         }
         const skipCount: number = (paginator.pageNumber - 1) * paginator.pageSize
 
