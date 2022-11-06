@@ -1,11 +1,11 @@
-import {postsCollection, postType} from "./db";
-import {blogsRepository} from "./blogs-repository";
+import {postsCollection} from "./db";
+import {postType} from "../projectTypes";
 
-export const postsRepository = {
+export const postsRepositoryInDB = {
     async findAllPosts(): Promise<postType[]>{
         return postsCollection.find({}, {projection:{_id:0}}).toArray();
     },
-    async findPostByID(id: string): Promise<postType | null | void> {
+    async findPostByID(id: string): Promise<postType | null> {
         const post = await postsCollection.findOne({id: id})
         if (post) {
             return {
@@ -24,19 +24,8 @@ export const postsRepository = {
             const result = await postsCollection.deleteOne({id: id})
             return result.deletedCount === 1
     },
-    async createPost(data: postType): Promise<postType>{
+    async createPost(newPost: postType): Promise<postType>{
 
-        const blog = await blogsRepository.findBlogByID(data.blogId)
-
-        const newPost: postType = {
-            id: String(+new Date()),
-            title: data.title,
-            shortDescription: data.shortDescription,
-            content: data.content,
-            blogId: data.blogId,
-            blogName:  String(blog?.name),
-            createdAt: new Date().toISOString()
-        }
         const newObjectPost: postType = Object.assign({}, newPost);
         await postsCollection.insertOne(newPost)
 

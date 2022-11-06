@@ -1,12 +1,12 @@
 import {body, param} from "express-validator";
-import {blogsRepository} from "../repositories/blogs-repository";
+import {blogsRepositoryInDB} from "../repositories/blogs-repository";
 
 export const postTypeValidation = [
     body('title').trim().exists({checkFalsy: true}).withMessage('The field [title] must exist')
         .bail().isLength({max: 30}).withMessage('Title length should be max 30 symbols'),
     body('blogId').exists({checkFalsy: true}).withMessage('The field [blogId] must exist')
         .bail().custom(async (value) => {
-        const blog = await blogsRepository.findBlogByID(value)
+        const blog = await blogsRepositoryInDB.findBlogByID(value)
         if (!blog) {
             throw new Error('BlogID does not exist');
         }

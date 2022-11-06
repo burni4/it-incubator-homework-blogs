@@ -1,12 +1,12 @@
 import request from 'supertest'
 import {app} from "../../src";
-import {blogsRepository} from "../../src/repositories/blogs-repository";
-import {postsRepository} from "../../src/repositories/posts-repository";
+import {blogsRepositoryInDB} from "../../src/repositories/blogs-repository";
+import {postsRepositoryInDB} from "../../src/repositories/posts-repository";
 
 describe('/blogs', ()=>{
 
     beforeAll(async () => {
-        await blogsRepository.deleteAllBlogs()
+        await blogsRepositoryInDB.deleteAllBlogs()
     })
 
     let createdBlog: any = null;
@@ -131,7 +131,7 @@ describe('/posts', ()=>{
 
     beforeAll(async () => {
 
-        await postsRepository.deleteAllPosts()
+        await postsRepositoryInDB.deleteAllPosts()
 
         const createResponseBlog = await request(app)
             .post('/blogs')

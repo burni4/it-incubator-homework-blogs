@@ -1,24 +1,10 @@
 import * as dotenv from 'dotenv'
 import {MongoClient} from "mongodb";
+import {blogType, postType} from "../projectTypes";
 
 dotenv.config()
 
-export type postType = {
-    id: string,
-    title: string,
-    shortDescription: string,
-    content: string,
-    blogId: string,
-    blogName: string,
-    createdAt: string
-}
 
-export type blogType = {
-    id?: string,
-    name : string,
-    youtubeUrl: string
-    createdAt: string
-}
 
 const mongoURILocalhost: string = "mongodb://0.0.0.0:27017"
 

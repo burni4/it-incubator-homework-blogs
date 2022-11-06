@@ -2,8 +2,8 @@ import express, { Request, Response } from "express"
 import bodyParser from 'body-parser'
 import {postsRouter} from "./routers/posts-router";
 import {blogsRouter} from "./routers/blogs-router";
-import {blogsRepository} from "./repositories/blogs-repository";
-import {postsRepository} from "./repositories/posts-repository";
+import {blogsRepositoryInDB} from "./repositories/blogs-repository";
+import {postsRepositoryInDB} from "./repositories/posts-repository";
 import {runDb} from "./repositories/db";
 
 export const app = express()
@@ -22,8 +22,8 @@ app.get("/", (req: Request, res: Response) => {
 
 app.delete("/testing/all-data", async (req: Request, res: Response) => {
 
-    await blogsRepository.deleteAllBlogs()
-    await postsRepository.deleteAllPosts()
+    await blogsRepositoryInDB.deleteAllBlogs()
+    await postsRepositoryInDB.deleteAllPosts()
 
     res.sendStatus(204)
 

@@ -5,7 +5,7 @@ export const blogsService = {
     async findAllBlogs(): Promise<blogType[]>{
         return blogsRepositoryInDB.findAllBlogs();
     },
-    async findBlogByID(id: string): Promise<blogType | null | void>{
+    async findBlogByID(id: string): Promise<blogType | null>{
         return blogsRepositoryInDB.findBlogByID(id)
     },
     async deleteBlogByID(id: string): Promise<boolean>{
