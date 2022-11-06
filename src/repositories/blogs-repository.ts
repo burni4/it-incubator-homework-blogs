@@ -1,6 +1,6 @@
 import {blogsCollection, blogType} from "./db";
 
-export const blogsRepository = {
+export const blogsRepositoryInDB = {
     async findAllBlogs(): Promise<blogType[]>{
         return blogsCollection.find({}, {projection:{_id:0}}).toArray();
     },

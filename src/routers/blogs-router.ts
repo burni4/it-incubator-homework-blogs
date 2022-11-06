@@ -1,21 +1,21 @@
 import {Request, Response, Router} from "express";
 import {inputValidationMiddleware} from "../middlewares/input-validation-middleware"
-import {blogsRepository} from "../repositories/blogs-repository"
 import {blogParamsValidation, blogTypeValidation} from "../middlewares/input-blogs-validation-middleware"
-import {authorizationMiddleware, basicAuthMiddleware} from "../middlewares/authorization-middleware";
+import {basicAuthMiddleware} from "../middlewares/authorization-middleware";
+import {blogsService} from "../domain/blogs-service";
 
 export const blogsRouter = Router({});
 
 blogsRouter.get('/', async (req: Request, res: Response) => {
 
-    const foundProducts = await blogsRepository.findAllBlogs();
+    const foundProducts = await blogsService.findAllBlogs();
     res.send(foundProducts);
 
 })
 
 blogsRouter.get('/:id', async (req: Request, res: Response) => {
 
-    const blog = await blogsRepository.findBlogByID(req.params.id)
+    const blog = await blogsService.findBlogByID(req.params.id)
     if (blog) {
         res.send(blog);
     } else {
@@ -30,7 +30,7 @@ blogsRouter.post('/',
     inputValidationMiddleware,
     async (req: Request, res: Response) => {
 
-        const newBlog = await blogsRepository.createBlog(req.body)
+        const newBlog = await blogsService.createBlog(req.body)
 
         res.status(201).send(newBlog);
 
@@ -42,7 +42,7 @@ blogsRouter.put('/:id',
     inputValidationMiddleware,
     async (req: Request, res: Response) => {
 
-        const isUpdated = await blogsRepository.updateBlogByID(req.params.id, req.body)
+        const isUpdated = await blogsService.updateBlogByID(req.params.id, req.body)
 
         if (isUpdated) {
             res.sendStatus(204);
@@ -57,7 +57,7 @@ blogsRouter.delete('/:id',
     blogParamsValidation,
     async (req: Request, res: Response) => {
 
-        const isDeleted = await blogsRepository.deleteBlogByID(req.params.id)
+        const isDeleted = await blogsService.deleteBlogByID(req.params.id)
         if (isDeleted) {
             res.sendStatus(204);
         } else {
