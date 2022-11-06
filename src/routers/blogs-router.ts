@@ -15,7 +15,9 @@ blogsRouter.get('/', async (req: Request<{},{},{}, queryBlogParams>, res: Respon
 
 })
 
-blogsRouter.get('/:id/posts', async (req: Request<{},{},{}, queryPostParams>, res: Response) => {
+blogsRouter.get('/:id/posts',
+    blogParamsValidation,
+    async (req: Request<{},{},{}, queryPostParams>, res: Response) => {
 
     const foundPosts= await blogsService.findAllPostsByBlogID(req.query);
     res.send(foundPosts);
@@ -46,6 +48,7 @@ blogsRouter.post('/',
 
 blogsRouter.post('/:id/posts',
     basicAuthMiddleware,
+    blogParamsValidation,
     postTypeValidation,
     inputValidationMiddleware,
     async (req: Request, res: Response) => {
