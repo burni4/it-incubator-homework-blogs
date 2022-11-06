@@ -7,20 +7,30 @@ export const blogsRepositoryInDB = {
         if(paginator.searchNameTerm){
             filter = {name: { $regex: paginator.searchNameTerm}}
         }
-        const foundBlogsInDB = await blogsCollection.find(filter, {projection:{_id:0}}).toArray();
+        const skipCount: number = (paginator.pageNumber - 1) * paginator.pageSize
+
+        const foundBlogsInDB = await blogsCollection.find(filter, {projection:{_id:0}})
+            .sort({[paginator.sortBy]: paginator.sortDirection === 'asc' ?  1 : -1})
+            .skip(skipCount)
+            .limit(paginator.pageSize);
+
+        const totalCount = await blogsCollection.count(filter)
+        const pageCount: number = Math.ceil(totalCount / paginator.pageSize)
+        const blogsArray = await foundBlogsInDB.toArray()
+
         const outputBlogs: outputBlogType = {
-            pagesCount: 0,
-            page: 0,
-            pageSize: 0,
-            totalCount: 0,
-            items: [
-                {
-                    id: "string",
-                    name: "string",
-                    youtubeUrl: "string",
-                    createdAt: "2022-11-06T14:17:28.774Z"
+            pagesCount: pageCount,
+            page: paginator.pageNumber,
+            pageSize: paginator.pageSize,
+            totalCount: totalCount,
+            items: blogsArray.map((el) => {
+                return {
+                    id: el.id,
+                    name: el.name,
+                    youtubeUrl: el.youtubeUrl,
+                    createdAt: el.createdAt
                 }
-            ]
+            })
         }
         return outputBlogs
     },

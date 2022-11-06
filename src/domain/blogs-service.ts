@@ -1,8 +1,9 @@
 import {blogsRepositoryInDB} from "../repositories/blogs-repository";
-import {blogType, queryBlogParams} from "../projectTypes";
+import {blogType, outputBlogType, postType, queryBlogParams} from "../projectTypes";
+import {postsService} from "./posts-service";
 
 export const blogsService = {
-    async findAllBlogs(queryParams: queryBlogParams): Promise<blogType[]>{
+    async findAllBlogs(queryParams: queryBlogParams): Promise<outputBlogType>{
         return blogsRepositoryInDB.findAllBlogs(queryBlogParamsPaginator(queryParams));
     },
     async findBlogByID(id: string): Promise<blogType | null>{
@@ -20,6 +21,10 @@ export const blogsService = {
         }
         const createdBlog: blogType = await blogsRepositoryInDB.createBlog(newBlog)
         return createdBlog
+    },
+    async createPostByBlogID(id: string, data: postType): Promise<postType | null>{
+        data.blogId = id
+        return await postsService.createPost(data)
     },
     async updateBlogByID(id: string, body: blogType): Promise<boolean>{
         return blogsRepositoryInDB.updateBlogByID(id, body)
