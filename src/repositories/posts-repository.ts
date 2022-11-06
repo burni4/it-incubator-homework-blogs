@@ -1,9 +1,38 @@
-import {postsCollection} from "./db";
-import {postType} from "../projectTypes";
+import {blogsCollection, postsCollection} from "./db";
+import {outputPostType, postType, queryPostParams} from "../projectTypes";
 
 export const postsRepositoryInDB = {
-    async findAllPosts(): Promise<postType[]>{
-        return postsCollection.find({}, {projection:{_id:0}}).toArray();
+    async findAllPosts(paginator: queryPostParams): Promise<outputPostType>{
+
+        const skipCount: number = (paginator.pageNumber - 1) * paginator.pageSize
+
+        const foundPostsInDB = await postsCollection.find({}, {projection:{_id:0}})
+            .sort({[paginator.sortBy]: paginator.sortDirection === 'asc' ?  1 : -1})
+            .skip(skipCount)
+            .limit(paginator.pageSize);
+
+        const totalCount = await postsCollection.count({})
+        const pageCount: number = Math.ceil(totalCount / paginator.pageSize)
+        const postsArray = await foundPostsInDB.toArray()
+
+        const outputPosts: outputPostType = {
+            pagesCount: pageCount,
+            page: paginator.pageNumber,
+            pageSize: paginator.pageSize,
+            totalCount: totalCount,
+            items: postsArray.map((post) => {
+                return {
+                    id: post.id,
+                    title: post.title,
+                    shortDescription: post.shortDescription,
+                    content: post.content,
+                    blogId: post.blogId,
+                    blogName: post.blogName,
+                    createdAt: post.createdAt
+                }
+            })
+        }
+        return outputPosts
     },
     async findPostByID(id: string): Promise<postType | null> {
         const post = await postsCollection.findOne({id: id})

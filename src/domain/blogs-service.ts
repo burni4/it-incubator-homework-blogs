@@ -1,10 +1,13 @@
 import {blogsRepositoryInDB} from "../repositories/blogs-repository";
-import {blogType, outputBlogType, postType, queryBlogParams} from "../projectTypes";
-import {postsService} from "./posts-service";
+import {blogType, outputBlogType, outputPostType, postType, queryBlogParams, queryPostParams} from "../projectTypes";
+import {postsService, queryPostParamsPaginator} from "./posts-service";
 
 export const blogsService = {
     async findAllBlogs(queryParams: queryBlogParams): Promise<outputBlogType>{
         return blogsRepositoryInDB.findAllBlogs(queryBlogParamsPaginator(queryParams));
+    },
+    async findAllPostsByBlogID(queryParams: queryPostParams): Promise<outputPostType>{
+        return postsService.findAllPosts(queryPostParamsPaginator(queryParams));
     },
     async findBlogByID(id: string): Promise<blogType | null>{
         return blogsRepositoryInDB.findBlogByID(id)

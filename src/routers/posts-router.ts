@@ -3,12 +3,13 @@ import {basicAuthMiddleware} from "../middlewares/authorization-middleware";
 import {inputValidationMiddleware} from "../middlewares/input-validation-middleware";
 import {postParamsValidation, postTypeValidation} from "../middlewares/input-posts-validation-middleware";
 import {postsService} from "../domain/posts-service";
+import {queryPostParams} from "../projectTypes";
 
 export const postsRouter = Router({});
 
-postsRouter.get('/', async (req: Request, res: Response) => {
+postsRouter.get('/', async (req: Request<{},{},{}, queryPostParams>, res: Response) => {
 
-    const foundProducts = await postsService.findAllPosts()
+    const foundProducts = await postsService.findAllPosts(req.query)
     res.send(foundProducts);
 
 })

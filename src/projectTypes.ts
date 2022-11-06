@@ -26,6 +26,9 @@ export type outputBlogType = paginatorType & {
     items: blogType[]
 }
 
+export type outputPostType = paginatorType & {
+    items: postType[]
+}
 export type queryBlogParams = {
     searchNameTerm: string | null
     pageNumber: number
@@ -34,3 +37,9 @@ export type queryBlogParams = {
     sortDirection: string
 }
 
+export type queryPostParams = {
+    pageNumber: number
+    pageSize: number
+    sortBy: string
+    sortDirection: string
+}

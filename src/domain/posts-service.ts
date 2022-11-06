@@ -1,11 +1,11 @@
 import {postsRepositoryInDB} from "../repositories/posts-repository";
 import {blogsRepositoryInDB} from "../repositories/blogs-repository";
-import {postType} from "../projectTypes";
+import {outputPostType, postType, queryPostParams} from "../projectTypes";
 
 
 export const postsService = {
-    async findAllPosts(): Promise<postType[]>{
-        return postsRepositoryInDB.findAllPosts();
+    async findAllPosts(queryParams: queryPostParams): Promise<outputPostType>{
+        return postsRepositoryInDB.findAllPosts(queryPostParamsPaginator(queryParams));
     },
     async findPostByID(id: string): Promise<postType | null> {
         return postsRepositoryInDB.findPostByID(id)
@@ -38,5 +38,14 @@ export const postsService = {
     },
     async deleteAllPosts(): Promise<boolean>{
         return postsRepositoryInDB.deleteAllPosts()
+    }
+}
+
+export const queryPostParamsPaginator = (queryParams: queryPostParams):queryPostParams => {
+    return {
+        pageNumber: typeof queryParams.pageNumber === "string" ? +queryParams.pageNumber : 1,
+        pageSize: typeof queryParams.pageSize === "string" ? +queryParams.pageSize : 10,
+        sortBy: typeof queryParams.sortBy === "string" ? queryParams.sortBy : 'createdAt',
+        sortDirection: queryParams.sortDirection === 'asc' ? 'asc' : 'desc'
     }
 }

@@ -23,12 +23,12 @@ export const blogsRepositoryInDB = {
             page: paginator.pageNumber,
             pageSize: paginator.pageSize,
             totalCount: totalCount,
-            items: blogsArray.map((el) => {
+            items: blogsArray.map((blog) => {
                 return {
-                    id: el.id,
-                    name: el.name,
-                    youtubeUrl: el.youtubeUrl,
-                    createdAt: el.createdAt
+                    id: blog.id,
+                    name: blog.name,
+                    youtubeUrl: blog.youtubeUrl,
+                    createdAt: blog.createdAt
                 }
             })
         }

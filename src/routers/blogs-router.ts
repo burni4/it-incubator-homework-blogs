@@ -3,7 +3,8 @@ import {inputValidationMiddleware} from "../middlewares/input-validation-middlew
 import {blogParamsValidation, blogTypeValidation} from "../middlewares/input-blogs-validation-middleware"
 import {basicAuthMiddleware} from "../middlewares/authorization-middleware";
 import {blogsService} from "../domain/blogs-service";
-import {queryBlogParams} from "../projectTypes";
+import {queryBlogParams, queryPostParams} from "../projectTypes";
+import {postTypeValidation} from "../middlewares/input-posts-validation-middleware";
 
 export const blogsRouter = Router({});
 
@@ -14,6 +15,12 @@ blogsRouter.get('/', async (req: Request<{},{},{}, queryBlogParams>, res: Respon
 
 })
 
+blogsRouter.get('/:id/posts', async (req: Request<{},{},{}, queryPostParams>, res: Response) => {
+
+    const foundPosts= await blogsService.findAllPostsByBlogID(req.query);
+    res.send(foundPosts);
+
+})
 blogsRouter.get('/:id', async (req: Request, res: Response) => {
 
     const blog = await blogsService.findBlogByID(req.params.id)
@@ -39,7 +46,7 @@ blogsRouter.post('/',
 
 blogsRouter.post('/:id/posts',
     basicAuthMiddleware,
-    blogTypeValidation,
+    postTypeValidation,
     inputValidationMiddleware,
     async (req: Request, res: Response) => {
 
