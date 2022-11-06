@@ -52,10 +52,10 @@ export const blogsService = {
 }
 const queryBlogParamsPaginator = (queryParams: queryBlogParams):queryBlogParams => {
     return {
-        searchNameTerm: typeof queryParams.searchNameTerm === "string" ? queryParams.searchNameTerm : null,
-        pageNumber: typeof queryParams.pageNumber === "string" ? +queryParams.pageNumber : 1,
-        pageSize: typeof queryParams.pageSize === "string" ? +queryParams.pageSize : 10,
-        sortBy: typeof queryParams.sortBy === "string" ? queryParams.sortBy : 'createdAt',
+        searchNameTerm: queryParams.searchNameTerm || null,
+        pageNumber: +queryParams.pageNumber || 1,
+        pageSize: +queryParams.pageSize || 10,
+        sortBy: queryParams.sortBy || 'createdAt',
         sortDirection: queryParams.sortDirection === 'asc' ? 'asc' : 'desc'
     }
 }

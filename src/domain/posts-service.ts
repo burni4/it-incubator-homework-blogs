@@ -43,9 +43,9 @@ export const postsService = {
 
 export const queryPostParamsPaginator = (queryParams: queryPostParams):queryPostParams => {
     return {
-        pageNumber: typeof queryParams.pageNumber === "string" ? +queryParams.pageNumber : 1,
-        pageSize: typeof queryParams.pageSize === "string" ? +queryParams.pageSize : 10,
-        sortBy: typeof queryParams.sortBy === "string" ? queryParams.sortBy : 'createdAt',
+        pageNumber: +queryParams.pageNumber || 1,
+        pageSize: +queryParams.pageSize || 10,
+        sortBy: queryParams.sortBy || 'createdAt',
         sortDirection: queryParams.sortDirection === 'asc' ? 'asc' : 'desc'
     }
 }
