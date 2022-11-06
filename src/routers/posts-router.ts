@@ -1,7 +1,11 @@
 import {Request, Response, Router} from "express";
 import {basicAuthMiddleware} from "../middlewares/authorization-middleware";
 import {inputValidationMiddleware} from "../middlewares/input-validation-middleware";
-import {postParamsValidation, postTypeValidation} from "../middlewares/input-posts-validation-middleware";
+import {
+    postParamsValidation,
+    postTypeValidation,
+    postTypeValidationBlogID
+} from "../middlewares/input-posts-validation-middleware";
 import {postsService} from "../domain/posts-service";
 import {queryPostParams} from "../projectTypes";
 
@@ -40,6 +44,7 @@ postsRouter.delete('/:id',
 
 postsRouter.post('/',
     basicAuthMiddleware,
+    postTypeValidationBlogID,
     postTypeValidation,
     inputValidationMiddleware,
     async (req: Request, res: Response) => {
@@ -56,6 +61,7 @@ postsRouter.post('/',
 
 postsRouter.put('/:id',
     basicAuthMiddleware,
+    postTypeValidationBlogID,
     postTypeValidation,
     inputValidationMiddleware,
     async (req: Request, res: Response) => {
