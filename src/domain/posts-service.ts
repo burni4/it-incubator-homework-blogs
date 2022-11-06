@@ -4,8 +4,8 @@ import {outputPostType, postType, queryPostParams} from "../projectTypes";
 
 
 export const postsService = {
-    async findAllPosts(queryParams: queryPostParams): Promise<outputPostType>{
-        return postsRepositoryInDB.findAllPosts(queryPostParamsPaginator(queryParams));
+    async findAllPosts(queryParams: queryPostParams, blogId?: string): Promise<outputPostType>{
+        return postsRepositoryInDB.findAllPosts(queryPostParamsPaginator(queryParams), blogId);
     },
     async findPostByID(id: string): Promise<postType | null> {
         return postsRepositoryInDB.findPostByID(id)

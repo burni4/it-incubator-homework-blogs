@@ -17,12 +17,17 @@ blogsRouter.get('/', async (req: Request<{},{},{}, queryBlogParams>, res: Respon
 
 blogsRouter.get('/:id/posts',
     blogParamsValidation,
-    async (req: Request<{},{},{}, queryPostParams>, res: Response) => {
+    async (req: Request<{id:string},{},{}, queryPostParams>, res: Response) => {
 
-    const foundPosts= await blogsService.findAllPostsByBlogID(req.query);
-    res.send(foundPosts);
+    const foundPosts = await blogsService.findAllPostsByBlogID(req.params.id, req.query);
 
+    if(!foundPosts){
+        res.sendStatus(404);
+    }else {
+        res.send(foundPosts);
+    }
 })
+
 blogsRouter.get('/:id', async (req: Request, res: Response) => {
 
     const blog = await blogsService.findBlogByID(req.params.id)
@@ -55,7 +60,12 @@ blogsRouter.post('/:id/posts',
 
         const newBlog = await blogsService.createPostByBlogID(req.params.id,req.body)
 
-        res.status(201).send(newBlog);
+        if(!newBlog){
+            res.sendStatus(404)
+            return;
+        }else{
+            res.status(201).send(newBlog);
+        }
 
     })
 

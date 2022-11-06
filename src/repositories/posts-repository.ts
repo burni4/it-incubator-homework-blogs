@@ -2,16 +2,22 @@ import {blogsCollection, postsCollection} from "./db";
 import {outputPostType, postType, queryPostParams} from "../projectTypes";
 
 export const postsRepositoryInDB = {
-    async findAllPosts(paginator: queryPostParams): Promise<outputPostType>{
+    async findAllPosts(paginator: queryPostParams, blogID?: string): Promise<outputPostType>{
+
+        let filter = {}
+
+        if(blogID){
+            filter = {blogId: blogID}
+        }
 
         const skipCount: number = (paginator.pageNumber - 1) * paginator.pageSize
 
-        const foundPostsInDB = await postsCollection.find({}, {projection:{_id:0}})
+        const foundPostsInDB = await postsCollection.find(filter, {projection:{_id:0}})
             .sort({[paginator.sortBy]: paginator.sortDirection === 'asc' ?  1 : -1})
             .skip(skipCount)
             .limit(paginator.pageSize);
 
-        const totalCount = await postsCollection.count({})
+        const totalCount = await postsCollection.count(filter)
         const pageCount: number = Math.ceil(totalCount / paginator.pageSize)
         const postsArray = await foundPostsInDB.toArray()
 

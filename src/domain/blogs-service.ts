@@ -6,8 +6,15 @@ export const blogsService = {
     async findAllBlogs(queryParams: queryBlogParams): Promise<outputBlogType>{
         return blogsRepositoryInDB.findAllBlogs(queryBlogParamsPaginator(queryParams));
     },
-    async findAllPostsByBlogID(queryParams: queryPostParams): Promise<outputPostType>{
-        return postsService.findAllPosts(queryPostParamsPaginator(queryParams));
+    async findAllPostsByBlogID(id: string, queryParams: queryPostParams): Promise<outputPostType | null>{
+
+        const foundBlog = await blogsRepositoryInDB.findBlogByID(id)
+
+        if(!foundBlog){
+            return null
+        }
+
+        return postsService.findAllPosts(queryPostParamsPaginator(queryParams), id);
     },
     async findBlogByID(id: string): Promise<blogType | null>{
         return blogsRepositoryInDB.findBlogByID(id)
@@ -26,7 +33,14 @@ export const blogsService = {
         return createdBlog
     },
     async createPostByBlogID(id: string, data: postType): Promise<postType | null>{
+
+        const foundBlog = await blogsRepositoryInDB.findBlogByID(id)
+
+        if(!foundBlog){
+          return null
+        }
         data.blogId = id
+
         return await postsService.createPost(data)
     },
     async updateBlogByID(id: string, body: blogType): Promise<boolean>{
