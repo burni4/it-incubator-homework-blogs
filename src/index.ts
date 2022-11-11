@@ -16,7 +16,7 @@ app.use('/blogs', blogsRouter);
 app.use('/posts', postsRouter);
 
 app.get("/", (req: Request, res: Response) => {
-    res.send("Hello Homework [Blogs] from Artem Narchuk");
+    res.send("Hello Homework [Blogs] from Artem Narchuk 1");
 })
 
 
