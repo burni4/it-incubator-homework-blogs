@@ -15,6 +15,14 @@ export type blogType = {
     createdAt: string
 }
 
+export type userType = {
+    id: string
+    login : string
+    password : string
+    email: string
+    createdAt: string
+}
+
 export type paginatorType = {
     pagesCount: number
     page: number
