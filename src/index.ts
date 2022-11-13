@@ -5,7 +5,9 @@ import {blogsRouter} from "./routers/blogs-router";
 import {usersRouter} from "./routers/users-router";
 import {blogsRepositoryInDB} from "./repositories/blogs-repository";
 import {postsRepositoryInDB} from "./repositories/posts-repository";
+import {usersRepositoryInDB} from "./repositories/users-repository";
 import {runDb} from "./repositories/db";
+
 
 
 export const app = express()
@@ -27,6 +29,7 @@ app.delete("/testing/all-data", async (req: Request, res: Response) => {
 
     await blogsRepositoryInDB.deleteAllBlogs()
     await postsRepositoryInDB.deleteAllPosts()
+    await usersRepositoryInDB.deleteAllUsers()
 
     res.sendStatus(204)
 
