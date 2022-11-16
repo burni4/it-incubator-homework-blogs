@@ -51,3 +51,8 @@ export type queryPostParams = {
     sortBy: string
     sortDirection: string
 }
+
+export type loginInputType = {
+    login: string
+    password: string
+}
