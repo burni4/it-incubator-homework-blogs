@@ -20,7 +20,7 @@ export async function runDb(){
 
     try {
         await client.connect()
-        await client.db("products").command({ping: 1})
+        await client.db("it-incubator-homework-blogs").command({ping: 1})
         console.log("Connected successfully to mongo server")
     }catch {
         console.log("Can't connect to mongo server!!!")

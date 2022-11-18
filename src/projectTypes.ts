@@ -19,7 +19,8 @@ export type blogType = {
 export type userType = {
     id: string
     login : string
-    password : string
+    passwordHash : string
+    passwordSalt : string
     email: string
     createdAt: string
 }
