@@ -26,7 +26,8 @@ export const blogsService = {
         const newBlog: blogType = {
             id: String(+new Date()),
             name: data.name,
-            youtubeUrl: data.youtubeUrl,
+            description: data.description,
+            websiteUrl: data.websiteUrl,
             createdAt: new Date().toISOString()
         }
         const createdBlog: blogType = await blogsRepositoryInDB.createBlog(newBlog)

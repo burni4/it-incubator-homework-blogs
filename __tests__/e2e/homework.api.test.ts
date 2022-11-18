@@ -138,6 +138,8 @@ describe('/blogs', () => {
 
 describe('/posts', () => {
 
+    return
+
     let createdPost: any = null;
     let createdBlogForPost: any = null;
 

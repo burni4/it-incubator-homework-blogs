@@ -27,7 +27,8 @@ export const blogsRepositoryInDB = {
                 return {
                     id: blog.id,
                     name: blog.name,
-                    youtubeUrl: blog.youtubeUrl,
+                    description: blog.description,
+                    websiteUrl: blog.websiteUrl,
                     createdAt: blog.createdAt
                 }
             })
@@ -40,7 +41,8 @@ export const blogsRepositoryInDB = {
             return {
                 id: blog.id,
                 name : blog.name,
-                youtubeUrl: blog.youtubeUrl,
+                description : blog.description,
+                websiteUrl: blog.websiteUrl,
                 createdAt: blog.createdAt,
             }
         }
@@ -54,7 +56,8 @@ export const blogsRepositoryInDB = {
         const newBlog: blogType = {
             id: String(+new Date()),
             name: data.name,
-            youtubeUrl: data.youtubeUrl,
+            description: data.description,
+            websiteUrl: data.websiteUrl,
             createdAt: new Date().toISOString()
         }
         const newObjectBlog: blogType = Object.assign({}, newBlog);
@@ -65,7 +68,7 @@ export const blogsRepositoryInDB = {
     async updateBlogByID(id: string, body: blogType): Promise<boolean>{
         const result = await blogsCollection.updateOne({id: id}, {$set: {
             name: body.name,
-            youtubeUrl: body.youtubeUrl}})
+            youtubeUrl: body.websiteUrl}})
         return result.matchedCount === 1
     },
     async deleteAllBlogs(): Promise<boolean>{
