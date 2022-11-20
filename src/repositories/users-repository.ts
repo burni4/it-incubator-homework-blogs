@@ -13,7 +13,7 @@ export const usersRepositoryInDB = {
         }
 
         if (expressions.length > 0){
-            filter = {$and: expressions}
+            filter = {$or: expressions}
         }
 
         const skipCount: number = (paginator.pageNumber - 1) * paginator.pageSize
