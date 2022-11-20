@@ -1,10 +1,10 @@
 import bcrypt from 'bcrypt'
 import {ObjectId} from "mongodb";
 import {usersRepositoryInDB} from "../repositories/users-repository";
-import {userType} from "../projectTypes";
+import {userOutputType, userType} from "../projectTypes";
 
 export const usersService = {
-    async createUser(login: string, email: string, password: string): Promise<any>{
+    async createUser(login: string, email: string, password: string): Promise<userOutputType | null>{
         const passwordSalt = await bcrypt.genSalt(10)
         const passwordHash = await this.generateHash(password,passwordSalt)
 
@@ -18,7 +18,16 @@ export const usersService = {
             createdAt: new Date().toISOString()
         }
 
-        return usersRepositoryInDB.createUser(newUser)
+        await usersRepositoryInDB.createUser(newUser)
+
+        const outputUser: userOutputType = {
+            id: newUser.id,
+            login: newUser.login,
+            email: newUser.email,
+            createdAt: newUser.createdAt
+        }
+
+        return outputUser
     },
     async deleteUserByID(id: string): Promise<boolean>{
         return await usersRepositoryInDB.deleteUserByID(id)

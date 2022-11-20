@@ -25,11 +25,28 @@ export type userType = {
     createdAt: string
 }
 
+export type userInputType = {
+    login: string
+    password : string
+    email: string
+}
+
+export type userOutputType = {
+    id: string
+    login: string
+    email : string
+    createdAt: string
+}
+
 export type paginatorType = {
     pagesCount: number
     page: number
     pageSize: number
     totalCount: number
+}
+
+export type outputUserType = paginatorType & {
+    items: userInputType[]
 }
 
 export type outputBlogType = paginatorType & {

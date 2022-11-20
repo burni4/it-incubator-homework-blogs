@@ -2,6 +2,8 @@ import {Request, Response, Router} from "express";
 import {inputValidationMiddleware} from "../middlewares/input-validation-middleware"
 import {usersService} from "../domain/users-service";
 import {basicAuthMiddleware} from "../middlewares/authorization-middleware";
+import {userTypeValidation} from "../middlewares/input-users-validation-middleware";
+import {userInputType, userOutputType} from "../projectTypes";
 
 export const usersRouter = Router({});
 
@@ -16,10 +18,13 @@ usersRouter.get('/',
 
 usersRouter.post('/',
     basicAuthMiddleware,
+    userTypeValidation,
     inputValidationMiddleware,
-    async (req: Request, res: Response) => {
+    async (req: Request<{},{},userInputType>, res: Response) => {
 
-        res.status(201);
+        const newUser: userOutputType | null = await usersService.createUser(req.body.login, req.body.email, req.body.password)
+
+        res.status(201).send(newUser);
 
 })
 
