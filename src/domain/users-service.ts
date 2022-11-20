@@ -20,7 +20,9 @@ export const usersService = {
 
         return usersRepositoryInDB.createUser(newUser)
     },
-
+    async deleteUserByID(id: string): Promise<boolean>{
+        return await usersRepositoryInDB.deleteUserByID(id)
+    },
     async checkCredentials(loginOrEmail: string, password: string) {
         const user: userType | null = await usersRepositoryInDB.findByLoginOrEmail(loginOrEmail)
         if(!user) return false

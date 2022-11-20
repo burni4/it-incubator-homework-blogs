@@ -17,10 +17,10 @@ export const blogsService = {
         return postsService.findAllPosts(queryPostParamsPaginator(queryParams), id);
     },
     async findBlogByID(id: string): Promise<blogType | null>{
-        return blogsRepositoryInDB.findBlogByID(id)
+        return await blogsRepositoryInDB.findBlogByID(id)
     },
     async deleteBlogByID(id: string): Promise<boolean>{
-        return blogsRepositoryInDB.deleteBlogByID(id)
+        return await blogsRepositoryInDB.deleteBlogByID(id)
     },
     async createBlog(data: blogType): Promise<blogType>{
         const newBlog: blogType = {
