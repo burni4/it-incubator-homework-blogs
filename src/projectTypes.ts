@@ -45,15 +45,15 @@ export type paginatorType = {
     totalCount: number
 }
 
-export type outputUserType = paginatorType & {
-    items: userInputType[]
+export type outputUsersWithPaginatorType = paginatorType & {
+    items: userOutputType[]
 }
 
-export type outputBlogType = paginatorType & {
+export type outputBlogsWithPaginatorType = paginatorType & {
     items: blogType[]
 }
 
-export type outputPostType = paginatorType & {
+export type outputPostsWithPaginatorType = paginatorType & {
     items: postType[]
 }
 export type queryBlogParams = {
@@ -69,6 +69,15 @@ export type queryPostParams = {
     pageSize: number
     sortBy: string
     sortDirection: string
+}
+
+export type queryUserParams = {
+    pageNumber: number
+    pageSize: number
+    sortBy: string
+    sortDirection: string
+    searchLoginTerm: string | null
+    searchEmailTerm: string | null
 }
 
 export type loginInputType = {

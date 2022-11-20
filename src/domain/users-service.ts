@@ -1,9 +1,17 @@
 import bcrypt from 'bcrypt'
 import {ObjectId} from "mongodb";
 import {usersRepositoryInDB} from "../repositories/users-repository";
-import {userOutputType, userType} from "../projectTypes";
+import {
+    outputUsersWithPaginatorType,
+    queryUserParams,
+    userOutputType,
+    userType
+} from "../projectTypes";
 
 export const usersService = {
+    async findUsers(params: queryUserParams): Promise<outputUsersWithPaginatorType>{
+        return await usersRepositoryInDB.findUsers(queryUserParamsPaginator(params))
+    },
     async createUser(login: string, email: string, password: string): Promise<userOutputType | null>{
         const passwordSalt = await bcrypt.genSalt(10)
         const passwordHash = await this.generateHash(password,passwordSalt)
@@ -46,5 +54,16 @@ export const usersService = {
     async generateHash(password: string, salt: string) {
         const hash = await bcrypt.hash(password, salt)
         return hash
+    }
+}
+
+const queryUserParamsPaginator = (queryParams: queryUserParams):queryUserParams => {
+    return {
+        pageNumber: +queryParams.pageNumber || 1,
+        pageSize: +queryParams.pageSize || 10,
+        sortBy: queryParams.sortBy || 'createdAt',
+        sortDirection: queryParams.sortDirection === 'asc' ? 'asc' : 'desc',
+        searchLoginTerm: queryParams.searchLoginTerm || null,
+        searchEmailTerm: queryParams.searchEmailTerm || null,
     }
 }

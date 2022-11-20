@@ -1,9 +1,41 @@
 import {usersCollection} from "./db";
-import {userType} from "../projectTypes";
+import {outputUsersWithPaginatorType, queryUserParams, userType} from "../projectTypes";
 
 export const usersRepositoryInDB = {
-    async findAllUsers(): Promise<null>{
-        return null
+    async findUsers(paginator: queryUserParams): Promise<outputUsersWithPaginatorType>{
+        let filter = {}
+        if(paginator.searchLoginTerm){
+            filter = {name: { $regex: paginator.searchLoginTerm, $options: "i" }}
+        }
+        if(paginator.searchEmailTerm){
+            filter = {name: { $regex: paginator.searchEmailTerm, $options: "i" }}
+        }
+        const skipCount: number = (paginator.pageNumber - 1) * paginator.pageSize
+
+        const foundUsersInDB = await usersCollection.find(filter, {projection:{_id:0}})
+            .sort({[paginator.sortBy]: paginator.sortDirection === 'asc' ?  1 : -1})
+            .skip(skipCount)
+            .limit(paginator.pageSize);
+
+        const totalCount = await usersCollection.count(filter)
+        const pageCount: number = Math.ceil(totalCount / paginator.pageSize)
+        const usersArrayFromDB = await foundUsersInDB.toArray()
+
+        const usersArray: outputUsersWithPaginatorType = {
+            pagesCount: pageCount,
+            page: paginator.pageNumber,
+            pageSize: paginator.pageSize,
+            totalCount: totalCount,
+            items: usersArrayFromDB.map((user) => {
+                return {
+                    id: user.id,
+                    login: user.login,
+                    email: user.email,
+                    createdAt: user.createdAt
+                }
+            })
+        }
+        return usersArray
     },
     async deleteUserByID(id: string): Promise<boolean>{
         const result = await usersCollection.deleteOne({id: id})

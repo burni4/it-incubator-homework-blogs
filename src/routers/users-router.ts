@@ -3,16 +3,18 @@ import {inputValidationMiddleware} from "../middlewares/input-validation-middlew
 import {usersService} from "../domain/users-service";
 import {basicAuthMiddleware} from "../middlewares/authorization-middleware";
 import {userTypeValidation} from "../middlewares/input-users-validation-middleware";
-import {userInputType, userOutputType} from "../projectTypes";
+import {queryUserParams, userInputType, userOutputType} from "../projectTypes";
 
 export const usersRouter = Router({});
 
 usersRouter.get('/',
-    basicAuthMiddleware,
-    inputValidationMiddleware,
-    async (req: Request<{},{},{}>, res: Response) => {
+    // basicAuthMiddleware,
+    // inputValidationMiddleware,
+    async (req: Request<{},{},{}, queryUserParams>, res: Response) => {
 
-    res.send(200)
+    const foundUsers = await usersService.findUsers(req.query);
+
+    res.status(200).send(foundUsers);
 
 })
 

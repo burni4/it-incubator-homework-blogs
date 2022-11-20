@@ -1,10 +1,10 @@
 import {postsRepositoryInDB} from "../repositories/posts-repository";
 import {blogsRepositoryInDB} from "../repositories/blogs-repository";
-import {outputPostType, postType, queryPostParams} from "../projectTypes";
+import {outputPostsWithPaginatorType, postType, queryPostParams} from "../projectTypes";
 
 
 export const postsService = {
-    async findAllPosts(queryParams: queryPostParams, blogId?: string): Promise<outputPostType>{
+    async findAllPosts(queryParams: queryPostParams, blogId?: string): Promise<outputPostsWithPaginatorType>{
         return postsRepositoryInDB.findAllPosts(queryPostParamsPaginator(queryParams), blogId);
     },
     async findPostByID(id: string): Promise<postType | null> {

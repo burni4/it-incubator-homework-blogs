@@ -1,8 +1,8 @@
 import {blogsCollection} from "./db";
-import {blogType, outputBlogType, queryBlogParams} from "../projectTypes";
+import {blogType, outputBlogsWithPaginatorType, queryBlogParams} from "../projectTypes";
 
 export const blogsRepositoryInDB = {
-    async findAllBlogs(paginator: queryBlogParams): Promise<outputBlogType>{
+    async findAllBlogs(paginator: queryBlogParams): Promise<outputBlogsWithPaginatorType>{
         let filter = {}
         if(paginator.searchNameTerm){
             filter = {name: { $regex: paginator.searchNameTerm, $options: "i" }}
@@ -18,7 +18,7 @@ export const blogsRepositoryInDB = {
         const pageCount: number = Math.ceil(totalCount / paginator.pageSize)
         const blogsArray = await foundBlogsInDB.toArray()
 
-        const outputBlogs: outputBlogType = {
+        const outputBlogs: outputBlogsWithPaginatorType = {
             pagesCount: pageCount,
             page: paginator.pageNumber,
             pageSize: paginator.pageSize,
