@@ -4,12 +4,18 @@ import {outputUsersWithPaginatorType, queryUserParams, userType} from "../projec
 export const usersRepositoryInDB = {
     async findUsers(paginator: queryUserParams): Promise<outputUsersWithPaginatorType>{
         let filter = {}
+        const expressions = []
         if(paginator.searchLoginTerm){
-            filter = {name: { $regex: paginator.searchLoginTerm, $options: "i" }}
+            expressions.push({login: { $regex: paginator.searchLoginTerm, $options: "i" }})
         }
         if(paginator.searchEmailTerm){
-            filter = {name: { $regex: paginator.searchEmailTerm, $options: "i" }}
+            expressions.push({email: { $regex: paginator.searchEmailTerm, $options: "i" }})
         }
+
+        if (expressions.length > 0){
+            filter = {$and: expressions}
+        }
+
         const skipCount: number = (paginator.pageNumber - 1) * paginator.pageSize
 
         const foundUsersInDB = await usersCollection.find(filter, {projection:{_id:0}})
