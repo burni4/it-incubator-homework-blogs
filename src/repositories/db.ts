@@ -4,8 +4,6 @@ import {blogType, postType, userType} from "../projectTypes";
 
 dotenv.config()
 
-
-
 const mongoURILocalhost: string = "mongodb://0.0.0.0:27017"
 
 const mongoUri = process.env.mongoURIAtlas || mongoURILocalhost;

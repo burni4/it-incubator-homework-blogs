@@ -12,12 +12,26 @@ usersRouter.get('/',
     // inputValidationMiddleware,
     async (req: Request<{},{},{}, queryUserParams>, res: Response) => {
 
-    const foundUsers = await usersService.findUsers(req.query);
+    const accessToken = await usersService.findUsers(req.query);
 
-    res.status(200).send(foundUsers);
+        //{
+        //     "accessToken": "string"
+        //}
+
+    res.status(200).send(accessToken);
 
 })
 
+usersRouter.get('/me',
+    // basicAuthMiddleware,
+    // inputValidationMiddleware,
+    async (req: Request<{},{},{}, queryUserParams>, res: Response) => {
+
+        const foundUsers = await usersService.findUsers(req.query);
+
+        res.status(200).send(foundUsers);
+
+    })
 usersRouter.post('/',
     basicAuthMiddleware,
     userTypeValidation,
