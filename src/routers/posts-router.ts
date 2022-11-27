@@ -69,8 +69,6 @@ postsRouter.post('/:id/comments',
     inputValidationMiddleware,
     async (req: Request, res: Response) => {
 
-    console.log('Hello')
-
         const post = await postsService.findPostByID(req.params.id)
 
         if(!post){

@@ -33,8 +33,6 @@ export  const authMiddleware = async (req: Request, res: Response, next: NextFun
 
     const userId = await jwtService.getUserIdByToken(token)
 
-    console.log(userId, ' userId')
-
     if(!userId){
         res.sendStatus(401)
         return
@@ -43,12 +41,9 @@ export  const authMiddleware = async (req: Request, res: Response, next: NextFun
     const user = await usersService.findUserByID(userId)
 
     if(!user){
-        console.log(user, ' NOT USER')
         res.sendStatus(401)
         return
     }
-
-    console.log(user, ' USER')
 
     req.body.user = user
 
