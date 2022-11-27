@@ -31,11 +31,12 @@ export  const authMiddleware = async (req: Request, res: Response, next: NextFun
 
     const userId = await jwtService.getUserIdByToken(token)
 
-    if(userId){
-        req.body.user = await usersService.findUserByID(userId)
-        next()
+    if(!userId){
+        res.sendStatus(401)
         return
     }
 
-    res.sendStatus(401)
+    req.body.user = await usersService.findUserByID(userId)
+    next()
+
 }
