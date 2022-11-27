@@ -10,7 +10,6 @@ import {postsRepositoryInDB} from "./repositories/posts-repository";
 import {usersRepositoryInDB} from "./repositories/users-repository";
 import {commentsRepositoryInDB} from "./repositories/comments-repository";
 import {runDb} from "./repositories/db";
-import bcrypt from "bcrypt";
 
 export const app = express()
 const port = process.env.PORT || 3000
