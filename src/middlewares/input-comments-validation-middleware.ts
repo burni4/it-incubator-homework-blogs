@@ -1,6 +1,6 @@
 import {body, param} from "express-validator";
-import {commentsRepositoryInDB} from "../repositories/comments-repository";
 import {NextFunction, Request, Response} from "express";
+import {commentsService} from "../domain/comments-service";
 
 
 
@@ -10,7 +10,7 @@ export const commentParamsValidation = [
 
 export const commentValidationOwnerID = (req: Request, res: Response, next: NextFunction) => body('user').exists({checkFalsy: true}).withMessage('The field [user] must exist')
     .bail().custom(async (value) => {
-        const result: boolean = await commentsRepositoryInDB.checkOwnerComment(value, req.params.id)
+        const result: boolean = await commentsService.checkOwnerComment(value, req.params.id)
         if (!result) {
             res.sendStatus(403);
             return false

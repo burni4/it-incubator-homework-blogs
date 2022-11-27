@@ -3,16 +3,26 @@ import {inputValidationMiddleware} from "../middlewares/input-validation-middlew
 import {commentsService} from "../domain/comments-service";
 import {authMiddleware} from "../middlewares/authorization-middleware";
 import {commentParamsValidation, commentValidationOwnerID} from "../middlewares/input-comments-validation-middleware";
+import {commentOutputType} from "../projectTypes";
 
 export const commentsRouter = Router({});
 
 commentsRouter.get('/:id',
-    async (req: Request<{},{},{}>, res: Response) => {
+    commentParamsValidation,
+    inputValidationMiddleware,
+    async (req: Request, res: Response) => {
 
+        const foundComment: commentOutputType | null = await commentsService.findCommentByID(req.params.id);
 
+        if(!foundComment){
+            res.sendStatus(404);
+        }else {
+            res.send(foundComment);
+        }
 })
 
-commentsRouter.post('/:id',
+commentsRouter.put('/:id',
+
     async (req: Request<{},{},{}>, res: Response) => {
 
 

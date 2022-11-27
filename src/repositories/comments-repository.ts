@@ -23,14 +23,5 @@ export const commentsRepositoryInDB = {
     async deleteAllComments(): Promise<boolean>{
         const result = await commentsCollection.deleteMany({})
         return !!result.deletedCount
-    },
-    async checkOwnerComment(user: userOutputType, commentId: string): Promise<boolean>{
-        const result: commentDBType | null = await this.findCommentByID(commentId)
-        if(!result || result.userId !== user.id){
-            return false
-        }
-        return true
     }
-
-
 }
