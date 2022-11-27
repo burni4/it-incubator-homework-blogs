@@ -69,16 +69,20 @@ postsRouter.post('/:id/comments',
     inputValidationMiddleware,
     async (req: Request, res: Response) => {
 
+    console.log('Hello')
+
         const post = await postsService.findPostByID(req.params.id)
 
         if(!post){
-            return res.status(404)
+            res.sendStatus(404)
+            return
         }
 
         const newComment = await commentsService.createComment(req.body.user, req.body, req.params.id)
 
         if(!newComment){
-            return res.status(400)
+            res.sendStatus(400)
+            return
         }
 
         res.status(201).send(newComment);
@@ -92,7 +96,8 @@ postsRouter.get('/:id/comments',
         const post = await postsService.findPostByID(req.params.id)
 
         if(!post){
-            return res.status(404)
+            res.sendStatus(404)
+            return
         }
 
         const foundPosts = await commentsService.findAllCommentsByPostID(req.params.id, req.query);

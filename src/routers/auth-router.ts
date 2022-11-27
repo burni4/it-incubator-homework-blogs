@@ -21,7 +21,7 @@ authRouter.post('/login',
                 res.sendStatus(401)
             }
 })
-authRouter.post('/me',
+authRouter.get('/me',
     authMiddleware,
     inputValidationMiddleware,
     async (req: Request<{},{},{user: userOutputType}>, res: Response) => {
