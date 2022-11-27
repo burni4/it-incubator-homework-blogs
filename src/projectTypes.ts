@@ -100,3 +100,7 @@ export type commentOutputType = {
     userLogin : string
     createdAt: string
 }
+
+export type commentInputType = {
+    content : string
+}

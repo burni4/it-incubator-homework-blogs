@@ -2,8 +2,13 @@ import {Request, Response, Router} from "express";
 import {inputValidationMiddleware} from "../middlewares/input-validation-middleware"
 import {commentsService} from "../domain/comments-service";
 import {authMiddleware} from "../middlewares/authorization-middleware";
-import {commentParamsValidation, commentValidationOwnerID} from "../middlewares/input-comments-validation-middleware";
+import {
+    commentParamsValidation,
+    commentTypeValidation,
+    commentValidationOwnerID
+} from "../middlewares/input-comments-validation-middleware";
 import {commentOutputType} from "../projectTypes";
+import {blogsService} from "../domain/blogs-service";
 
 export const commentsRouter = Router({});
 
@@ -22,9 +27,20 @@ commentsRouter.get('/:id',
 })
 
 commentsRouter.put('/:id',
+    authMiddleware,
+    commentParamsValidation,
+    commentTypeValidation,
+    commentValidationOwnerID,
+    inputValidationMiddleware,
+    async (req: Request, res: Response) => {
 
-    async (req: Request<{},{},{}>, res: Response) => {
+        const isUpdated = await commentsService.updateCommentByID(req.params.id, req.body)
 
+        if (isUpdated) {
+            res.sendStatus(204);
+        } else {
+            res.sendStatus(404);
+        }
 
 })
 

@@ -1,5 +1,6 @@
 import {commentsRepositoryInDB} from "../repositories/comments-repository";
-import {commentDBType, commentOutputType, userOutputType} from "../projectTypes";
+import {blogType, commentDBType, commentInputType, commentOutputType, userOutputType} from "../projectTypes";
+import {blogsRepositoryInDB} from "../repositories/blogs-repository";
 
 
 export const commentsService = {
@@ -15,5 +16,8 @@ export const commentsService = {
             return false
         }
         return true
-    }
+    },
+    async updateCommentByID(id: string, body: commentInputType): Promise<boolean>{
+        return await commentsRepositoryInDB.updateCommentByID(id, body)
+    },
 }

@@ -1,5 +1,5 @@
-import {commentsCollection, usersCollection} from "./db";
-import {commentDBType, commentOutputType, userDBType, userOutputType} from "../projectTypes";
+import {commentsCollection, postsCollection, usersCollection} from "./db";
+import {commentDBType, commentInputType, commentOutputType, userDBType, userOutputType} from "../projectTypes";
 
 
 export const commentsRepositoryInDB = {
@@ -16,11 +16,15 @@ export const commentsRepositoryInDB = {
             createdAt: foundCommentInDB.createdAt
         }
     },
-    async deleteCommentByID(id: string): Promise<boolean>{
+    async updateCommentByID(id: string, comment: commentInputType): Promise<boolean> {
+        const result = await commentsCollection.updateOne({id: id}, {$set: {content: comment.content}})
+        return result.matchedCount === 1
+    },
+    async deleteCommentByID(id: string): Promise<boolean> {
         const result = await commentsCollection.deleteOne({id: id})
         return result.deletedCount === 1
     },
-    async deleteAllComments(): Promise<boolean>{
+    async deleteAllComments(): Promise<boolean> {
         const result = await commentsCollection.deleteMany({})
         return !!result.deletedCount
     }
