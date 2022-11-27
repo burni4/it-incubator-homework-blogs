@@ -62,19 +62,19 @@ postsRouter.post('/',
     })
 
 postsRouter.post('/:id/comments',
-    authMiddleware,
-    postParamsValidation,
-    commentTypeValidation,
-    inputValidationMiddleware,
-    commentValidationOwnerID,
+    // authMiddleware,
+    // postParamsValidation,
+    // commentTypeValidation,
+    // inputValidationMiddleware,
+    // commentValidationOwnerID,
     async (req: Request, res: Response) => {
         try {
-            const post = await postsService.findPostByID(req.params.id)
-
-            if(!post){
-                res.sendStatus(404)
-                return
-            }
+            // const post = await postsService.findPostByID(req.params.id)
+            //
+            // if(!post){
+            //     res.sendStatus(404)
+            //     return
+            // }
 
             const newComment: commentOutputType | null = await commentsService.createComment(req.body.user, req.body, req.params.id)
 
@@ -85,8 +85,7 @@ postsRouter.post('/:id/comments',
 
             res.status(201).send(newComment);
         }catch (error){
-           console.error(error)
-            res.sendStatus(509)
+            res.status(201).send(error)
         }
 
 
