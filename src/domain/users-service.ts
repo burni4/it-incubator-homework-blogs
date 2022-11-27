@@ -12,6 +12,9 @@ export const usersService = {
     async findUsers(params: queryUserParams): Promise<outputUsersWithPaginatorType>{
         return await usersRepositoryInDB.findUsers(queryUserParamsPaginator(params))
     },
+    async findUserByID(userId: string): Promise<userOutputType | null>{
+        return await usersRepositoryInDB.findUserByID(userId)
+    },
     async createUser(login: string, email: string, password: string): Promise<userOutputType | null>{
         const passwordSalt = await bcrypt.genSalt(10)
         const passwordHash = await this.generateHash(password,passwordSalt)

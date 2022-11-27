@@ -1,7 +1,19 @@
 import {usersCollection} from "./db";
-import {outputUsersWithPaginatorType, queryUserParams, userType} from "../projectTypes";
+import {outputUsersWithPaginatorType, queryUserParams, userOutputType, userType} from "../projectTypes";
 
 export const usersRepositoryInDB = {
+    async findUserByID(idFromDB: string): Promise<userOutputType | null>{
+        const foundUsersInDB: userType | null = await usersCollection.findOne({ id : idFromDB }, {projection:{_id:0}})
+        if(!foundUsersInDB){
+           return null
+        }
+        return {
+            id: foundUsersInDB.id,
+            login: foundUsersInDB.login,
+            email: foundUsersInDB.email,
+            createdAt: foundUsersInDB.createdAt
+        }
+    },
     async findUsers(paginator: queryUserParams): Promise<outputUsersWithPaginatorType>{
         let filter = {}
         const expressions = []
