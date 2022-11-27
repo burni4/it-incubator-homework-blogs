@@ -1,6 +1,6 @@
 import {Request, Response, Router} from "express";
 import {inputValidationMiddleware} from "../middlewares/input-validation-middleware"
-import {usersService} from "../domain/users-service";
+import {commentsService} from "../domain/comments-service";
 
 export const commentsRouter = Router({});
 
@@ -20,7 +20,7 @@ commentsRouter.delete('/:id',
     inputValidationMiddleware,
     async (req: Request, res: Response) => {
 
-        const isDeleted = await usersService.deleteUserByID(req.params.id)
+        const isDeleted = await commentsService.deleteCommentByID(req.params.id)
         if (isDeleted) {
             res.sendStatus(204);
         } else {

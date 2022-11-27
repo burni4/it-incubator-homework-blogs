@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken'
-import {userOutputType, userType} from "../projectTypes";
+import {userOutputType, userDBType} from "../projectTypes";
 
 const JWT_SECRET_LOCAL: string = "JWT_SECRET"
 

@@ -5,7 +5,7 @@ import {
     outputUsersWithPaginatorType,
     queryUserParams,
     userOutputType,
-    userType
+    userDBType
 } from "../projectTypes";
 
 export const usersService = {
@@ -44,7 +44,7 @@ export const usersService = {
         return await usersRepositoryInDB.deleteUserByID(id)
     },
     async checkCredentials(loginOrEmail: string, password: string): Promise<userOutputType | null> {
-        const user: userType | null = await usersRepositoryInDB.findByLoginOrEmail(loginOrEmail)
+        const user: userDBType | null = await usersRepositoryInDB.findByLoginOrEmail(loginOrEmail)
         if(!user) return null
 
         const passwordHash = await this.generateHash(password, user.passwordSalt)

@@ -1,9 +1,9 @@
 import {usersCollection} from "./db";
-import {outputUsersWithPaginatorType, queryUserParams, userOutputType, userType} from "../projectTypes";
+import {outputUsersWithPaginatorType, queryUserParams, userOutputType, userDBType} from "../projectTypes";
 
 export const usersRepositoryInDB = {
     async findUserByID(idFromDB: string): Promise<userOutputType | null>{
-        const foundUsersInDB: userType | null = await usersCollection.findOne({ id : idFromDB }, {projection:{_id:0}})
+        const foundUsersInDB: userDBType | null = await usersCollection.findOne({ id : idFromDB }, {projection:{_id:0}})
         if(!foundUsersInDB){
            return null
         }
@@ -59,10 +59,10 @@ export const usersRepositoryInDB = {
         const result = await usersCollection.deleteOne({id: id})
         return result.deletedCount === 1
     },
-    async findByLoginOrEmail(loginOrEmail: string): Promise<userType | null>{
+    async findByLoginOrEmail(loginOrEmail: string): Promise<userDBType | null>{
         const filter = {$or: [{login : { $regex: loginOrEmail, $options: "i" }},
                 {email : { $regex: loginOrEmail, $options: "i" }}]}
-        const user: userType | null = await usersCollection.findOne(filter)
+        const user: userDBType | null = await usersCollection.findOne(filter)
         if (user) {
             return {
                 id: user.id,
@@ -75,8 +75,8 @@ export const usersRepositoryInDB = {
         }
         return null
     },
-    async createUser(newUser: userType): Promise<userType | null>{
-        const newObjectUser: userType = Object.assign({}, newUser);
+    async createUser(newUser: userDBType): Promise<userDBType | null>{
+        const newObjectUser: userDBType = Object.assign({}, newUser);
         await usersCollection.insertOne(newUser)
 
         return newObjectUser

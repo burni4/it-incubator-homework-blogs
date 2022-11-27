@@ -16,7 +16,7 @@ export type blogType = {
     createdAt: string
 }
 
-export type userType = {
+export type userDBType = {
     id: string
     login : string
     passwordHash : string
@@ -83,4 +83,12 @@ export type queryUserParams = {
 export type loginInputType = {
     login: string
     password: string
+}
+
+export type commentDBType = {
+    id: string
+    content : string
+    userId : string
+    userLogin : string
+    createdAt: string
 }

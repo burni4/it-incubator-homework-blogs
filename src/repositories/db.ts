@@ -1,6 +1,6 @@
 import * as dotenv from 'dotenv'
 import {MongoClient} from "mongodb";
-import {blogType, postType, userType} from "../projectTypes";
+import {blogType, commentDBType, postType, userDBType} from "../projectTypes";
 
 dotenv.config()
 
@@ -12,7 +12,8 @@ export const client = new MongoClient(mongoUri)
 export const db = client.db("it-incubator-homework-blogs")
 export const blogsCollection = db.collection<blogType>("blogs");
 export const postsCollection = db.collection<postType>("posts");
-export const usersCollection = db.collection<userType>("users");
+export const usersCollection = db.collection<userDBType>("users");
+export const commentsCollection = db.collection<commentDBType>("comments");
 
 export async function runDb(){
 
