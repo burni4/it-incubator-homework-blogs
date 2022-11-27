@@ -62,11 +62,11 @@ postsRouter.post('/',
     })
 
 postsRouter.post('/:id/comments',
-    authMiddleware,
-    postParamsValidation,
-    commentTypeValidation,
-    inputValidationMiddleware,
-    commentValidationOwnerID,
+    //authMiddleware,
+    //postParamsValidation,
+    //commentTypeValidation,
+    //inputValidationMiddleware,
+    //commentValidationOwnerID,
     async (req: Request, res: Response) => {
         try {
             const post = await postsService.findPostByID(req.params.id)
