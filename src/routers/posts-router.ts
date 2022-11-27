@@ -69,21 +69,21 @@ postsRouter.post('/:id/comments',
     //commentValidationOwnerID,
     async (req: Request, res: Response) => {
         try {
-            // const post = await postsService.findPostByID(req.params.id)
-            //
-            // if(!post){
-            //     res.sendStatus(404)
-            //     return
-            // }
+            const post = await postsService.findPostByID(req.params.id)
 
-            const newComment = await commentsService.createComment(req.body.user, req.body, req.params.id)
-
-            if(!newComment){
-                res.sendStatus(400)
+            if(!post){
+                res.sendStatus(404)
                 return
             }
 
-            res.status(201).send(newComment);
+            // const newComment = await commentsService.createComment(req.body.user, req.body, req.params.id)
+            //
+            // if(!newComment){
+            //     res.sendStatus(400)
+            //     return
+            // }
+
+            res.status(201).send({});
         }catch (error){
            console.error(error)
             res.sendStatus(509)
