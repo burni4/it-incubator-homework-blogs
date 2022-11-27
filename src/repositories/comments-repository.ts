@@ -23,7 +23,7 @@ export const commentsRepositoryInDB = {
     },
     async createComment(newComment: commentDBType): Promise<commentDBType | null> {
         const newObjectComment: commentDBType = Object.assign({}, newComment);
-        await commentsCollection.insertOne(newObjectComment)
+        await commentsCollection.insertOne(newComment)
 
         return newObjectComment
     },

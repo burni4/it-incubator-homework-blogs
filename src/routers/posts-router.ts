@@ -7,7 +7,7 @@ import {
     postTypeValidationBlogID
 } from "../middlewares/input-posts-validation-middleware";
 import {postsService} from "../domain/posts-service";
-import {queryPostParams} from "../projectTypes";
+import {commentOutputType, queryPostParams} from "../projectTypes";
 import {commentTypeValidation, commentValidationOwnerID} from "../middlewares/input-comments-validation-middleware";
 import {commentsService} from "../domain/comments-service";
 
@@ -62,11 +62,11 @@ postsRouter.post('/',
     })
 
 postsRouter.post('/:id/comments',
-    //authMiddleware,
-    //postParamsValidation,
-    //commentTypeValidation,
-    //inputValidationMiddleware,
-    //commentValidationOwnerID,
+    authMiddleware,
+    postParamsValidation,
+    commentTypeValidation,
+    inputValidationMiddleware,
+    commentValidationOwnerID,
     async (req: Request, res: Response) => {
         try {
             const post = await postsService.findPostByID(req.params.id)
@@ -76,14 +76,14 @@ postsRouter.post('/:id/comments',
                 return
             }
 
-            // const newComment = await commentsService.createComment(req.body.user, req.body, req.params.id)
-            //
-            // if(!newComment){
-            //     res.sendStatus(400)
-            //     return
-            // }
+            const newComment: commentOutputType | null = await commentsService.createComment(req.body.user, req.body, req.params.id)
 
-            res.status(201).send({});
+            if(!newComment){
+                res.sendStatus(400)
+                return
+            }
+
+            res.status(201).send(newComment);
         }catch (error){
            console.error(error)
             res.sendStatus(509)
