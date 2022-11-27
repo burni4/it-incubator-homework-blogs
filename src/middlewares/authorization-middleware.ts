@@ -23,7 +23,7 @@ export const basicAuthMiddleware = (req: Request, res: Response, next: NextFunct
 export  const authMiddleware = async (req: Request, res: Response, next: NextFunction)  => {
 
     if(!req.headers.authorization){
-        res.send(401)
+        res.sendStatus(401)
         return
     }
 
@@ -34,7 +34,8 @@ export  const authMiddleware = async (req: Request, res: Response, next: NextFun
     if(userId){
         req.body.user = await usersService.findUserByID(userId)
         next()
+        return
     }
 
-    res.send(401)
+    res.sendStatus(401)
 }
