@@ -1,12 +1,12 @@
 import jwt from 'jsonwebtoken'
-import {userType} from "../projectTypes";
+import {userOutputType, userType} from "../projectTypes";
 
 const JWT_SECRET_LOCAL: string = "JWT_SECRET"
 
 const JWT_SECRET = process.env.mongoURIAtlas || JWT_SECRET_LOCAL;
 
 export const jwtService = {
-    async createJWT(user: userType){
+    async createJWT(user: userOutputType){
         const token = jwt.sign({userId: user.id}, JWT_SECRET, {expiresIn: '1h'})
         return {
             accessToken: token

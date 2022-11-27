@@ -2,6 +2,8 @@ import {Request, Response, Router} from "express";
 import {inputValidationMiddleware} from "../middlewares/input-validation-middleware"
 import {authTypeValidation} from "../middlewares/input-auth-validation-middleware";
 import {usersService} from "../domain/users-service";
+import {userOutputType} from "../projectTypes";
+import {jwtService} from "../application/jwtService";
 
 export const authRouter = Router({})
 
@@ -10,9 +12,10 @@ authRouter.post('/login',
     inputValidationMiddleware,
     async (req: Request<{},{},{loginOrEmail: string, password: string}>, res: Response) => {
 
-        const checkResult: boolean = await usersService.checkCredentials(req.body.loginOrEmail, req.body.password)
-            if (checkResult) {
-                    res.sendStatus(204)
+        const user: userOutputType | null = await usersService.checkCredentials(req.body.loginOrEmail, req.body.password)
+            if (user) {
+                const token = await jwtService.createJWT(user)
+                res.status(201).send(token)
             } else {
                     res.sendStatus(401)
             }
