@@ -42,6 +42,12 @@ export  const authMiddleware = async (req: Request, res: Response, next: NextFun
 
     const user = await usersService.findUserByID(userId)
 
+    if(!user){
+        console.log(user, ' NOT USER')
+        res.sendStatus(401)
+        return
+    }
+
     console.log(user, ' USER')
 
     req.body.user = user
