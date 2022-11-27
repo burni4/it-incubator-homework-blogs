@@ -91,6 +91,7 @@ export type commentDBType = {
     userId : string
     userLogin : string
     createdAt: string
+    postId: string
 }
 
 export type commentOutputType = {

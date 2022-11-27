@@ -1,5 +1,5 @@
 import {Request, Response, Router} from "express";
-import {basicAuthMiddleware} from "../middlewares/authorization-middleware";
+import {authMiddleware, basicAuthMiddleware} from "../middlewares/authorization-middleware";
 import {inputValidationMiddleware} from "../middlewares/input-validation-middleware";
 import {
     postParamsValidation,
@@ -8,6 +8,8 @@ import {
 } from "../middlewares/input-posts-validation-middleware";
 import {postsService} from "../domain/posts-service";
 import {queryPostParams} from "../projectTypes";
+import {commentTypeValidation, commentValidationOwnerID} from "../middlewares/input-comments-validation-middleware";
+import {commentsService} from "../domain/comments-service";
 
 export const postsRouter = Router({});
 
@@ -56,6 +58,24 @@ postsRouter.post('/',
         }
 
         res.status(201).send(newPost);
+
+    })
+
+postsRouter.post('/:id/comments',
+    authMiddleware,
+    postParamsValidation,
+    commentTypeValidation,
+    commentValidationOwnerID,
+    inputValidationMiddleware,
+    async (req: Request, res: Response) => {
+
+        const newComment = await commentsService.createComment(req.body.user, req.body, req.params.id)
+
+        if(!newComment){
+            return res.status(400)
+        }
+
+        res.status(201).send(newComment);
 
     })
 

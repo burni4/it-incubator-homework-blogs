@@ -8,7 +8,6 @@ import {
     commentValidationOwnerID
 } from "../middlewares/input-comments-validation-middleware";
 import {commentOutputType} from "../projectTypes";
-import {blogsService} from "../domain/blogs-service";
 
 export const commentsRouter = Router({});
 

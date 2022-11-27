@@ -1,6 +1,6 @@
 import {commentsRepositoryInDB} from "../repositories/comments-repository";
-import {blogType, commentDBType, commentInputType, commentOutputType, userOutputType} from "../projectTypes";
-import {blogsRepositoryInDB} from "../repositories/blogs-repository";
+import {commentDBType, commentInputType, commentOutputType, postType, userOutputType} from "../projectTypes";
+import {postsRepositoryInDB} from "../repositories/posts-repository";
 
 
 export const commentsService = {
@@ -11,7 +11,7 @@ export const commentsService = {
         return await commentsRepositoryInDB.findCommentByID(id)
     },
     async checkOwnerComment(user: userOutputType, commentId: string): Promise<boolean>{
-        const result: commentDBType | null = await this.findCommentByID(commentId)
+        const result: commentOutputType | null = await this.findCommentByID(commentId)
         if(!result || result.userId !== user.id){
             return false
         }
@@ -19,5 +19,34 @@ export const commentsService = {
     },
     async updateCommentByID(id: string, body: commentInputType): Promise<boolean>{
         return await commentsRepositoryInDB.updateCommentByID(id, body)
+    },
+    async createComment(user: userOutputType, body: commentInputType, postId: string): Promise<commentOutputType | null>{
+
+        const foundPost = await postsRepositoryInDB.findPostByID(postId)
+
+        if(!foundPost){
+            return null
+        }
+        const newComment: commentDBType = {
+            id: String(+new Date()),
+            content : body.content,
+            userId : user.id,
+            userLogin : user.login,
+            createdAt: new Date().toISOString(),
+            postId: postId
+        }
+
+        const newCommentInDB = await commentsRepositoryInDB.createComment(newComment)
+
+        if(!newCommentInDB){
+            return  null
+        }
+        return {
+            id: newCommentInDB.id,
+            content : newCommentInDB.content,
+            userId : newCommentInDB.userId,
+            userLogin : newCommentInDB.userLogin,
+            createdAt: newCommentInDB.createdAt
+        }
     },
 }
