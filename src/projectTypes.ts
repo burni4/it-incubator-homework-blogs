@@ -92,3 +92,11 @@ export type commentDBType = {
     userLogin : string
     createdAt: string
 }
+
+export type commentOutputType = {
+    id: string
+    content : string
+    userId : string
+    userLogin : string
+    createdAt: string
+}

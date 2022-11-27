@@ -1,4 +1,4 @@
-import {blogsCollection, postsCollection} from "./db";
+import {postsCollection} from "./db";
 import {outputPostsWithPaginatorType, postType, queryPostParams} from "../projectTypes";
 
 export const postsRepositoryInDB = {
