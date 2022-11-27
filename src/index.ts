@@ -10,6 +10,7 @@ import {postsRepositoryInDB} from "./repositories/posts-repository";
 import {usersRepositoryInDB} from "./repositories/users-repository";
 import {commentsRepositoryInDB} from "./repositories/comments-repository";
 import {runDb} from "./repositories/db";
+import bcrypt from "bcrypt";
 
 export const app = express()
 const port = process.env.PORT || 3000
@@ -46,3 +47,9 @@ const startApp = async () => {
 }
 
 startApp()
+
+const run = async () => {
+    const hash = await bcrypt.hash('12345', "$2a$10$r3ZkRK.LvdRbbW26VFzZ8.")
+    console.log(hash)
+}
+run()

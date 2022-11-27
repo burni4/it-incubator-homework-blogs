@@ -14,7 +14,7 @@ export const jwtService = {
     },
     async getUserIdByToken(token: string){
         try{
-            const result: any = jwt.verify(token, '')
+            const result: any = jwt.verify(token, JWT_SECRET)
             return result.id
         }catch(error){
             return null
