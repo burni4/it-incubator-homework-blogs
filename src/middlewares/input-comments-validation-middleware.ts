@@ -15,7 +15,7 @@ export const commentValidationOwnerID = (req: Request, res: Response, next: Next
     .bail().custom(async (value) => {
         const result: boolean = await commentsService.checkOwnerComment(value, req.params.id)
         if (!result) {
-            //res.sendStatus(403);
+            res.sendStatus(403);
             throw new Error('Trying to delete a comment that is not your own');
         }
         return true;

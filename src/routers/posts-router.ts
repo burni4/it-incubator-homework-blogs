@@ -89,7 +89,8 @@ postsRouter.post('/:id/comments',
 
 postsRouter.get('/:id/comments',
     postParamsValidation,
-    async (req: Request<{id:string},{},{}, queryPostParams>, res: Response) => {
+    inputValidationMiddleware,
+    async (req: Request<{id:string},{},{}>, res: Response) => {
 
         const post = await postsService.findPostByID(req.params.id)
 
@@ -98,7 +99,7 @@ postsRouter.get('/:id/comments',
             return
         }
 
-        const foundPosts = await commentsService.findAllCommentsByPostID(req.params.id, req.query);
+        const foundPosts = await commentsService.findAllCommentsByPostID(req.params.id, (req.query as unknown) as queryPostParams);
 
         if(!foundPosts){
             res.sendStatus(404);

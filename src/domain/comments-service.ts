@@ -63,7 +63,7 @@ export const commentsService = {
             return null
         }
 
-        return commentsRepositoryInDB.findAllCommentsByPostID(queryCommentParamsPaginator(queryParams), postId);
+        return await commentsRepositoryInDB.findAllCommentsByPostID(queryCommentParamsPaginator(queryParams), postId);
     },
 }
 

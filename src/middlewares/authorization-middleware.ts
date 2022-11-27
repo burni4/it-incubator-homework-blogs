@@ -22,8 +22,6 @@ export const basicAuthMiddleware = (req: Request, res: Response, next: NextFunct
 
 export  const authMiddleware = async (req: Request, res: Response, next: NextFunction)  => {
 
-    console.log(req.headers.authorization, 'authorization')
-
     if(!req.headers.authorization){
         res.sendStatus(401)
         return
