@@ -1,5 +1,11 @@
 import {commentsRepositoryInDB} from "../repositories/comments-repository";
-import {commentDBType, commentInputType, commentOutputType, postType, userOutputType} from "../projectTypes";
+import {
+    commentDBType,
+    commentInputType,
+    commentOutputType, outputCommentsWithPaginatorType,
+    queryCommentParams,
+    userOutputType
+} from "../projectTypes";
 import {postsRepositoryInDB} from "../repositories/posts-repository";
 
 
@@ -49,4 +55,23 @@ export const commentsService = {
             createdAt: newCommentInDB.createdAt
         }
     },
+    async findAllCommentsByPostID(postId: string, queryParams: queryCommentParams): Promise<outputCommentsWithPaginatorType | null>{
+
+        const foundPost = await postsRepositoryInDB.findPostByID(postId)
+
+        if(!foundPost){
+            return null
+        }
+
+        return commentsRepositoryInDB.findAllCommentsByPostID(queryCommentParamsPaginator(queryParams), postId);
+    },
+}
+
+const queryCommentParamsPaginator = (queryParams: queryCommentParams):queryCommentParams => {
+    return {
+        pageNumber: +queryParams.pageNumber || 1,
+        pageSize: +queryParams.pageSize || 10,
+        sortBy: queryParams.sortBy || 'createdAt',
+        sortDirection: queryParams.sortDirection === 'asc' ? 'asc' : 'desc'
+    }
 }

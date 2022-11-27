@@ -1,8 +1,8 @@
-import {commentsCollection, postsCollection, usersCollection} from "./db";
+import {commentsCollection} from "./db";
 import {
     commentDBType,
     commentInputType,
-    commentOutputType
+    commentOutputType,outputCommentsWithPaginatorType, queryCommentParams
 } from "../projectTypes";
 
 
@@ -38,5 +38,37 @@ export const commentsRepositoryInDB = {
     async deleteAllComments(): Promise<boolean> {
         const result = await commentsCollection.deleteMany({})
         return !!result.deletedCount
+    },
+    async findAllCommentsByPostID(paginator: queryCommentParams, postId: string): Promise<outputCommentsWithPaginatorType> {
+
+        const filter = {postId: postId}
+
+        const skipCount: number = (paginator.pageNumber - 1) * paginator.pageSize
+
+        const foundCommentsInDB = await commentsCollection.find(filter, {projection:{_id:0}})
+            .sort({[paginator.sortBy]: paginator.sortDirection === 'asc' ?  1 : -1})
+            .skip(skipCount)
+            .limit(paginator.pageSize);
+
+        const totalCount = await commentsCollection.count(filter)
+        const pageCount: number = Math.ceil(totalCount / paginator.pageSize)
+        const commentsArray = await foundCommentsInDB.toArray()
+
+        const outputComments: outputCommentsWithPaginatorType = {
+            pagesCount: pageCount,
+            page: paginator.pageNumber,
+            pageSize: paginator.pageSize,
+            totalCount: totalCount,
+            items: commentsArray.map((comment) => {
+                return {
+                    id: comment.id,
+                    content: comment.content,
+                    userId: comment.userId,
+                    userLogin: comment.userLogin,
+                    createdAt: comment.createdAt
+                }
+            })
+        }
+        return outputComments
     }
 }

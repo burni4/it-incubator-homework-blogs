@@ -69,6 +69,12 @@ postsRouter.post('/:id/comments',
     inputValidationMiddleware,
     async (req: Request, res: Response) => {
 
+        const post = await postsService.findPostByID(req.params.id)
+
+        if(!post){
+            return res.status(404)
+        }
+
         const newComment = await commentsService.createComment(req.body.user, req.body, req.params.id)
 
         if(!newComment){
@@ -76,6 +82,26 @@ postsRouter.post('/:id/comments',
         }
 
         res.status(201).send(newComment);
+
+    })
+
+postsRouter.get('/:id/comments',
+    postParamsValidation,
+    async (req: Request<{id:string},{},{}, queryPostParams>, res: Response) => {
+
+        const post = await postsService.findPostByID(req.params.id)
+
+        if(!post){
+            return res.status(404)
+        }
+
+        const foundPosts = await commentsService.findAllCommentsByPostID(req.params.id, req.query);
+
+        if(!foundPosts){
+            res.sendStatus(404);
+        }else {
+            res.send(foundPosts);
+        }
 
     })
 
