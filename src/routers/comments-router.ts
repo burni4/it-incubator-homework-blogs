@@ -1,6 +1,7 @@
 import {Request, Response, Router} from "express";
 import {inputValidationMiddleware} from "../middlewares/input-validation-middleware"
 import {commentsService} from "../domain/comments-service";
+import {authMiddleware} from "../middlewares/authorization-middleware";
 
 export const commentsRouter = Router({});
 
@@ -17,6 +18,7 @@ commentsRouter.post('/:id',
 })
 
 commentsRouter.delete('/:id',
+    authMiddleware,
     inputValidationMiddleware,
     async (req: Request, res: Response) => {
 
