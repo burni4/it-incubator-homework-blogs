@@ -33,6 +33,13 @@ commentsRouter.put('/:id',
     inputValidationMiddleware,
     async (req: Request, res: Response) => {
 
+        const foundComment: commentOutputType | null = await commentsService.findCommentByID(req.params.id);
+
+        if(!foundComment) {
+            res.sendStatus(404);
+            return
+        }
+
         const isUpdated = await commentsService.updateCommentByID(req.params.id, req.body)
 
         if (isUpdated) {
@@ -49,6 +56,13 @@ commentsRouter.delete('/:id',
     commentValidationOwnerID,
     inputValidationMiddleware,
     async (req: Request, res: Response) => {
+
+        const foundComment: commentOutputType | null = await commentsService.findCommentByID(req.params.id);
+
+        if(!foundComment) {
+            res.sendStatus(404);
+            return
+        }
 
         const isDeleted = await commentsService.deleteCommentByID(req.params.id, req.body.user)
         if (isDeleted) {
