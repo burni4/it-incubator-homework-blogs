@@ -65,7 +65,6 @@ postsRouter.post('/:id/comments',
     authMiddleware,
     postParamsValidation,
     commentTypeValidation,
-    commentValidationOwnerID,
     inputValidationMiddleware,
     async (req: Request, res: Response) => {
 
