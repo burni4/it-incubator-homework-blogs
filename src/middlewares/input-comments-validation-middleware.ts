@@ -14,7 +14,7 @@ export const commentParamsValidation = [
 export const commentValidationOwnerID = async (req: Request, res: Response, next: NextFunction) => {
     const result: boolean = await commentsService.checkOwnerComment(req.body.user, req.params.id)
     if (!result) {
-        res.sendStatus(404);
+        res.sendStatus(403);
         return
     }
     next()
