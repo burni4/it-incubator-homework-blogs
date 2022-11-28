@@ -8,7 +8,6 @@ import {
 } from "../projectTypes";
 import {postsRepositoryInDB} from "../repositories/posts-repository";
 
-
 export const commentsService = {
     async deleteCommentByID(id: string, user: userOutputType): Promise<boolean>{
         return await commentsRepositoryInDB.deleteCommentByID(id)
