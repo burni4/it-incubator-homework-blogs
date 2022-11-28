@@ -1,5 +1,3 @@
-import {ObjectId} from "mongodb";
-
 export type postType = {
     id: string
     title: string
@@ -84,7 +82,7 @@ export type loginInputType = {
 }
 
 export type commentDBType = {
-    id: ObjectId
+    id: string
     content : string
     userId : string
     userLogin : string
@@ -93,7 +91,7 @@ export type commentDBType = {
 }
 
 export type commentOutputType = {
-    id: ObjectId
+    id: string
     content : string
     userId : string
     userLogin : string

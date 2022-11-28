@@ -7,7 +7,6 @@ import {
     userOutputType
 } from "../projectTypes";
 import {postsRepositoryInDB} from "../repositories/posts-repository";
-import {ObjectId} from "mongodb";
 
 export const commentsService = {
     async deleteCommentByID(id: string, user: userOutputType): Promise<boolean>{
@@ -34,7 +33,7 @@ export const commentsService = {
             return null
         }
         const newComment: commentDBType = {
-            id: new ObjectId(),
+            id: String(+new Date()),
             content : body.content,
             userId : user.id,
             userLogin : user.login,
