@@ -14,7 +14,7 @@ import {
 } from "../projectTypes";
 import {jwtService} from "../application/jwtService";
 import {authMiddleware} from "../middlewares/authorization-middleware";
-import {userTypeValidation, validationOfExistingUsers} from "../middlewares/input-users-validation-middleware";
+import {userTypeValidation} from "../middlewares/input-users-validation-middleware";
 
 export const authRouter = Router({})
 
@@ -62,22 +62,22 @@ authRouter.post('/registration-email-resending',
     })
 authRouter.post('/registration',
     userTypeValidation,
-    validationOfExistingUsers,
+    //validationOfExistingUsers,
     inputValidationMiddleware,
-    async (req: Request, res: Response) => {
+    async (req: Request<{},{},dataRegistrationType>, res: Response) => {
 
-       // const userByLogin = await usersService.findByLogin(req.body.login)
+        const userByLogin = await usersService.findByLogin(req.body.login)
 
-       // if (userByLogin) {
-        //    return res.sendStatus(400)
+        if (userByLogin) {
+            return res.sendStatus(400)
             //return res.sendStatus(400).send({errorsMessages: [{message: 'User already exist', field:'login'}]})
-       // }
-       // const userByEmail = await usersService.findByEmail(req.body.email)
+        }
+        const userByEmail = await usersService.findByEmail(req.body.email)
 
-      //  if (userByEmail) {
-      //      return res.sendStatus(400)
-            // return res.sendStatus(400).send({errorsMessages: [{message: 'User already exist', field:'email'}]})
-      //  }
+        if (userByEmail) {
+            return res.sendStatus(400)
+           // return res.sendStatus(400).send({errorsMessages: [{message: 'User already exist', field:'email'}]})
+        }
 
         const user = await usersService.createUser(req.body.login,req.body.email,req.body.password)
 
