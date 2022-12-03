@@ -3,7 +3,7 @@ import {inputValidationMiddleware} from "../middlewares/input-validation-middlew
 import {
     authTypeValidation,
     registrationConfirmationTypeValidation,
-    registrationResendingConfirmationTypeValidation
+    registrationResendingConfirmationTypeValidation, validationOfConfirmedUserByEmail
 } from "../middlewares/input-auth-validation-middleware";
 import {usersService} from "../domain/users-service";
 import {
