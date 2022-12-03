@@ -20,7 +20,7 @@ export const validationOfExistingUsersByCode = async (req: Request, res: Respons
 
     const user = await usersService.findUserByConfirmationCode(req.body.login)
 
-    if (!user) {
+    if (user) {
         messageRepository.addMessage('code','Code not exist')
         res.sendStatus(400).send(errorsMessages);
         return
@@ -33,13 +33,11 @@ export const validationOfConfirmedUserByEmail = async (req: Request, res: Respon
     const user: userDBType | null = await usersService.findByLoginOrEmail(req.body.email)
 
     if (!user) {
-        messageRepository.addMessage('User','User not exist')
-        res.sendStatus(400).send(errorsMessages);
+        res.sendStatus(400).send({errorsMessages: [{message: 'User not exist', field:'user'}]});
         return
     }
     if (user.emailConfirmation.isConfirmed) {
-        messageRepository.addMessage('isConfirmed','Email already confirmed')
-        res.sendStatus(400).send(errorsMessages);
+        res.sendStatus(400).send({errorsMessages: [{message: 'Email already confirmed', field:'isConfirmed'}]});
         return
     }
 

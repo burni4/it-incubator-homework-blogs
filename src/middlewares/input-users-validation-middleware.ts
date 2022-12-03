@@ -17,15 +17,13 @@ export const validationOfExistingUsers = async (req: Request, res: Response, nex
         const userByLogin = await usersService.findByLogin(req.body.login)
 
         if (userByLogin) {
-           // messageRepository.addMessage('login','Email or login already used')
-            res.sendStatus(400)
+            res.sendStatus(400).send({errorsMessages: [{message: 'User already exist', field:'login'}]})
             return
         }
 
         const userByEmail = await usersService.findByEmail(req.body.email)
         if (userByEmail) {
-            //messageRepository.addMessage('email','Email or login already used')
-            res.sendStatus(400)
+            res.sendStatus(400).send({errorsMessages: [{message: 'User already exist', field:'mail'}]})
             return
         }
 

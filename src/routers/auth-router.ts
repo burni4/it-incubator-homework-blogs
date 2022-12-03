@@ -3,7 +3,7 @@ import {inputValidationMiddleware} from "../middlewares/input-validation-middlew
 import {
     authTypeValidation,
     registrationConfirmationTypeValidation,
-    registrationResendingConfirmationTypeValidation, validationOfConfirmedUserByEmail
+    registrationResendingConfirmationTypeValidation, validationOfConfirmedUserByEmail, validationOfExistingUsersByCode
 } from "../middlewares/input-auth-validation-middleware";
 import {usersService} from "../domain/users-service";
 import {
@@ -33,9 +33,9 @@ authRouter.post('/login',
 })
 authRouter.post('/registration-confirmation',
     registrationConfirmationTypeValidation,
-    //validationOfExistingUsersByCode,
+    validationOfExistingUsersByCode,
     inputValidationMiddleware,
-    async (req: Request<{},{},registrationConformationType>, res: Response) => {
+    async (req: Request, res: Response) => {
 
         const mailConfirmed: boolean = await usersService.confirmEmailByCode(req.body.code)
 
@@ -47,9 +47,9 @@ authRouter.post('/registration-confirmation',
     })
 authRouter.post('/registration-email-resending',
     registrationResendingConfirmationTypeValidation,
-    //validationOfConfirmedUserByEmail,
+    validationOfConfirmedUserByEmail,
     inputValidationMiddleware,
-    async (req: Request<{},{},registrationResendingConformationType>, res: Response) => {
+    async (req: Request, res: Response) => {
 
         const mailSend: boolean = await usersService.resendConfirmationCodeOnEmail(req.body.email)
 
@@ -65,21 +65,6 @@ authRouter.post('/registration',
     validationOfExistingUsers,
     inputValidationMiddleware,
     async (req: Request, res: Response) => {
-
-        const userByLogin = await usersService.findByLogin(req.body.login)
-
-        if (userByLogin) {
-            res.sendStatus(400)
-            return
-            //return res.sendStatus(400).send({errorsMessages: [{message: 'User already exist', field:'login'}]})
-        }
-        const userByEmail = await usersService.findByEmail(req.body.email)
-
-        if (userByEmail) {
-             res.sendStatus(400)
-            return
-           // return res.sendStatus(400).send({errorsMessages: [{message: 'User already exist', field:'email'}]})
-        }
 
         const user = await usersService.createUser(req.body.login,req.body.email,req.body.password)
 
