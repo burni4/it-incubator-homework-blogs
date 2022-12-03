@@ -21,6 +21,29 @@ authRouter.post('/login',
                 res.sendStatus(401)
             }
 })
+authRouter.post('/registration-confirmation',
+    authTypeValidation,
+    inputValidationMiddleware,
+    async (req: Request<{},{},{loginOrEmail: string, password: string}>, res: Response) => {
+
+        res.sendStatus(200)
+
+    })
+authRouter.post('/registration-email-resending',
+    authTypeValidation,
+    inputValidationMiddleware,
+    async (req: Request<{},{},{loginOrEmail: string, password: string}>, res: Response) => {
+
+            res.sendStatus(200)
+
+    })
+authRouter.post('/registration',
+    authTypeValidation,
+    inputValidationMiddleware,
+    async (req: Request<{},{},{loginOrEmail: string, password: string}>, res: Response) => {
+
+        res.sendStatus(200)
+    })
 authRouter.get('/me',
     authMiddleware,
     inputValidationMiddleware,
