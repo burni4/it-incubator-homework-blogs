@@ -14,7 +14,7 @@ import {
 } from "../projectTypes";
 import {jwtService} from "../application/jwtService";
 import {authMiddleware} from "../middlewares/authorization-middleware";
-import {userTypeValidation} from "../middlewares/input-users-validation-middleware";
+import {userTypeValidation, validationOfExistingUsers} from "../middlewares/input-users-validation-middleware";
 
 export const authRouter = Router({})
 
@@ -62,7 +62,7 @@ authRouter.post('/registration-email-resending',
     })
 authRouter.post('/registration',
     userTypeValidation,
-    //validationOfExistingUsers,
+    validationOfExistingUsers,
     inputValidationMiddleware,
     async (req: Request<{},{},dataRegistrationType>, res: Response) => {
 
