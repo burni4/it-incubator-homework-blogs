@@ -2,7 +2,7 @@ import {Request, Response, Router} from "express";
 import {inputValidationMiddleware} from "../middlewares/input-validation-middleware"
 import {authTypeValidation} from "../middlewares/input-auth-validation-middleware";
 import {usersService} from "../domain/users-service";
-import {userOutputType} from "../projectTypes";
+import {dataRegistrationType, userOutputType} from "../projectTypes";
 import {jwtService} from "../application/jwtService";
 import {authMiddleware} from "../middlewares/authorization-middleware";
 
@@ -24,7 +24,7 @@ authRouter.post('/login',
 authRouter.post('/registration-confirmation',
     authTypeValidation,
     inputValidationMiddleware,
-    async (req: Request<{},{},{loginOrEmail: string, password: string}>, res: Response) => {
+    async (req: Request<{},{},{}>, res: Response) => {
 
         res.sendStatus(200)
 
@@ -32,7 +32,7 @@ authRouter.post('/registration-confirmation',
 authRouter.post('/registration-email-resending',
     authTypeValidation,
     inputValidationMiddleware,
-    async (req: Request<{},{},{loginOrEmail: string, password: string}>, res: Response) => {
+    async (req: Request<{},{},{}>, res: Response) => {
 
             res.sendStatus(200)
 
@@ -40,7 +40,9 @@ authRouter.post('/registration-email-resending',
 authRouter.post('/registration',
     authTypeValidation,
     inputValidationMiddleware,
-    async (req: Request<{},{},{loginOrEmail: string, password: string}>, res: Response) => {
+    async (req: Request<{},{},dataRegistrationType>, res: Response) => {
+
+        const user = await usersService.createUser(req.body.login,req.body.email,req.body.password)
 
         res.sendStatus(200)
     })

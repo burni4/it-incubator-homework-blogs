@@ -1,3 +1,5 @@
+import add from "date-fns/add";
+
 export type postType = {
     id: string
     title: string
@@ -18,17 +20,41 @@ export type blogType = {
 
 export type userDBType = {
     id: string
-    login : string
-    passwordHash : string
-    passwordSalt : string
-    email: string
-    createdAt: string
+    accountData: {
+        login: string
+        passwordHash: string
+        passwordSalt: string
+        email: string
+        createdAt: string
+    },
+    emailConfirmation: {
+        confirmationCode: string
+        expirationDate: Date
+        isConfirmed: boolean
+    }
+}
+
+export type userServiceType = {
+    id: string
+    accountData: {
+        login: string
+        passwordHash: string
+        passwordSalt: string
+        email: string
+        createdAt: string
+    },
+    emailConfirmation: {
+        confirmationCode: string
+        expirationDate: Date
+        isConfirmed: boolean
+    }
 }
 
 export type userInputType = {
     login: string
     password : string
     email: string
+
 }
 
 export type userOutputType = {
@@ -79,6 +105,12 @@ export type queryCommentParams = {
 export type loginInputType = {
     login: string
     password: string
+}
+
+export type dataRegistrationType = {
+    login: string
+    password: string
+    email: string
 }
 
 export type commentDBType = {

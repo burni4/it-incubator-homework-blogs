@@ -9,9 +9,9 @@ export const usersRepositoryInDB = {
         }
         return {
             id: foundUsersInDB.id,
-            login: foundUsersInDB.login,
-            email: foundUsersInDB.email,
-            createdAt: foundUsersInDB.createdAt
+            login: foundUsersInDB.accountData.login,
+            email: foundUsersInDB.accountData.email,
+            createdAt: foundUsersInDB.accountData.createdAt
         }
     },
     async findUsers(paginator: queryUserParams): Promise<outputUsersWithPaginatorType>{
@@ -47,9 +47,9 @@ export const usersRepositoryInDB = {
             items: usersArrayFromDB.map((user) => {
                 return {
                     id: user.id,
-                    login: user.login,
-                    email: user.email,
-                    createdAt: user.createdAt
+                    login: user.accountData.login,
+                    email: user.accountData.email,
+                    createdAt: user.accountData.createdAt
                 }
             })
         }
@@ -66,11 +66,18 @@ export const usersRepositoryInDB = {
         if (user) {
             return {
                 id: user.id,
-                login: user.login,
-                email: user.email,
-                passwordHash: user.passwordHash,
-                passwordSalt: user.passwordSalt,
-                createdAt: user.createdAt
+                accountData: {
+                    login: user.accountData.login,
+                    email: user.accountData.email,
+                    passwordHash: user.accountData.passwordHash,
+                    passwordSalt: user.accountData.passwordSalt,
+                    createdAt: user.accountData.createdAt
+                },
+                emailConfirmation: {
+                    confirmationCode: user.emailConfirmation.confirmationCode,
+                    expirationDate: user.emailConfirmation.expirationDate,
+                    isConfirmed: user.emailConfirmation.isConfirmed
+                }
             }
         }
         return null
