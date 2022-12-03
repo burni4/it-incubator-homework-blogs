@@ -13,7 +13,7 @@ export const userTypeValidation = [
 ]
 export const validationOfExistingUsers = async (req: Request, res: Response, next: NextFunction) => {
 
-    const userByLogin = await usersService.findByLogin(req.body.login)
+    //const userByLogin = await usersService.findByLogin(req.body.login)
     /*
     if (!userByLogin) {
        // messageRepository.addMessage('login','Email or login already used')
