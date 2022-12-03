@@ -64,15 +64,20 @@ authRouter.post('/registration-email-resending',
     })
 authRouter.post('/registration',
     userTypeValidation,
-    validationOfExistingUsers,
+    //validationOfExistingUsers,
     inputValidationMiddleware,
     async (req: Request<{},{},dataRegistrationType>, res: Response) => {
 
-       // let user = await usersService.findByLogin(req.body.login)
-        //
-        // if (user){
-       //     return res.sendStatus(400)
-       // }
+        const userByLogin = await usersService.findByLogin(req.body.login)
+
+        if (userByLogin) {
+            return res.sendStatus(400).send({errorsMessages: [{message: 'User already exist', field:'login'}]})
+        }
+        const userByEmail = await usersService.findByEmail(req.body.email)
+
+        if (userByEmail) {
+            return res.sendStatus(400).send({errorsMessages: [{message: 'User already exist', field:'email'}]})
+        }
 
         const user = await usersService.createUser(req.body.login,req.body.email,req.body.password)
 
