@@ -5,6 +5,7 @@ import {usersService} from "../domain/users-service";
 import {dataRegistrationType, userOutputType} from "../projectTypes";
 import {jwtService} from "../application/jwtService";
 import {authMiddleware} from "../middlewares/authorization-middleware";
+import {userTypeValidation} from "../middlewares/input-users-validation-middleware";
 
 export const authRouter = Router({})
 
@@ -38,13 +39,17 @@ authRouter.post('/registration-email-resending',
 
     })
 authRouter.post('/registration',
-    authTypeValidation,
+    userTypeValidation,
     inputValidationMiddleware,
     async (req: Request<{},{},dataRegistrationType>, res: Response) => {
 
         const user = await usersService.createUser(req.body.login,req.body.email,req.body.password)
 
-        res.sendStatus(200)
+        if (user){
+            res.sendStatus(204)
+        }else {
+            res.sendStatus(400)
+        }
     })
 authRouter.get('/me',
     authMiddleware,

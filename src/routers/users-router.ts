@@ -14,10 +14,6 @@ usersRouter.get('/',
 
     const accessToken = await usersService.findUsers(req.query);
 
-        //{
-        //     "accessToken": "string"
-        //}
-
     res.status(200).send(accessToken);
 
 })

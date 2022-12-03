@@ -9,6 +9,7 @@ import {
     userDBType, userServiceType
 } from "../projectTypes";
 import add from "date-fns/add";
+import {emailManager} from "../managers/email-manager";
 
 export const usersService = {
     async findUsers(params: queryUserParams): Promise<outputUsersWithPaginatorType>{
@@ -39,6 +40,13 @@ export const usersService = {
         }
 
         const newUserInDB = await usersRepositoryInDB.createUser(newUser)
+
+        try {
+            await emailManager.sendEmailConfirmationMessage(newUser)
+        }catch {
+            await usersRepositoryInDB.deleteUserByID(newUser.id)
+            return null
+        }
 
         const outputUser: userOutputType = {
             id: newUser.id,
