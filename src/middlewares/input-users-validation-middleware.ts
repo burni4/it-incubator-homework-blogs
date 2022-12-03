@@ -19,14 +19,14 @@ export const validationOfExistingUsers = async (req: Request, res: Response, nex
         if (!userByLogin) {
             messageRepository.addMessage('login','Email or login already used')
             res.sendStatus(400);
-           // return
+            return
         }
 
         const userByEmail = await usersService.findByEmail(req.body.email)
         if (!userByEmail) {
             messageRepository.addMessage('email','Email or login already used')
             res.sendStatus(400);
-           // return
+            return
         }
 
     next()
