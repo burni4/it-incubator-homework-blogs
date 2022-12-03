@@ -1,6 +1,7 @@
 import {body} from "express-validator";
 import {NextFunction, Request, Response} from "express";
 import {usersService} from "../domain/users-service";
+import {messageRepository} from "../repositories/messages-repository";
 
 export const userTypeValidation = [
     body('login').trim().exists({checkFalsy: true}).withMessage('The field [Login] must exist')
@@ -12,24 +13,23 @@ export const userTypeValidation = [
         .bail().matches('^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$').withMessage('Email not valid')
 ]
 export const validationOfExistingUsers = async (req: Request, res: Response, next: NextFunction) => {
-    /*
+
         const userByLogin = await usersService.findByLogin(req.body.login)
 
         if (!userByLogin) {
-           // messageRepository.addMessage('login','Email or login already used')
+            messageRepository.addMessage('login','Email or login already used')
             res.sendStatus(400);
-            return
+           // return
         }
 
         const userByEmail = await usersService.findByEmail(req.body.email)
         if (!userByEmail) {
-           // messageRepository.addMessage('email','Email or login already used')
+            messageRepository.addMessage('email','Email or login already used')
             res.sendStatus(400);
-            return
+           // return
         }
 
     next()
-   */
 }
 
 
