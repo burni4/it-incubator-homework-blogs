@@ -64,6 +64,10 @@ export type userOutputType = {
     createdAt: string
 }
 
+export type registrationConformationType = {
+    code: string
+}
+
 export type paginatorType = {
     pagesCount: number
     page: number

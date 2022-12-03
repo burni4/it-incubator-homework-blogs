@@ -18,6 +18,17 @@ export const usersService = {
     async findByLoginOrEmail(loginOrEmail: string): Promise<userDBType | null>{
         return await usersRepositoryInDB.findByLoginOrEmail(loginOrEmail)
     },
+    async confirmEmail(code: string): Promise<boolean>{
+        let user: userDBType | null = await usersRepositoryInDB.findUserByConfirmationCode(code)
+        if(!user) return false
+        if(user.emailConfirmation.isConfirmed) return false
+        if (user.emailConfirmation.confirmationCode === code
+            && user.emailConfirmation.expirationDate > new Date()){
+            let result = await usersRepositoryInDB.updateConfirmation(user.id)
+            return result
+        }
+        return false
+    },
     async userWithEmailAndPasswordExist(email: string, password: string): Promise<boolean>{
         const passwordSalt = await this.generateSalt()
         const passwordHash = await this.generateHash(password, passwordSalt)

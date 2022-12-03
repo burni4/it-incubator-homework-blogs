@@ -1,11 +1,15 @@
 import {Request, Response, Router} from "express";
 import {inputValidationMiddleware} from "../middlewares/input-validation-middleware"
-import {authTypeValidation} from "../middlewares/input-auth-validation-middleware";
+import {
+    authTypeValidation,
+    registrationConfirmationTypeValidation
+} from "../middlewares/input-auth-validation-middleware";
 import {usersService} from "../domain/users-service";
-import {dataRegistrationType, userOutputType} from "../projectTypes";
+import {dataRegistrationType, registrationConformationType, userOutputType} from "../projectTypes";
 import {jwtService} from "../application/jwtService";
 import {authMiddleware} from "../middlewares/authorization-middleware";
 import {userTypeValidation} from "../middlewares/input-users-validation-middleware";
+import {body} from "express-validator";
 
 export const authRouter = Router({})
 
@@ -23,12 +27,17 @@ authRouter.post('/login',
             }
 })
 authRouter.post('/registration-confirmation',
-    authTypeValidation,
+    registrationConfirmationTypeValidation,
     inputValidationMiddleware,
-    async (req: Request<{},{},{}>, res: Response) => {
+    async (req: Request<{},{},registrationConformationType>, res: Response) => {
 
-        res.sendStatus(200)
+        const mailConfirmed: boolean = await usersService.confirmEmail(req.body.code)
 
+        if (mailConfirmed) {
+            res.sendStatus(204)
+        }else{
+            res.sendStatus(400)
+        }
     })
 authRouter.post('/registration-email-resending',
     authTypeValidation,

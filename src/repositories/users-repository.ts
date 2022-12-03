@@ -104,6 +104,23 @@ export const usersRepositoryInDB = {
         }
 
     },
+    async findUserByConfirmationCode(code: string): Promise<userDBType | null>{
+
+        const user: userDBType | null = await usersCollection.findOne({"emailConfirmation.confirmationCode": code})
+
+        if(user){
+            return user
+        }else{
+            return null
+        }
+
+    },
+    async updateConfirmation(id: string): Promise<boolean>{
+
+        let result = await  usersCollection.updateOne({id: id},{$set:{'emailConfirmation.isConfirmed': true}})
+        return result.modifiedCount === 1
+
+    },
     async createUser(newUser: userDBType): Promise<userDBType | null>{
         const newObjectUser: userDBType = Object.assign({}, newUser);
         await usersCollection.insertOne(newUser)
