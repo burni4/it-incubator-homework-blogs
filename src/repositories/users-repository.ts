@@ -1,5 +1,11 @@
 import {usersCollection} from "./db";
-import {outputUsersWithPaginatorType, queryUserParams, userOutputType, userDBType} from "../projectTypes";
+import {
+    outputUsersWithPaginatorType,
+    queryUserParams,
+    userOutputType,
+    userDBType,
+    emailConfirmationType
+} from "../projectTypes";
 
 export const usersRepositoryInDB = {
     async findUserByID(idFromDB: string): Promise<userOutputType | null>{
@@ -132,7 +138,13 @@ export const usersRepositoryInDB = {
         return result.modifiedCount === 1
 
     },
-    async createUser(newUser: userDBType): Promise<userDBType | null>{
+    async updateEmailConfirmation(id: string, emailConformation: emailConfirmationType): Promise<boolean> {
+
+        let result = await usersCollection.updateOne({id: id}, {$set: {emailConfirmation: emailConformation}})
+        return result.modifiedCount === 1
+
+    },
+    async createUser(newUser: userDBType): Promise<userDBType | null> {
         const newObjectUser: userDBType = Object.assign({}, newUser);
         await usersCollection.insertOne(newUser)
 

@@ -43,13 +43,14 @@ export type userServiceType = {
         email: string
         createdAt: string
     },
-    emailConfirmation: {
-        confirmationCode: string
-        expirationDate: Date
-        isConfirmed: boolean
-    }
+    emailConfirmation: emailConfirmationType
 }
+export type emailConfirmationType = {
+    confirmationCode: string
+    expirationDate: Date
+    isConfirmed: boolean
 
+}
 export type userInputType = {
     login: string
     password : string
