@@ -93,6 +93,17 @@ export const usersRepositoryInDB = {
         }
 
     },
+    async findByLogin(login: string): Promise<userDBType | null>{
+
+        const user: userDBType | null = await usersCollection.findOne({"accountData.login": login})
+
+        if(user){
+            return user
+        }else{
+            return null
+        }
+
+    },
     async findByPasswordHash(passwordHash: string): Promise<userDBType | null>{
 
         const user: userDBType | null = await usersCollection.findOne({"accountData.passwordHash": passwordHash})

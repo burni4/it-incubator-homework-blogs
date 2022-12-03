@@ -1,7 +1,7 @@
 type messageType = {message: string | null, field: string | null}
 type errorsMessagesType = { errorsMessages: messageType[]}
 
-const errorsMessages: errorsMessagesType = {errorsMessages:[]};
+export const errorsMessages: errorsMessagesType = {errorsMessages:[]};
 
 export const messageRepository = {
     getAllMessages(): errorsMessagesType{

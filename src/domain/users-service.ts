@@ -18,6 +18,15 @@ export const usersService = {
     async findByLoginOrEmail(loginOrEmail: string): Promise<userDBType | null>{
         return await usersRepositoryInDB.findByLoginOrEmail(loginOrEmail)
     },
+    async findByLogin(login: string): Promise<userDBType | null>{
+        return await usersRepositoryInDB.findByLogin(login)
+    },
+    async findByEmail(email: string): Promise<userDBType | null>{
+        return await usersRepositoryInDB.findByEmail(email)
+    },
+    async findUserByConfirmationCode(code: string): Promise<userDBType | null>{
+        return await this.findUserByConfirmationCode(code)
+    },
     async confirmEmailByCode(code: string): Promise<boolean>{
         let user: userDBType | null = await usersRepositoryInDB.findUserByConfirmationCode(code)
         if(!user) return false
@@ -33,14 +42,25 @@ export const usersService = {
         const code = ''
         return await this.confirmEmailByCode(code)
     },
+    async userWithLoginOrEmailExist(email: string, login: string): Promise<boolean>{
+
+        const userByEmail = await usersRepositoryInDB.findByEmail(email)
+        const userByLogin = await usersRepositoryInDB.findByLogin(login)
+
+        if (userByEmail || userByLogin){
+            return true
+        }else{
+            return false
+        }
+    },
     async userWithEmailAndPasswordExist(email: string, password: string): Promise<boolean>{
         const passwordSalt = await this.generateSalt()
         const passwordHash = await this.generateHash(password, passwordSalt)
 
-        const emailUsed = await usersRepositoryInDB.findByEmail(email)
-        const passwordUsed = await usersRepositoryInDB.findByPasswordHash(passwordHash)
+        const userByEmail = await usersRepositoryInDB.findByEmail(email)
+        const userByLoginPasswordUsed = await usersRepositoryInDB.findByPasswordHash(passwordHash)
 
-        if (emailUsed || passwordUsed){
+        if (userByEmail || userByLoginPasswordUsed){
             return true
         }else{
             return false

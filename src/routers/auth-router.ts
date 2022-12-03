@@ -2,7 +2,9 @@ import {Request, Response, Router} from "express";
 import {inputValidationMiddleware} from "../middlewares/input-validation-middleware"
 import {
     authTypeValidation,
-    registrationConfirmationTypeValidation, registrationResendingConfirmationTypeValidation
+    registrationConfirmationTypeValidation,
+    registrationResendingConfirmationTypeValidation, validationOfConfirmedUserByEmail,
+    validationOfExistingUsersByCode
 } from "../middlewares/input-auth-validation-middleware";
 import {usersService} from "../domain/users-service";
 import {
@@ -13,7 +15,7 @@ import {
 } from "../projectTypes";
 import {jwtService} from "../application/jwtService";
 import {authMiddleware} from "../middlewares/authorization-middleware";
-import {userTypeValidation} from "../middlewares/input-users-validation-middleware";
+import {userTypeValidation, validationOfExistingUsers} from "../middlewares/input-users-validation-middleware";
 import {body} from "express-validator";
 
 export const authRouter = Router({})
@@ -33,6 +35,7 @@ authRouter.post('/login',
 })
 authRouter.post('/registration-confirmation',
     registrationConfirmationTypeValidation,
+    validationOfExistingUsersByCode,
     inputValidationMiddleware,
     async (req: Request<{},{},registrationConformationType>, res: Response) => {
 
@@ -46,6 +49,7 @@ authRouter.post('/registration-confirmation',
     })
 authRouter.post('/registration-email-resending',
     registrationResendingConfirmationTypeValidation,
+    validationOfConfirmedUserByEmail,
     inputValidationMiddleware,
     async (req: Request<{},{},registrationResendingConformationType>, res: Response) => {
 
@@ -60,16 +64,11 @@ authRouter.post('/registration-email-resending',
     })
 authRouter.post('/registration',
     userTypeValidation,
+    validationOfExistingUsers,
     inputValidationMiddleware,
     async (req: Request<{},{},dataRegistrationType>, res: Response) => {
 
-        const emailOrPasswordIsUsed = await usersService.userWithEmailAndPasswordExist(req.body.email,req.body.password)
-
-        if (emailOrPasswordIsUsed){
-            return res.sendStatus(400)
-        }
-
-        const user = await usersService.createUser(req.body.login,req.body.email,req.body.password)
+       const user = await usersService.createUser(req.body.login,req.body.email,req.body.password)
 
         if (user){
             res.sendStatus(204)
