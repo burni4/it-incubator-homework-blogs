@@ -69,12 +69,14 @@ authRouter.post('/registration',
         const userByLogin = await usersService.findByLogin(req.body.login)
 
         if (userByLogin) {
-            return res.sendStatus(400).send({errorsMessages: [{message: 'User already exist', field:'login'}]})
+            return res.sendStatus(400)
+            //return res.sendStatus(400).send({errorsMessages: [{message: 'User already exist', field:'login'}]})
         }
         const userByEmail = await usersService.findByEmail(req.body.email)
 
         if (userByEmail) {
-            return res.sendStatus(400).send({errorsMessages: [{message: 'User already exist', field:'email'}]})
+            return res.sendStatus(400)
+           // return res.sendStatus(400).send({errorsMessages: [{message: 'User already exist', field:'email'}]})
         }
 
         const user = await usersService.createUser(req.body.login,req.body.email,req.body.password)
