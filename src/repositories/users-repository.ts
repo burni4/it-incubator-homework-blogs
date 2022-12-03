@@ -18,10 +18,10 @@ export const usersRepositoryInDB = {
         let filter = {}
         const expressions = []
         if(paginator.searchLoginTerm){
-            expressions.push({login: { $regex: paginator.searchLoginTerm, $options: "i" }})
+            expressions.push({"accountData.login": { $regex: paginator.searchLoginTerm, $options: "i" }})
         }
         if(paginator.searchEmailTerm){
-            expressions.push({email: { $regex: paginator.searchEmailTerm, $options: "i" }})
+            expressions.push({"accountData.email": { $regex: paginator.searchEmailTerm, $options: "i" }})
         }
 
         if (expressions.length > 0){
@@ -60,8 +60,8 @@ export const usersRepositoryInDB = {
         return result.deletedCount === 1
     },
     async findByLoginOrEmail(loginOrEmail: string): Promise<userDBType | null>{
-        const filter = {$or: [{login : { $regex: loginOrEmail, $options: "i" }},
-                {email : { $regex: loginOrEmail, $options: "i" }}]}
+        const filter = {$or: [{"accountData.login" : { $regex: loginOrEmail, $options: "i" }},
+                {"accountData.email" : { $regex: loginOrEmail, $options: "i" }}]}
         const user: userDBType | null = await usersCollection.findOne(filter)
         if (user) {
             return {
@@ -81,6 +81,28 @@ export const usersRepositoryInDB = {
             }
         }
         return null
+    },
+    async findByEmail(email: string): Promise<userDBType | null>{
+
+        const user: userDBType | null = await usersCollection.findOne({"accountData.email": email})
+
+        if(user){
+            return user
+        }else{
+            return null
+        }
+
+    },
+    async findByPasswordHash(passwordHash: string): Promise<userDBType | null>{
+
+        const user: userDBType | null = await usersCollection.findOne({"accountData.passwordHash": passwordHash})
+
+        if(user){
+            return user
+        }else{
+            return null
+        }
+
     },
     async createUser(newUser: userDBType): Promise<userDBType | null>{
         const newObjectUser: userDBType = Object.assign({}, newUser);

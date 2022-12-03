@@ -15,11 +15,27 @@ export const usersService = {
     async findUsers(params: queryUserParams): Promise<outputUsersWithPaginatorType>{
         return await usersRepositoryInDB.findUsers(queryUserParamsPaginator(params))
     },
+    async findByLoginOrEmail(loginOrEmail: string): Promise<userDBType | null>{
+        return await usersRepositoryInDB.findByLoginOrEmail(loginOrEmail)
+    },
+    async userWithEmailAndPasswordExist(email: string, password: string): Promise<boolean>{
+        const passwordSalt = await this.generateSalt()
+        const passwordHash = await this.generateHash(password, passwordSalt)
+
+        const emailUsed = await usersRepositoryInDB.findByEmail(email)
+        const passwordUsed = await usersRepositoryInDB.findByPasswordHash(passwordHash)
+
+        if (emailUsed || passwordUsed){
+            return true
+        }else{
+            return false
+        }
+    },
     async findUserByID(userId: string): Promise<userOutputType | null>{
         return await usersRepositoryInDB.findUserByID(userId)
     },
     async createUser(login: string, email: string, password: string): Promise<userOutputType | null>{
-        const passwordSalt = await bcrypt.genSalt(10)
+        const passwordSalt = await this.generateSalt()
         const passwordHash = await this.generateHash(password,passwordSalt)
 
         const newUser: userServiceType = {
@@ -79,6 +95,9 @@ export const usersService = {
     async generateHash(password: string, salt: string) {
         const hash = await bcrypt.hash(password, salt)
         return hash
+    },
+    async generateSalt() {
+        return await bcrypt.genSalt(10)
     }
 }
 
