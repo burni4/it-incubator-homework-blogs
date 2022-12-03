@@ -2,10 +2,15 @@ import {Request, Response, Router} from "express";
 import {inputValidationMiddleware} from "../middlewares/input-validation-middleware"
 import {
     authTypeValidation,
-    registrationConfirmationTypeValidation
+    registrationConfirmationTypeValidation, registrationResendingConfirmationTypeValidation
 } from "../middlewares/input-auth-validation-middleware";
 import {usersService} from "../domain/users-service";
-import {dataRegistrationType, registrationConformationType, userOutputType} from "../projectTypes";
+import {
+    dataRegistrationType,
+    registrationConformationType,
+    registrationResendingConformationType,
+    userOutputType
+} from "../projectTypes";
 import {jwtService} from "../application/jwtService";
 import {authMiddleware} from "../middlewares/authorization-middleware";
 import {userTypeValidation} from "../middlewares/input-users-validation-middleware";
@@ -31,7 +36,7 @@ authRouter.post('/registration-confirmation',
     inputValidationMiddleware,
     async (req: Request<{},{},registrationConformationType>, res: Response) => {
 
-        const mailConfirmed: boolean = await usersService.confirmEmail(req.body.code)
+        const mailConfirmed: boolean = await usersService.confirmEmailByCode(req.body.code)
 
         if (mailConfirmed) {
             res.sendStatus(204)
@@ -40,11 +45,17 @@ authRouter.post('/registration-confirmation',
         }
     })
 authRouter.post('/registration-email-resending',
-    authTypeValidation,
+    registrationResendingConfirmationTypeValidation,
     inputValidationMiddleware,
-    async (req: Request<{},{},{}>, res: Response) => {
+    async (req: Request<{},{},registrationResendingConformationType>, res: Response) => {
 
-            res.sendStatus(200)
+        const mailSend: boolean = await usersService.resendConfirmationCodeOnEmail(req.body.email)
+
+        if (mailSend) {
+            res.sendStatus(204)
+        }else{
+            res.sendStatus(400)
+        }
 
     })
 authRouter.post('/registration',

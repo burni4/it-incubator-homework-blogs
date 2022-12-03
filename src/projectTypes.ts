@@ -67,6 +67,9 @@ export type userOutputType = {
 export type registrationConformationType = {
     code: string
 }
+export type registrationResendingConformationType = {
+    email: string
+}
 
 export type paginatorType = {
     pagesCount: number

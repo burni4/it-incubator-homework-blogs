@@ -18,7 +18,7 @@ export const usersService = {
     async findByLoginOrEmail(loginOrEmail: string): Promise<userDBType | null>{
         return await usersRepositoryInDB.findByLoginOrEmail(loginOrEmail)
     },
-    async confirmEmail(code: string): Promise<boolean>{
+    async confirmEmailByCode(code: string): Promise<boolean>{
         let user: userDBType | null = await usersRepositoryInDB.findUserByConfirmationCode(code)
         if(!user) return false
         if(user.emailConfirmation.isConfirmed) return false
@@ -28,6 +28,10 @@ export const usersService = {
             return result
         }
         return false
+    },
+    async confirmEmailByRegistrationLink(email: string): Promise<boolean>{
+        const code = ''
+        return await this.confirmEmailByCode(code)
     },
     async userWithEmailAndPasswordExist(email: string, password: string): Promise<boolean>{
         const passwordSalt = await this.generateSalt()
@@ -69,7 +73,7 @@ export const usersService = {
         const newUserInDB = await usersRepositoryInDB.createUser(newUser)
 
         try {
-            await emailManager.sendEmailConfirmationMessage(newUser)
+            await emailManager.sendEmailConfirmationMessage(newUser.emailConfirmation.confirmationCode, newUser.accountData.email)
         }catch {
             await usersRepositoryInDB.deleteUserByID(newUser.id)
             return null
@@ -83,6 +87,16 @@ export const usersService = {
         }
 
         return outputUser
+    },
+    async resendConfirmationCodeOnEmail(email: string): Promise<boolean>{
+
+        const user: userDBType | null = await this.findByLoginOrEmail(email)
+
+        if(!user) return false
+
+        await emailManager.sendEmailConfirmationMessage(user.emailConfirmation.confirmationCode, email)
+
+        return false
     },
     async deleteUserByID(id: string): Promise<boolean>{
         return await usersRepositoryInDB.deleteUserByID(id)
