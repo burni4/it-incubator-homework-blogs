@@ -3,8 +3,8 @@ import {inputValidationMiddleware} from "../middlewares/input-validation-middlew
 import {
     authTypeValidation,
     registrationConfirmationTypeValidation,
-    registrationResendingConfirmationTypeValidation, validationOfConfirmedUserByEmail,
-    validationOfExistingUsersByCode
+    registrationResendingConfirmationTypeValidation,
+    validationOfConfirmedUserByEmail, validationOfExistingUsersByCode
 } from "../middlewares/input-auth-validation-middleware";
 import {usersService} from "../domain/users-service";
 import {
@@ -35,7 +35,7 @@ authRouter.post('/login',
 })
 authRouter.post('/registration-confirmation',
     registrationConfirmationTypeValidation,
-    validationOfExistingUsersByCode,
+    //validationOfExistingUsersByCode,
     inputValidationMiddleware,
     async (req: Request<{},{},registrationConformationType>, res: Response) => {
 
@@ -49,7 +49,7 @@ authRouter.post('/registration-confirmation',
     })
 authRouter.post('/registration-email-resending',
     registrationResendingConfirmationTypeValidation,
-    validationOfConfirmedUserByEmail,
+    //validationOfConfirmedUserByEmail,
     inputValidationMiddleware,
     async (req: Request<{},{},registrationResendingConformationType>, res: Response) => {
 
@@ -64,11 +64,17 @@ authRouter.post('/registration-email-resending',
     })
 authRouter.post('/registration',
     userTypeValidation,
-    validationOfExistingUsers,
+    //validationOfExistingUsers,
     inputValidationMiddleware,
     async (req: Request<{},{},dataRegistrationType>, res: Response) => {
 
-       const user = await usersService.createUser(req.body.login,req.body.email,req.body.password)
+       // let user = await usersService.findByLogin(req.body.login)
+        //
+        // if (user){
+       //     return res.sendStatus(400)
+       // }
+
+        const user = await usersService.createUser(req.body.login,req.body.email,req.body.password)
 
         if (user){
             res.sendStatus(204)
