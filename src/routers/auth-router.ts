@@ -3,8 +3,7 @@ import {inputValidationMiddleware} from "../middlewares/input-validation-middlew
 import {
     authTypeValidation,
     registrationConfirmationTypeValidation,
-    registrationResendingConfirmationTypeValidation,
-    validationOfConfirmedUserByEmail, validationOfExistingUsersByCode
+    registrationResendingConfirmationTypeValidation
 } from "../middlewares/input-auth-validation-middleware";
 import {usersService} from "../domain/users-service";
 import {
@@ -15,8 +14,7 @@ import {
 } from "../projectTypes";
 import {jwtService} from "../application/jwtService";
 import {authMiddleware} from "../middlewares/authorization-middleware";
-import {userTypeValidation, validationOfExistingUsers} from "../middlewares/input-users-validation-middleware";
-import {body} from "express-validator";
+import {userTypeValidation} from "../middlewares/input-users-validation-middleware";
 
 export const authRouter = Router({})
 

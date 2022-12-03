@@ -114,9 +114,15 @@ export const usersService = {
 
         if(!user) return false
 
+        // const newEmailConfirmation = {
+        //     confirmationCode: uuidv4(),
+        //     expirationDate: add(new Date(), {hours: 1, minutes: 0}),
+        //     isConfirmed: false
+        // }
+
         await emailManager.sendEmailConfirmationMessage(user.emailConfirmation.confirmationCode, email)
 
-        return false
+        return true
     },
     async deleteUserByID(id: string): Promise<boolean>{
         return await usersRepositoryInDB.deleteUserByID(id)
