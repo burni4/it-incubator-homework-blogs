@@ -20,9 +20,8 @@ export const validationOfExistingUsersByCode = async (req: Request, res: Respons
 
     const user = await usersService.findUserByConfirmationCode(req.body.login)
 
-    if (user) {
-        messageRepository.addMessage('code','Code not exist')
-        res.sendStatus(400).send(errorsMessages);
+    if (!user) {
+        res.sendStatus(400).send({errorsMessages: [{message: 'Code not exist', field:'code'}]});
         return
     }
 
