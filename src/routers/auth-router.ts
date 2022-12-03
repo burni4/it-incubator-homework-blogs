@@ -64,7 +64,7 @@ authRouter.post('/registration',
     userTypeValidation,
     validationOfExistingUsers,
     inputValidationMiddleware,
-    async (req: Request<{},{},dataRegistrationType>, res: Response) => {
+    async (req: Request, res: Response) => {
 
         const userByLogin = await usersService.findByLogin(req.body.login)
 
