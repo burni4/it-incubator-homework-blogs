@@ -25,7 +25,7 @@ export const usersService = {
         return await usersRepositoryInDB.findByEmail(email)
     },
     async findUserByConfirmationCode(code: string): Promise<userDBType | null>{
-        return await this.findUserByConfirmationCode(code)
+        return await usersRepositoryInDB.findUserByConfirmationCode(code)
     },
     async confirmEmailByCode(code: string): Promise<boolean>{
         let user: userDBType | null = await usersRepositoryInDB.findUserByConfirmationCode(code)
