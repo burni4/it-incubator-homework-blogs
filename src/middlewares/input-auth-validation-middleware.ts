@@ -28,8 +28,8 @@ export const validationOfExistingUsersByCode = async (req: Request, res: Respons
     // next()
 
     const errors = []
-    const user = await usersService.findUserByConfirmationCode(req.body.login)
-    if (user) errors.push({message: 'login is already exist', field: "login"})
+    const user = await usersService.findUserByConfirmationCode(req.body.code)
+    if (!user) errors.push({message: 'code not exist', field: "code"})
     if (errors.length < 1) return next()
     res.status(400).send({"errorsMessages": errors})
 
@@ -50,8 +50,8 @@ export const validationOfConfirmedUserByEmail = async (req: Request, res: Respon
     // next()
 
     const errors = []
-    const user = await usersService.findUserByConfirmationCode(req.body.email)
-    if (user) errors.push({message: 'login is already exist', field: "email"})
+    const user = await usersService.findByLoginOrEmail(req.body.email)
+    if (!user) errors.push({message: 'login is already exist', field: "email"})
     if (errors.length < 1) return next()
     res.status(400).send({"errorsMessages": errors})
 }
