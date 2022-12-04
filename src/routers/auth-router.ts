@@ -50,8 +50,16 @@ authRouter.post('/logout',
     refreshTokenVerification,
     inputValidationMiddleware,
     async (req: Request, res: Response) => {
+        req.cookies.clearCookie("refreshToken")
+        const user = await usersService.findByRefreshToken(req.cookies?.refreshToken)
+        if (!user){
+            res.status(401)
+        }else{
+            await usersService.updateRefreshToken(user.id,'')
+            res.status(204)
+        }
 
-        res.status(200)
+
 
 })
 authRouter.post('/registration-confirmation',
