@@ -18,29 +18,42 @@ export const registrationResendingConfirmationTypeValidation = [
 
 export const validationOfExistingUsersByCode = async (req: Request, res: Response, next: NextFunction) => {
 
+    // const user = await usersService.findUserByConfirmationCode(req.body.login)
+    //
+    // if (!user) {
+    //     res.sendStatus(400).send({errorsMessages: [{message: 'Code not exist', field:'code'}]});
+    //     return
+    // }
+    //
+    // next()
+
+    const errors = []
     const user = await usersService.findUserByConfirmationCode(req.body.login)
+    if (user) errors.push({message: 'login is already exist', field: "login"})
+    if (errors.length < 1) return next()
+    res.status(400).send({"errorsMessages": errors})
 
-    if (!user) {
-        res.sendStatus(400).send({errorsMessages: [{message: 'Code not exist', field:'code'}]});
-        return
-    }
-
-    next()
 }
 export const validationOfConfirmedUserByEmail = async (req: Request, res: Response, next: NextFunction) => {
+    //
+    // const user: userDBType | null = await usersService.findByLoginOrEmail(req.body.email)
+    //
+    // if (!user) {
+    //     res.sendStatus(400).send({errorsMessages: [{message: 'User not exist', field:'user'}]});
+    //     return
+    // }
+    // if (user.emailConfirmation.isConfirmed) {
+    //     res.sendStatus(400).send({errorsMessages: [{message: 'Email already confirmed', field:'isConfirmed'}]});
+    //     return
+    // }
+    //
+    // next()
 
-    const user: userDBType | null = await usersService.findByLoginOrEmail(req.body.email)
-
-    if (!user) {
-        res.sendStatus(400).send({errorsMessages: [{message: 'User not exist', field:'user'}]});
-        return
-    }
-    if (user.emailConfirmation.isConfirmed) {
-        res.sendStatus(400).send({errorsMessages: [{message: 'Email already confirmed', field:'isConfirmed'}]});
-        return
-    }
-
-    next()
+    const errors = []
+    const user = await usersService.findUserByConfirmationCode(req.body.email)
+    if (user) errors.push({message: 'login is already exist', field: "email"})
+    if (errors.length < 1) return next()
+    res.status(400).send({"errorsMessages": errors})
 }
 
 
