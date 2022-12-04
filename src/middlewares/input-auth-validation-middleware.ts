@@ -20,8 +20,8 @@ export const validationOfExistingUsersByCode = async (req: Request, res: Respons
 
     const errors = []
     const user: userDBType | null = await usersService.findUserByConfirmationCode(req.body.code)
-    if (!user) errors.push({message: 'code not exist', field: "code"})
-    if (user && user.emailConfirmation.isConfirmed) errors.push({message: 'Email already confirmed', field: "isConfirmed"})
+    if (!user) errors.push({message: 'Code not exist', field: "code"})
+    if (user && user.emailConfirmation.isConfirmed) errors.push({message: 'Email already confirmed', field: "code"})
     if (errors.length < 1) return next()
     res.status(400).send({"errorsMessages": errors})
 
