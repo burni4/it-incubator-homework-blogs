@@ -36,7 +36,6 @@ authRouter.post('/refresh-token',
 
         const user: userOutputType | null = await usersService.checkCredentials(req.body.loginOrEmail, req.body.password)
         if (user) {
-            req.cookies.clearCookie("refreshToken")
             const token = jwtService.createAccessJWT(user)
             const refreshToken = jwtService.createRefreshJWT(user)
             await usersService.updateRefreshToken(user.id, refreshToken)
@@ -50,13 +49,15 @@ authRouter.post('/logout',
     refreshTokenVerification,
     inputValidationMiddleware,
     async (req: Request, res: Response) => {
+
         req.cookies.clearCookie("refreshToken")
+
         const user = await usersService.findByRefreshToken(req.cookies?.refreshToken)
         if (!user){
             res.status(401)
         }else{
             await usersService.updateRefreshToken(user.id,'')
-            res.status(204)
+            res.clearCookie("refreshToken").status(204)
         }
 
 
