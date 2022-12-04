@@ -29,8 +29,9 @@ export const validationOfExistingUsersByCode = async (req: Request, res: Respons
 export const validationOfConfirmedUserByEmail = async (req: Request, res: Response, next: NextFunction) => {
 
     const errors = []
-    const user = await usersService.findByLoginOrEmail(req.body.email)
+    const user:userDBType | null = await usersService.findByLoginOrEmail(req.body.email)
     if (!user) errors.push({message: 'login is already exist', field: "email"})
+    if (user && user.emailConfirmation.isConfirmed) errors.push({message: 'Email already confirmed', field: "isConfirmed"})
     if (errors.length < 1) return next()
     res.status(400).send({"errorsMessages": errors})
 }
