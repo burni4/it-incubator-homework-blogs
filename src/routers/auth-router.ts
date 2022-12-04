@@ -56,14 +56,16 @@ authRouter.post('/logout',
     refreshTokenVerification,
     inputValidationMiddleware,
     async (req: Request, res: Response) => {
-        const user = await usersService.findByRefreshToken(req.cookies?.refreshToken)
+
+        const user: userDBType | null = await usersService.findByRefreshToken(req.cookies?.refreshToken)
+
         if (!user){
             return res.sendStatus(401)
-        }else{
-            await usersService.updateRefreshToken(user.id,'')
-            res.clearCookie("refreshToken")
-            return res.sendStatus(204)
         }
+
+        await usersService.updateRefreshToken(user.id,'')
+        res.clearCookie("refreshToken")
+        return res.sendStatus(204)
 
 })
 authRouter.post('/registration-confirmation',
