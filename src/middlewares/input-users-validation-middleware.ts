@@ -14,19 +14,25 @@ export const userTypeValidation = [
 ]
 export const validationOfExistingUsers = async (req: Request, res: Response, next: NextFunction) => {
 
-        const userByLogin = await usersService.findByLogin(req.body.login)
+        // const userByLogin = await usersService.findByLogin(req.body.login)
+        //
+        // if (userByLogin) {
+        //     res.sendStatus(400).send({errorsMessages: [{message: 'User already exist', field:'login'}]})
+        //     return
+        // }
+        //
+        // const userByEmail = await usersService.findByEmail(req.body.email)
+        // if (userByEmail) {
+        //     res.sendStatus(400).send({errorsMessages: [{message: 'User already exist', field:'mail'}]})
+        //     return
+        // }
 
-        if (userByLogin) {
-            res.sendStatus(400).send({errorsMessages: [{message: 'User already exist', field:'login'}]})
-            return
-        }
 
-        const userByEmail = await usersService.findByEmail(req.body.email)
-        if (userByEmail) {
-            res.sendStatus(400).send({errorsMessages: [{message: 'User already exist', field:'mail'}]})
-            return
-        }
-
+    const user = await usersService.userWithLoginOrEmailExist(req.body.login, req.body.email)
+    if (user) {
+        res.sendStatus(400).send({errorsMessages: [{message: 'User already exist', field:'mail'}]})
+        return
+    }
     next()
 }
 
