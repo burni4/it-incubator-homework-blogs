@@ -53,7 +53,7 @@ authRouter.post('/refresh-token',
             .status(200).send(token)
     })
 authRouter.post('/logout',
-    refreshTokenVerification,
+    //refreshTokenVerification,
     inputValidationMiddleware,
     async (req: Request, res: Response) => {
 
