@@ -6,14 +6,9 @@ import {
     registrationResendingConfirmationTypeValidation, validationOfConfirmedUserByEmail, validationOfExistingUsersByCode
 } from "../middlewares/input-auth-validation-middleware";
 import {usersService} from "../domain/users-service";
-import {
-    dataRegistrationType,
-    registrationConformationType,
-    registrationResendingConformationType,
-    userOutputType
-} from "../projectTypes";
+import {userOutputType} from "../projectTypes";
 import {jwtService} from "../application/jwtService";
-import {authMiddleware} from "../middlewares/authorization-middleware";
+import {authMiddleware, refreshTokenVerification} from "../middlewares/authorization-middleware";
 import {userTypeValidation, validationOfExistingUsers} from "../middlewares/input-users-validation-middleware";
 
 export const authRouter = Router({})
@@ -25,11 +20,38 @@ authRouter.post('/login',
 
         const user: userOutputType | null = await usersService.checkCredentials(req.body.loginOrEmail, req.body.password)
             if (user) {
-                const token = jwtService.createJWT(user)
-                res.status(200).send(token)
+                const token = jwtService.createAccessJWT(user)
+                const refreshToken = jwtService.createRefreshJWT(user)
+                res.cookie("refreshToken", refreshToken, {httpOnly: true, secure: true})
+                    .status(200).send(token)
             } else {
                 res.sendStatus(401)
             }
+})
+authRouter.post('/refresh-token',
+    refreshTokenVerification,
+    inputValidationMiddleware,
+    async (req: Request, res: Response) => {
+
+    const user: userOutputType | null = await usersService.checkCredentials(req.body.loginOrEmail, req.body.password)
+        if (user) {
+            const token = jwtService.createAccessJWT(user)
+            const refreshToken = jwtService.createRefreshJWT(user)
+            res.cookie("refreshToken", refreshToken, {httpOnly: true, secure: true})
+                .status(200).send(token)
+        } else {
+            res.sendStatus(401)
+        }
+    res.status(200)
+
+})
+authRouter.post('/logout',
+    refreshTokenVerification,
+    inputValidationMiddleware,
+    async (req: Request, res: Response) => {
+
+        res.status(200)
+
 })
 authRouter.post('/registration-confirmation',
     registrationConfirmationTypeValidation,

@@ -47,3 +47,27 @@ export  const authMiddleware = async (req: Request, res: Response, next: NextFun
 
     next()
 }
+
+export const refreshTokenVerification = async (req: Request, res: Response, next: NextFunction) => {
+
+    if (!req.cookies.refreshToken) {
+        return res.status(401)
+    }
+
+    const refreshToken = req.cookies.refreshToken;
+
+    const userId = await jwtService.getUserIdByRefreshToken(refreshToken)
+
+    if(!userId){
+        res.sendStatus(401)
+        return
+    }
+
+    const user = await usersService.findUserByID(userId)
+
+    if(!user){
+        res.sendStatus(401)
+        return
+    }
+    next()
+}

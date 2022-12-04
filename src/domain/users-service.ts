@@ -38,10 +38,6 @@ export const usersService = {
         }
         return false
     },
-    async confirmEmailByRegistrationLink(email: string): Promise<boolean>{
-        const code = ''
-        return await this.confirmEmailByCode(code)
-    },
     async userWithLoginOrEmailExist(email: string, login: string): Promise<boolean>{
 
         const userByEmail = await usersRepositoryInDB.findByEmail(email)
