@@ -52,7 +52,7 @@ export  const authMiddleware = async (req: Request, res: Response, next: NextFun
 export const refreshTokenVerification = async (req: Request, res: Response, next: NextFunction) => {
 
     if (!req.cookies?.refreshToken) {
-        res.send(401)
+        res.sendStatus(401)
         return
     }
 
@@ -61,19 +61,19 @@ export const refreshTokenVerification = async (req: Request, res: Response, next
     const userId = await jwtService.getUserIdByRefreshToken(refreshToken)
 
     if(!userId){
-        res.send(401)
+        res.sendStatus(401)
         return
     }
 
     const user: userDBType | null = await usersService.findByRefreshToken(refreshToken)
 
     if(!user){
-        res.send(401)
+        res.sendStatus(401)
         return
     }
 
     if(user && user.id !== userId){
-        res.send(401)
+        res.sendStatus(401)
         return
     }
 

@@ -50,8 +50,6 @@ authRouter.post('/logout',
     inputValidationMiddleware,
     async (req: Request, res: Response) => {
 
-        req.cookies.clearCookie("refreshToken")
-
         const user = await usersService.findByRefreshToken(req.cookies?.refreshToken)
         if (!user){
             res.status(401)
