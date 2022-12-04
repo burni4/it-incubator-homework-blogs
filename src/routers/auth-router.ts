@@ -30,7 +30,6 @@ authRouter.post('/login',
             }
 })
 authRouter.post('/refresh-token',
-    authTypeValidation,
     refreshTokenVerification,
     inputValidationMiddleware,
     async (req: Request, res: Response) => {
