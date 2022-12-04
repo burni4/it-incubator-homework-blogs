@@ -6,7 +6,7 @@ import {
     registrationResendingConfirmationTypeValidation, validationOfConfirmedUserByEmail, validationOfExistingUsersByCode
 } from "../middlewares/input-auth-validation-middleware";
 import {usersService} from "../domain/users-service";
-import {userOutputType} from "../projectTypes";
+import {userDBType, userOutputType} from "../projectTypes";
 import {jwtService} from "../application/jwtService";
 import {authMiddleware, refreshTokenVerification} from "../middlewares/authorization-middleware";
 import {userTypeValidation, validationOfExistingUsers} from "../middlewares/input-users-validation-middleware";
@@ -34,17 +34,24 @@ authRouter.post('/refresh-token',
     inputValidationMiddleware,
     async (req: Request, res: Response) => {
 
-        const user: userOutputType | null = await usersService.checkCredentials(req.body.loginOrEmail, req.body.password)
-        if (user) {
-            const token = jwtService.createAccessJWT(user)
-            const refreshToken = jwtService.createRefreshJWT(user)
-            await usersService.updateRefreshToken(user.id, refreshToken)
-            res.cookie("refreshToken", refreshToken, {httpOnly: true, secure: true})
-                .status(200).send(token)
-        } else {
+        const user: userDBType | null = await usersService.findByRefreshToken(req.cookies?.refreshToken)
+
+        if (!user) {
             res.sendStatus(401)
+            return
         }
-})
+
+        const useOutput: userOutputType = {id: user.id,
+            email: user.accountData.email,
+            login: user.accountData.login,
+            createdAt: user.accountData.createdAt}
+
+        const token = jwtService.createAccessJWT(useOutput)
+        const refreshToken = jwtService.createRefreshJWT(useOutput)
+        await usersService.updateRefreshToken(user.id, refreshToken)
+        res.cookie("refreshToken", refreshToken, {httpOnly: true, secure: true})
+            .status(200).send(token)
+    })
 authRouter.post('/logout',
     refreshTokenVerification,
     inputValidationMiddleware,
