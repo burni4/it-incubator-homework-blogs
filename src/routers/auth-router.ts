@@ -36,6 +36,7 @@ authRouter.post('/refresh-token',
 
         const user: userOutputType | null = await usersService.checkCredentials(req.body.loginOrEmail, req.body.password)
         if (user) {
+            req.cookies.clearCookie("refreshToken")
             const token = jwtService.createAccessJWT(user)
             const refreshToken = jwtService.createRefreshJWT(user)
             await usersService.updateRefreshToken(user.id, refreshToken)
