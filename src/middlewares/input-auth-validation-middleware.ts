@@ -1,6 +1,5 @@
 import {body} from "express-validator";
 import {NextFunction, Request, Response} from "express";
-import {errorsMessages, messageRepository} from "../repositories/messages-repository";
 import {usersService} from "../domain/users-service";
 import {userDBType} from "../projectTypes";
 
@@ -31,7 +30,7 @@ export const validationOfConfirmedUserByEmail = async (req: Request, res: Respon
     const errors = []
     const user:userDBType | null = await usersService.findByLoginOrEmail(req.body.email)
     if (!user) errors.push({message: 'login is already exist', field: "email"})
-    if (user && user.emailConfirmation.isConfirmed) errors.push({message: 'Email already confirmed', field: "isConfirmed"})
+    if (user && user.emailConfirmation.isConfirmed) errors.push({message: 'Email already confirmed', field: "email"})
     if (errors.length < 1) return next()
     res.status(400).send({"errorsMessages": errors})
 }
