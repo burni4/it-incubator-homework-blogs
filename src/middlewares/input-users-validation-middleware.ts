@@ -30,7 +30,7 @@ export const validationOfExistingUsers = async (req: Request, res: Response, nex
     } else {
         next()
     }
-
+    next()
 }
 
 
