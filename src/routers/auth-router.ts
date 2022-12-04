@@ -42,7 +42,6 @@ authRouter.post('/refresh-token',
         } else {
             res.sendStatus(401)
         }
-    res.status(200)
 
 })
 authRouter.post('/logout',
