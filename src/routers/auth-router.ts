@@ -58,7 +58,6 @@ authRouter.post('/logout',
     async (req: Request, res: Response) => {
         const user = await usersService.findByRefreshToken(req.cookies?.refreshToken)
         if (!user){
-
             return res.sendStatus(401)
         }else{
             await usersService.updateRefreshToken(user.id,'')
