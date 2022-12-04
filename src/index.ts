@@ -1,5 +1,6 @@
 import express, { Request, Response } from "express"
 import bodyParser from 'body-parser'
+import cookieParser from 'cookie-parser'
 import {postsRouter} from "./routers/posts-router";
 import {blogsRouter} from "./routers/blogs-router";
 import {usersRouter} from "./routers/users-router";
@@ -13,9 +14,11 @@ import {runDb} from "./repositories/db";
 
 export const app = express()
 const port = process.env.PORT || 3000
-const parserMiddleware = bodyParser()
+const bodyParserMiddleware = bodyParser()
+const cookieParserMiddleware = cookieParser()
 
-app.use(parserMiddleware);
+app.use(bodyParserMiddleware);
+app.use(cookieParserMiddleware);
 
 app.use('/blogs', blogsRouter);
 app.use('/posts', postsRouter);
