@@ -83,7 +83,8 @@ export const usersRepositoryInDB = {
                     confirmationCode: user.emailConfirmation.confirmationCode,
                     expirationDate: user.emailConfirmation.expirationDate,
                     isConfirmed: user.emailConfirmation.isConfirmed
-                }
+                },
+                tokens: {refreshToken: user.tokens.refreshToken}
             }
         }
         return null
@@ -102,6 +103,17 @@ export const usersRepositoryInDB = {
     async findByLogin(login: string): Promise<userDBType | null>{
 
         const user: userDBType | null = await usersCollection.findOne({"accountData.login": login})
+
+        if(user){
+            return user
+        }else{
+            return null
+        }
+
+    },
+    async findByRefreshToken(token: string): Promise<userDBType | null>{
+
+        const user: userDBType | null = await usersCollection.findOne({"tokens.refreshToken": token})
 
         if(user){
             return user
@@ -135,6 +147,12 @@ export const usersRepositoryInDB = {
     async updateConfirmation(id: string): Promise<boolean>{
 
         let result = await  usersCollection.updateOne({id: id},{$set:{'emailConfirmation.isConfirmed': true}})
+        return result.modifiedCount === 1
+
+    },
+    async updateRefreshToken(id: string, refreshToken: string): Promise<boolean>{
+
+        let result = await  usersCollection.updateOne({id: id},{$set:{'tokens.refreshToken': refreshToken}})
         return result.modifiedCount === 1
 
     },

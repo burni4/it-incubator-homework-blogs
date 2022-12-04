@@ -1,6 +1,7 @@
 import {Response, Request, NextFunction} from "express";
 import {usersService} from "../domain/users-service";
 import {jwtService} from "../application/jwtService";
+import {userDBType} from "../projectTypes";
 
 const credentials = {
     login: 'admin',
@@ -64,11 +65,17 @@ export const refreshTokenVerification = async (req: Request, res: Response, next
         return
     }
 
-    const user = await usersService.findUserByID(userId)
+    const user: userDBType | null = await usersService.findByRefreshToken(refreshToken)
 
     if(!user){
         res.sendStatus(401)
         return
     }
+
+    if(user && user.id !== userId){
+        res.sendStatus(401)
+        return
+    }
+
     next()
 }

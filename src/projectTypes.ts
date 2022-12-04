@@ -27,11 +27,8 @@ export type userDBType = {
         email: string
         createdAt: string
     },
-    emailConfirmation: {
-        confirmationCode: string
-        expirationDate: Date
-        isConfirmed: boolean
-    }
+    emailConfirmation: emailConfirmationType
+    tokens: {refreshToken: string}
 }
 
 export type userServiceType = {

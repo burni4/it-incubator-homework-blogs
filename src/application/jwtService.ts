@@ -13,10 +13,7 @@ export const jwtService = {
         }
     },
     createRefreshJWT(user: userOutputType){
-        const token = jwt.sign({userId: user.id}, JWT_SECRET, {expiresIn: '20s'})
-        return {
-            refreshToken : token
-        }
+        return  jwt.sign({userId: user.id}, JWT_SECRET, {expiresIn: '20s'})
     },
     getUserIdByToken(token: string){
         try{

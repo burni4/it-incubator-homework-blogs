@@ -65,11 +65,11 @@ export const usersService = {
     async findUserByID(userId: string): Promise<userOutputType | null>{
         return await usersRepositoryInDB.findUserByID(userId)
     },
-    async createUser(login: string, email: string, password: string): Promise<userOutputType | null>{
+    createUser: async function (login: string, email: string, password: string): Promise<userOutputType | null> {
         const passwordSalt = await this.generateSalt()
-        const passwordHash = await this.generateHash(password,passwordSalt)
+        const passwordHash = await this.generateHash(password, passwordSalt)
 
-        const newUser: userServiceType = {
+        const newUser: userDBType = {
             //_id: new ObjectId(),
             id: String(+new Date()),
             accountData: {
@@ -83,14 +83,15 @@ export const usersService = {
                 confirmationCode: uuidv4(),
                 expirationDate: add(new Date(), {hours: 1, minutes: 0}),
                 isConfirmed: false
-            }
+            },
+            tokens: {refreshToken: ''}
         }
 
         const newUserInDB = await usersRepositoryInDB.createUser(newUser)
 
         try {
             await emailManager.sendEmailConfirmationMessage(newUser.emailConfirmation.confirmationCode, newUser.accountData.email)
-        }catch {
+        } catch {
             await usersRepositoryInDB.deleteUserByID(newUser.id)
             return null
         }
@@ -146,6 +147,12 @@ export const usersService = {
             email: user.accountData.email,
             createdAt: user.accountData.createdAt
         }
+    },
+    async updateRefreshToken(id: string, refreshToken: string): Promise<boolean>{
+        return await usersRepositoryInDB.updateRefreshToken(id, refreshToken)
+    },
+    async findByRefreshToken(refreshToken: string): Promise<userDBType | null>{
+        return await usersRepositoryInDB.findByRefreshToken(refreshToken)
     },
     async generateHash(password: string, salt: string) {
         const hash = await bcrypt.hash(password, salt)

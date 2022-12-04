@@ -22,6 +22,7 @@ authRouter.post('/login',
             if (user) {
                 const token = jwtService.createAccessJWT(user)
                 const refreshToken = jwtService.createRefreshJWT(user)
+                await usersService.updateRefreshToken(user.id, refreshToken)
                 res.cookie("refreshToken", refreshToken, {httpOnly: true, secure: true})
                     .status(200).send(token)
             } else {
@@ -29,20 +30,21 @@ authRouter.post('/login',
             }
 })
 authRouter.post('/refresh-token',
+    authTypeValidation,
     refreshTokenVerification,
     inputValidationMiddleware,
     async (req: Request, res: Response) => {
 
-    const user: userOutputType | null = await usersService.checkCredentials(req.body.loginOrEmail, req.body.password)
+        const user: userOutputType | null = await usersService.checkCredentials(req.body.loginOrEmail, req.body.password)
         if (user) {
             const token = jwtService.createAccessJWT(user)
             const refreshToken = jwtService.createRefreshJWT(user)
+            await usersService.updateRefreshToken(user.id, refreshToken)
             res.cookie("refreshToken", refreshToken, {httpOnly: true, secure: true})
                 .status(200).send(token)
         } else {
             res.sendStatus(401)
         }
-
 })
 authRouter.post('/logout',
     refreshTokenVerification,
