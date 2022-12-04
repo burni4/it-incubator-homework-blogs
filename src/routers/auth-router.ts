@@ -62,7 +62,7 @@ authRouter.post('/logout',
             return res.status(401)
         }else{
             await usersService.updateRefreshToken(user.id,'')
-            res.clearCookie("refreshToken")
+                //res.clearCookie("refreshToken")
             return res.status(204)
         }
 
