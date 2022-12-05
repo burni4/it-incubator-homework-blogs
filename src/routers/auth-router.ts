@@ -45,7 +45,6 @@ authRouter.post('/refresh-token',
         const tokens: generatedTokensType = jwtService.generateNewTokens(user.id)
         await usersService.updateRefreshToken(user.id, tokens.refreshToken)
 
-        await usersService.updateRefreshToken(user.id, tokens.refreshToken)
         res.cookie("refreshToken", tokens.refreshToken, {httpOnly: true, secure: true})
             .status(200).send({accessToken: tokens.accessToken})
     })
