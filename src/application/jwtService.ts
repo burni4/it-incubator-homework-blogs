@@ -1,19 +1,16 @@
 import jwt from 'jsonwebtoken'
-import {userOutputType} from "../projectTypes";
+import {generatedTokensType, userOutputType} from "../projectTypes";
 
 const JWT_SECRET_LOCAL: string = "JWT_SECRET"
 
 const JWT_SECRET = process.env.JWT_SECRET || JWT_SECRET_LOCAL;
 
 export const jwtService = {
-    createAccessJWT(user: userOutputType){
-        const token = jwt.sign({userId: user.id}, JWT_SECRET, {expiresIn: '10s'})
-        return {
-            accessToken: token
-        }
+    createAccessJWT(userId: string){
+        return jwt.sign({userId: userId}, JWT_SECRET, {expiresIn: '10s'})
     },
-    createRefreshJWT(user: userOutputType){
-        return  jwt.sign({userId: user.id}, JWT_SECRET, {expiresIn: '20s'})
+    createRefreshJWT(userId: string){
+        return  jwt.sign({userId: userId}, JWT_SECRET, {expiresIn: '20s'})
     },
     getUserIdByToken(token: string){
         try{
@@ -22,6 +19,16 @@ export const jwtService = {
         }catch(error){
             return null
         }
+    },
+    generateNewTokens(userId: string):generatedTokensType{
+
+        const tokens: generatedTokensType = {
+            accessToken: this.createAccessJWT(userId),
+            refreshToken: this.createRefreshJWT(userId)
+        }
+
+        return tokens
+
     },
     getUserIdByRefreshToken(token: string){
         try{

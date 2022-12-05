@@ -48,6 +48,11 @@ export type emailConfirmationType = {
     isConfirmed: boolean
 
 }
+export type generatedTokensType = {
+    accessToken: string
+    refreshToken: string
+
+}
 export type userInputType = {
     login: string
     password : string

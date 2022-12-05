@@ -6,7 +6,7 @@ import {
     registrationResendingConfirmationTypeValidation, validationOfConfirmedUserByEmail, validationOfExistingUsersByCode
 } from "../middlewares/input-auth-validation-middleware";
 import {usersService} from "../domain/users-service";
-import {userDBType, userOutputType} from "../projectTypes";
+import {generatedTokensType, userDBType, userOutputType} from "../projectTypes";
 import {jwtService} from "../application/jwtService";
 import {authMiddleware, refreshTokenVerification} from "../middlewares/authorization-middleware";
 import {userTypeValidation, validationOfExistingUsers} from "../middlewares/input-users-validation-middleware";
@@ -20,11 +20,12 @@ authRouter.post('/login',
 
         const user: userOutputType | null = await usersService.checkCredentials(req.body.loginOrEmail, req.body.password)
             if (user) {
-                const token = jwtService.createAccessJWT(user)
-                const refreshToken = jwtService.createRefreshJWT(user)
-                await usersService.updateRefreshToken(user.id, refreshToken)
-                res.cookie("refreshToken", refreshToken, {httpOnly: true, secure: true})
-                    .status(200).send(token)
+
+                const tokens: generatedTokensType = jwtService.generateNewTokens(user.id)
+                await usersService.updateRefreshToken(user.id, tokens.refreshToken)
+
+                res.cookie("refreshToken", tokens.refreshToken, {httpOnly: true, secure: true})
+                    .status(200).send({accessToken: tokens.accessToken})
             } else {
                 res.sendStatus(401)
             }
@@ -41,16 +42,12 @@ authRouter.post('/refresh-token',
             return
         }
 
-        const useOutput: userOutputType = {id: user.id,
-            email: user.accountData.email,
-            login: user.accountData.login,
-            createdAt: user.accountData.createdAt}
+        const tokens: generatedTokensType = jwtService.generateNewTokens(user.id)
+        await usersService.updateRefreshToken(user.id, tokens.refreshToken)
 
-        const token = jwtService.createAccessJWT(useOutput)
-        const refreshToken = jwtService.createRefreshJWT(useOutput)
-        await usersService.updateRefreshToken(user.id, refreshToken)
-        res.cookie("refreshToken", refreshToken, {httpOnly: true, secure: true})
-            .status(200).send(token)
+        await usersService.updateRefreshToken(user.id, tokens.refreshToken)
+        res.cookie("refreshToken", tokens.refreshToken, {httpOnly: true, secure: true})
+            .status(200).send({accessToken: tokens.accessToken})
     })
 authRouter.post('/logout',
     refreshTokenVerification,
