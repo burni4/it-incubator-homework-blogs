@@ -10,10 +10,11 @@ const mongoUri = process.env.mongoURIAtlas || mongoURILocalhost;
 export const client = new MongoClient(mongoUri)
 
 export const db = client.db("it-incubator-homework-blogs")
-export const blogsCollection = db.collection<blogType>("blogs");
-export const postsCollection = db.collection<postType>("posts");
-export const usersCollection = db.collection<userDBType>("users");
-export const commentsCollection = db.collection<commentDBType>("comments");
+export const blogsCollection = db.collection<blogType>("blogs")
+export const postsCollection = db.collection<postType>("posts")
+export const usersCollection = db.collection<userDBType>("users")
+export const commentsCollection = db.collection<commentDBType>("comments")
+export const sessionsInfoCollection = db.collection<commentDBType>("sessionsInfo")
 
 export async function runDb(){
 

@@ -17,6 +17,8 @@ const port = process.env.PORT || 3000
 const bodyParserMiddleware = bodyParser()
 const cookieParserMiddleware = cookieParser()
 
+app.set('trust proxy', true)
+
 app.use(bodyParserMiddleware);
 app.use(cookieParserMiddleware);
 

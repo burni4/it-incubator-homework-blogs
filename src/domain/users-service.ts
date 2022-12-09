@@ -6,7 +6,7 @@ import {
     outputUsersWithPaginatorType,
     queryUserParams,
     userOutputType,
-    userDBType, userServiceType, emailConfirmationType
+    userDBType, emailConfirmationType
 } from "../projectTypes";
 import add from "date-fns/add";
 import {emailManager} from "../managers/email-manager";
