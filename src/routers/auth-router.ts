@@ -21,7 +21,7 @@ authRouter.post('/login',
         const user: userOutputType | null = await usersService.checkCredentials(req.body.loginOrEmail, req.body.password)
             if (user) {
 
-                const tokens: generatedTokensType = jwtService.generateNewTokens(user.id)
+                const tokens: generatedTokensType = jwtService.generateNewTokens(user.id, '')
                 await usersService.updateRefreshToken(user.id, tokens.refreshToken)
 
                 res.cookie("refreshToken", tokens.refreshToken, {httpOnly: true, secure: true})
@@ -35,6 +35,9 @@ authRouter.post('/refresh-token',
     inputValidationMiddleware,
     async (req: Request, res: Response) => {
 
+        const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress
+        const userAgent = req.headers['user-agent'] || 'unknown device'
+
         const user: userDBType | null = await usersService.findByRefreshToken(req.cookies?.refreshToken)
 
         if (!user) {
@@ -42,7 +45,7 @@ authRouter.post('/refresh-token',
             return
         }
 
-        const tokens: generatedTokensType = jwtService.generateNewTokens(user.id)
+        const tokens: generatedTokensType = jwtService.generateNewTokens(user.id, userAgent)
         await usersService.updateRefreshToken(user.id, tokens.refreshToken)
 
         res.cookie("refreshToken", tokens.refreshToken, {httpOnly: true, secure: true})
@@ -53,13 +56,16 @@ authRouter.post('/logout',
     inputValidationMiddleware,
     async (req: Request, res: Response) => {
 
+        const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress
+        const userAgent = req.headers['user-agent'] || 'unknown device'
+
         const user: userDBType | null = await usersService.findByRefreshToken(req.cookies?.refreshToken)
 
         if (!user){
             return res.sendStatus(401)
         }
 
-        await usersService.updateRefreshToken(user.id,'')
+        await usersService.updateRefreshToken(user.id,userAgent)
         res.clearCookie("refreshToken")
         return res.sendStatus(204)
 

@@ -9,8 +9,8 @@ export const jwtService = {
     createAccessJWT(userId: string){
         return jwt.sign({userId: userId}, JWT_SECRET, {expiresIn: '10s'})
     },
-    createRefreshJWT(userId: string){
-        return  jwt.sign({userId: userId}, JWT_SECRET, {expiresIn: '20s'})
+    createRefreshJWT(userId: string, deviceId: string){
+        return  jwt.sign({userId: userId, deviceId: deviceId}, JWT_SECRET, {expiresIn: '20s'})
     },
     getUserIdByToken(token: string){
         try{
@@ -20,11 +20,11 @@ export const jwtService = {
             return null
         }
     },
-    generateNewTokens(userId: string):generatedTokensType{
+    generateNewTokens(userId: string, deviceId: string):generatedTokensType{
 
         const tokens: generatedTokensType = {
             accessToken: this.createAccessJWT(userId),
-            refreshToken: this.createRefreshJWT(userId)
+            refreshToken: this.createRefreshJWT(userId, deviceId)
         }
 
         return tokens
