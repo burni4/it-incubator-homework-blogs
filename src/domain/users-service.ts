@@ -12,6 +12,7 @@ import add from "date-fns/add";
 import {emailManager} from "../managers/email-manager";
 import {sessionsInfoRepositoryInDB} from "../repositories/sessionsInfo-repository";
 import {jwtService} from "../application/jwtService";
+import {sessionsInfoCollection} from "../repositories/db";
 
 export const usersService = {
     async findUsers(params: queryUserParams): Promise<outputUsersWithPaginatorType>{
@@ -191,6 +192,12 @@ export const usersService = {
                 deviceId: session.deviceId
             }
         })
+    },
+    async deleteAllSessionsExceptOne(refreshToken: string): Promise<boolean>{
+        const result = jwtService.getRefreshTokenPayload(refreshToken)
+        if(!result) return false
+        const delRes = await sessionsInfoRepositoryInDB.deleteAllSessionsExceptOne(result.deviceId, result.userId)
+        return delRes
     }
 }
 

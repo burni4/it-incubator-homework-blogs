@@ -17,8 +17,8 @@ securityRouter.delete('/devices',
     refreshTokenVerification,
     inputValidationMiddleware,
     async (req: Request, res: Response) => {
-
-        res.status(200)
+        const result = await  usersService.deleteAllSessionsExceptOne(req.cookies?.refreshToken)
+        res.status(204)
 })
 
 securityRouter.delete('/devices/:deviceId',
