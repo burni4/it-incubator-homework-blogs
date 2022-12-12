@@ -6,7 +6,7 @@ import {
     outputUsersWithPaginatorType,
     queryUserParams,
     userOutputType,
-    userDBType, emailConfirmationType, sessionInfoTypeInDB
+    userDBType, emailConfirmationType, sessionInfoTypeInDB, devicesOutputType
 } from "../projectTypes";
 import add from "date-fns/add";
 import {emailManager} from "../managers/email-manager";
@@ -163,9 +163,6 @@ export const usersService = {
         await sessionsInfoRepositoryInDB.createUserSession(newSession)
         return  newSession
     },
-    async updateRefreshToken(id: string, refreshToken: string): Promise<boolean>{
-        return await usersRepositoryInDB.updateRefreshToken(id, refreshToken)
-    },
     async findByRefreshToken(refreshToken: string): Promise<userDBType | null>{
         return await usersRepositoryInDB.findByRefreshToken(refreshToken)
     },
@@ -180,6 +177,20 @@ export const usersService = {
     },
     async generateSalt() {
         return await bcrypt.genSalt(10)
+    },
+    async findUserDevicesByRefreshToken(refreshToken: string): Promise<devicesOutputType[]> {
+        const result = jwtService.getRefreshTokenPayload(refreshToken)
+        if(!result) return []
+        const foundSessions: sessionInfoTypeInDB[] | null = await sessionsInfoRepositoryInDB.findUserSession(result.userId, result.deviceId)
+        if (!foundSessions) return []
+        return foundSessions.map((session) => {
+            return {
+                ip: session.ip,
+                title: session.title,
+                lastActiveDate: session.issueDate.toISOString(),
+                deviceId: session.deviceId
+            }
+        })
     }
 }
 

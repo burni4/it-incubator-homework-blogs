@@ -75,6 +75,14 @@ export type sessionInfoTypeInDB = {
     userId: string
 }
 
+export type devicesOutputType = {
+    ip: string
+    title: string
+    lastActiveDate: String
+    deviceId: string
+
+}
+
 export type registrationConformationType = {
     code: string
 }

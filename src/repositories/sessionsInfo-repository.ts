@@ -1,4 +1,4 @@
-import {sessionsInfoCollection} from "./db";
+import {postsCollection, sessionsInfoCollection} from "./db";
 import {sessionInfoTypeInDB} from "../projectTypes";
 
 
@@ -21,5 +21,10 @@ export const sessionsInfoRepositoryInDB = {
         await sessionsInfoCollection.insertOne(sessionInfo)
 
         return newUserSession
+    },
+    async findUserSession(userId: string, deviceId: string): Promise<sessionInfoTypeInDB[] | null> {
+        const foundUserSessions: sessionInfoTypeInDB[] | null = await sessionsInfoCollection.find({userId: userId, deviceId: deviceId}, {projection:{_id:0}}).toArray()
+        return foundUserSessions
     }
+
 }

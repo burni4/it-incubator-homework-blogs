@@ -149,12 +149,6 @@ export const usersRepositoryInDB = {
         return result.modifiedCount === 1
 
     },
-    async updateRefreshToken(id: string, refreshToken: string): Promise<boolean>{
-
-        let result = await  usersCollection.updateOne({id: id},{$set:{'tokens.refreshToken': refreshToken}})
-        return result.modifiedCount === 1
-
-    },
     async updateEmailConfirmationCode(id: string, confirmationCode: string): Promise<boolean> {
 
         let result = await usersCollection.updateOne({id: id}, {$set: {'emailConfirmation.confirmationCode': confirmationCode}})
