@@ -1,6 +1,6 @@
 import * as dotenv from 'dotenv'
 import {MongoClient} from "mongodb";
-import {blogType, commentDBType, postType, userDBType} from "../projectTypes";
+import {blogType, commentDBType, postType, sessionInfoTypeInDB, userDBType} from "../projectTypes";
 
 dotenv.config()
 
@@ -14,7 +14,7 @@ export const blogsCollection = db.collection<blogType>("blogs")
 export const postsCollection = db.collection<postType>("posts")
 export const usersCollection = db.collection<userDBType>("users")
 export const commentsCollection = db.collection<commentDBType>("comments")
-export const sessionsInfoCollection = db.collection<commentDBType>("sessionsInfo")
+export const sessionsInfoCollection = db.collection<sessionInfoTypeInDB>("sessionsInfo")
 export async function runDb(){
 
     try {

@@ -18,11 +18,15 @@ authRouter.post('/login',
     inputValidationMiddleware,
     async (req: Request<{},{},{loginOrEmail: string, password: string}>, res: Response) => {
 
+        const ip = req.ip //|| req.headers['x-forwarded-for'] || req.socket.remoteAddress
+        const userAgent = req.headers['user-agent'] || 'unknown device'
+
         const user: userOutputType | null = await usersService.checkCredentials(req.body.loginOrEmail, req.body.password)
             if (user) {
 
-                const tokens: generatedTokensType = jwtService.generateNewTokens(user.id, '')
-                await usersService.updateRefreshToken(user.id, tokens.refreshToken)
+                const tokens: generatedTokensType | null = await jwtService.generateNewTokens(user.id, ip, userAgent)
+
+                if(!tokens) return res.sendStatus(401)
 
                 res.cookie("refreshToken", tokens.refreshToken, {httpOnly: true, secure: true})
                     .status(200).send({accessToken: tokens.accessToken})
@@ -35,7 +39,7 @@ authRouter.post('/refresh-token',
     inputValidationMiddleware,
     async (req: Request, res: Response) => {
 
-        const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress
+        const ip = req.ip //|| req.headers['x-forwarded-for'] || req.socket.remoteAddress
         const userAgent = req.headers['user-agent'] || 'unknown device'
 
         const user: userDBType | null = await usersService.findByRefreshToken(req.cookies?.refreshToken)
@@ -45,8 +49,9 @@ authRouter.post('/refresh-token',
             return
         }
 
-        const tokens: generatedTokensType = jwtService.generateNewTokens(user.id, userAgent)
-        await usersService.updateRefreshToken(user.id, tokens.refreshToken)
+        const tokens: generatedTokensType | null  = await jwtService.updateRefreshToken(user.id, ip, userAgent, req.cookies?.refreshToken)
+
+        if(!tokens) return res.sendStatus(401)
 
         res.cookie("refreshToken", tokens.refreshToken, {httpOnly: true, secure: true})
             .status(200).send({accessToken: tokens.accessToken})
@@ -56,16 +61,12 @@ authRouter.post('/logout',
     inputValidationMiddleware,
     async (req: Request, res: Response) => {
 
-        const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress
-        const userAgent = req.headers['user-agent'] || 'unknown device'
+        const result: boolean = await usersService.deleteSession(req.cookies?.refreshToken)
 
-        const user: userDBType | null = await usersService.findByRefreshToken(req.cookies?.refreshToken)
-
-        if (!user){
+        if (!result){
             return res.sendStatus(401)
         }
 
-        await usersService.updateRefreshToken(user.id,userAgent)
         res.clearCookie("refreshToken")
         return res.sendStatus(204)
 

@@ -1,5 +1,7 @@
 import jwt from 'jsonwebtoken'
-import {generatedTokensType} from "../projectTypes";
+import {generatedTokensType, sessionInfoTypeInDB} from "../projectTypes";
+import {usersService} from "../domain/users-service";
+import {sessionsInfoRepositoryInDB} from "../repositories/sessionsInfo-repository";
 
 const JWT_SECRET_LOCAL: string = "JWT_SECRET"
 
@@ -20,12 +22,42 @@ export const jwtService = {
             return null
         }
     },
-    generateNewTokens(userId: string, deviceId: string):generatedTokensType{
+    getRefreshTokenPayload(refreshToken: string):{userId: string, deviceId: string} | null{
+        try{
+            const result: any = jwt.verify(refreshToken, JWT_SECRET)
+            return result
+        }catch(error){
+            return null
+        }
+    },
+    async generateNewTokens(userId: string, ip: string, title: string): Promise<generatedTokensType | null>{
+
+        const sessionInfo: sessionInfoTypeInDB | null = await usersService.createUserSession(userId, ip, title)
+
+        if (!sessionInfo){
+            return null
+        }
 
         const tokens: generatedTokensType = {
             accessToken: this.createAccessJWT(userId),
-            refreshToken: this.createRefreshJWT(userId, deviceId)
+            refreshToken: this.createRefreshJWT(userId, sessionInfo.deviceId)
         }
+
+        return tokens
+
+    },
+    async updateRefreshToken(userId: string, ip: string, title: string, refreshToken: string): Promise<generatedTokensType | null>{
+
+        let result: any
+
+        try{
+            result = jwt.verify(refreshToken, JWT_SECRET)
+        }catch(error){
+            return null
+        }
+
+        await sessionsInfoRepositoryInDB.deleteSessionByDeviceId(userId, result.deviceId)
+        const tokens : generatedTokensType | null = await  this.generateNewTokens(userId, ip, title)
 
         return tokens
 

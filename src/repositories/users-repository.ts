@@ -83,8 +83,7 @@ export const usersRepositoryInDB = {
                     confirmationCode: user.emailConfirmation.confirmationCode,
                     expirationDate: user.emailConfirmation.expirationDate,
                     isConfirmed: user.emailConfirmation.isConfirmed
-                },
-                tokens: {refreshToken: user.tokens.refreshToken}
+                }
             }
         }
         return null

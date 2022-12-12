@@ -6,10 +6,12 @@ import {
     outputUsersWithPaginatorType,
     queryUserParams,
     userOutputType,
-    userDBType, emailConfirmationType
+    userDBType, emailConfirmationType, sessionInfoTypeInDB
 } from "../projectTypes";
 import add from "date-fns/add";
 import {emailManager} from "../managers/email-manager";
+import {sessionsInfoRepositoryInDB} from "../repositories/sessionsInfo-repository";
+import {jwtService} from "../application/jwtService";
 
 export const usersService = {
     async findUsers(params: queryUserParams): Promise<outputUsersWithPaginatorType>{
@@ -83,8 +85,7 @@ export const usersService = {
                 confirmationCode: uuidv4(),
                 expirationDate: add(new Date(), {hours: 1, minutes: 0}),
                 isConfirmed: false
-            },
-            tokens: {refreshToken: ''}
+            }
         }
 
         const newUserInDB = await usersRepositoryInDB.createUser(newUser)
@@ -148,11 +149,30 @@ export const usersService = {
             createdAt: user.accountData.createdAt
         }
     },
+    async createUserSession(userId: string, ip: string, title: string): Promise<sessionInfoTypeInDB | null>{
+
+        const issueDate = new Date()
+
+        const newSession: sessionInfoTypeInDB = {
+            ip: ip,
+            title: title,
+            expireDate: add(issueDate, {seconds: 20}),
+            issueDate: issueDate,
+            deviceId: uuidv4(),
+            userId: userId}
+        await sessionsInfoRepositoryInDB.createUserSession(newSession)
+        return  newSession
+    },
     async updateRefreshToken(id: string, refreshToken: string): Promise<boolean>{
         return await usersRepositoryInDB.updateRefreshToken(id, refreshToken)
     },
     async findByRefreshToken(refreshToken: string): Promise<userDBType | null>{
         return await usersRepositoryInDB.findByRefreshToken(refreshToken)
+    },
+    async deleteSession(refreshToken: string): Promise<boolean>{
+        const result = jwtService.getRefreshTokenPayload(refreshToken)
+        if(!result) return false
+        return await sessionsInfoRepositoryInDB.deleteSessionByDeviceId(result.deviceId, result.userId)
     },
     async generateHash(password: string, salt: string) {
         const hash = await bcrypt.hash(password, salt)

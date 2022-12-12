@@ -28,7 +28,6 @@ export type userDBType = {
         createdAt: string
     },
     emailConfirmation: emailConfirmationType
-    tokens: {refreshToken: string}
 }
 
 export type userServiceType = {
@@ -70,8 +69,8 @@ export type userOutputType = {
 export type sessionInfoTypeInDB = {
     ip: string
     title: string
-    lastActiveDate: string
-    issueDate: string
+    expireDate: Date
+    issueDate: Date
     deviceId: string
     userId: string
 }

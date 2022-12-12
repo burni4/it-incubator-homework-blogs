@@ -8,8 +8,6 @@ import {queryUserParams, userInputType, userOutputType} from "../projectTypes";
 export const usersRouter = Router({});
 
 usersRouter.get('/',
-    // basicAuthMiddleware,
-    // inputValidationMiddleware,
     async (req: Request<{},{},{}, queryUserParams>, res: Response) => {
 
     const accessToken = await usersService.findUsers(req.query);
@@ -19,8 +17,6 @@ usersRouter.get('/',
 })
 
 usersRouter.get('/me',
-    // basicAuthMiddleware,
-    // inputValidationMiddleware,
     async (req: Request<{},{},{}, queryUserParams>, res: Response) => {
 
         const foundUsers = await usersService.findUsers(req.query);
