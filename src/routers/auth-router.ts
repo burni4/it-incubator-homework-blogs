@@ -6,7 +6,7 @@ import {
     registrationResendingConfirmationTypeValidation, validationOfConfirmedUserByEmail, validationOfExistingUsersByCode
 } from "../middlewares/input-auth-validation-middleware";
 import {usersService} from "../domain/users-service";
-import {generatedTokensType, userDBType, userOutputType} from "../projectTypes";
+import {generatedTokensType, userOutputType} from "../projectTypes";
 import {jwtService} from "../application/jwtService";
 import {authMiddleware, refreshTokenVerification} from "../middlewares/authorization-middleware";
 import {userTypeValidation, validationOfExistingUsers} from "../middlewares/input-users-validation-middleware";
