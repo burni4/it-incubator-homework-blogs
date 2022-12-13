@@ -4,7 +4,7 @@ import {sessionInfoTypeInDB} from "../projectTypes";
 
 export const sessionsInfoRepositoryInDB = {
 
-    async deleteAllComments(): Promise<boolean> {
+    async deleteAllSessions(): Promise<boolean> {
         const result = await sessionsInfoCollection.deleteMany({})
         return !!result.deletedCount
     },

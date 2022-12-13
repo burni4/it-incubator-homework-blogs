@@ -26,7 +26,7 @@ export const ipVerification = async (req: Request, res: Response, next: NextFunc
             endpoint: currentUrl,
             ip: currentIp,
             expireDate: add(new Date, {seconds: 10}),
-            connectionCount: 1
+            connectionCount: 0
         }
         connectionTable.push(newConnection)
         return next()
@@ -34,14 +34,18 @@ export const ipVerification = async (req: Request, res: Response, next: NextFunc
 
     curConnection.connectionCount++
 
+    console.log(curConnection.connectionCount)
+
     if (curConnection.expireDate > new Date()) {
 
-        if(curConnection.connectionCount > 5){
+        if(curConnection.connectionCount > 4){
+            console.log("429")
             return res.sendStatus(429)
         }
 
     }else{
-        connectionTable.splice(connectionTable.indexOf(curConnection), 1)
+        curConnection.connectionCount = 0
+        curConnection.expireDate= add(new Date, {seconds: 10})
     }
 
     next()

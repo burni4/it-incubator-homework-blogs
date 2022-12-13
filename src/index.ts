@@ -1,5 +1,5 @@
 import express, { Request, Response } from "express"
-import {runDb} from "./repositories/db";
+import {runDb, sessionsInfoCollection} from "./repositories/db";
 import bodyParser from 'body-parser'
 import cookieParser from 'cookie-parser'
 import {postsRouter} from "./routers/posts-router";
@@ -41,7 +41,7 @@ app.delete("/testing/all-data", async (req: Request, res: Response) => {
     await postsRepositoryInDB.deleteAllPosts()
     await usersRepositoryInDB.deleteAllUsers()
     await commentsRepositoryInDB.deleteAllComments()
-    await sessionsInfoRepositoryInDB.deleteAllComments()
+    await sessionsInfoRepositoryInDB.deleteAllSessions()
 
     res.sendStatus(204)
 

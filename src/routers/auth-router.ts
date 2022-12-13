@@ -56,7 +56,7 @@ authRouter.post('/logout',
     inputValidationMiddleware,
     async (req: Request, res: Response) => {
 
-        const result: boolean = await usersService.deleteSession(req.cookies?.refreshToken)
+        const result: boolean = await usersService.deleteSession(req.cookies.refreshToken)
 
         if (!result) {
             return res.sendStatus(401)
