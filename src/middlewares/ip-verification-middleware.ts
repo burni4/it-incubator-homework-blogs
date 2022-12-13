@@ -18,7 +18,7 @@ export const ipVerification = async (req: Request, res: Response, next: NextFunc
 
     curConnection = connectionTable.find((elem, index) => {
         if (elem.endpoint === currentUrl && elem.ip === currentIp){
-            return elem
+            return true
         }
     })
 
