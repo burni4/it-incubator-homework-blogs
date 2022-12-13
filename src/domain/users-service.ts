@@ -169,6 +169,11 @@ export const usersService = {
         if(!result) return false
         return await sessionsInfoRepositoryInDB.deleteSessionByDeviceId(result.deviceId, result.userId)
     },
+    async findSessionByDeviceID(refreshToken: string): Promise<sessionInfoTypeInDB | null>{
+        const result = jwtService.getRefreshTokenPayload(refreshToken)
+        if(!result) return null
+        return await sessionsInfoRepositoryInDB.findSessionByDeviceID(result.deviceId)
+    },
     async generateHash(password: string, salt: string) {
         const hash = await bcrypt.hash(password, salt)
         return hash

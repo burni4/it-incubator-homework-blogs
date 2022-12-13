@@ -11,7 +11,6 @@ type connectionType = {
 const connectionTable: connectionType[] = []
 
 export const ipVerification = async (req: Request, res: Response, next: NextFunction) => {
-/*
     const currentIp = req.ip
     const currentUrl: string = req.originalUrl
     let curConnection: connectionType | undefined
@@ -40,7 +39,6 @@ export const ipVerification = async (req: Request, res: Response, next: NextFunc
     }
 
     curConnection.connectionCount++
-*/
     next()
 }
 
