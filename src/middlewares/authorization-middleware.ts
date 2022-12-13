@@ -65,17 +65,5 @@ export const refreshTokenVerification = async (req: Request, res: Response, next
         return
     }
 
-    const user: userDBType | null = await usersService.findByRefreshToken(refreshToken)
-
-    if(!user){
-        res.sendStatus(401)
-        return
-    }
-
-    if(user && user.id !== userId){
-        res.sendStatus(401)
-        return
-    }
-
     next()
 }

@@ -110,17 +110,6 @@ export const usersRepositoryInDB = {
         }
 
     },
-    async findByRefreshToken(token: string): Promise<userDBType | null>{
-
-        const user: userDBType | null = await usersCollection.findOne({"tokens.refreshToken": token})
-
-        if(user){
-            return user
-        }else{
-            return null
-        }
-
-    },
     async findByPasswordHash(passwordHash: string): Promise<userDBType | null>{
 
         const user: userDBType | null = await usersCollection.findOne({"accountData.passwordHash": passwordHash})

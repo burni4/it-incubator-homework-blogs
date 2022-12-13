@@ -46,7 +46,7 @@ export const jwtService = {
         return tokens
 
     },
-    async updateRefreshToken(userId: string, ip: string, title: string, refreshToken: string): Promise<generatedTokensType | null>{
+    async updateRefreshToken(ip: string, title: string, refreshToken: string): Promise<generatedTokensType | null>{
 
         let result: any
 
@@ -56,8 +56,8 @@ export const jwtService = {
             return null
         }
 
-        await sessionsInfoRepositoryInDB.deleteSessionByDeviceId(userId, result.deviceId)
-        const tokens : generatedTokensType | null = await  this.generateNewTokens(userId, ip, title)
+        await sessionsInfoRepositoryInDB.deleteSessionByDeviceId(result.userId, result.deviceId)
+        const tokens : generatedTokensType | null = await  this.generateNewTokens(result.userId, ip, title)
 
         return tokens
 

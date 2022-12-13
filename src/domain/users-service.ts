@@ -164,9 +164,6 @@ export const usersService = {
         await sessionsInfoRepositoryInDB.createUserSession(newSession)
         return  newSession
     },
-    async findByRefreshToken(refreshToken: string): Promise<userDBType | null>{
-        return await usersRepositoryInDB.findByRefreshToken(refreshToken)
-    },
     async deleteSession(refreshToken: string): Promise<boolean>{
         const result = jwtService.getRefreshTokenPayload(refreshToken)
         if(!result) return false
