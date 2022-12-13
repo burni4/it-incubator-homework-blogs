@@ -105,6 +105,7 @@ authRouter.post('/registration-email-resending',
 
     })
 authRouter.post('/registration',
+    ipVerification,
     userTypeValidation,
     validationOfExistingUsers,
     inputValidationMiddleware,
