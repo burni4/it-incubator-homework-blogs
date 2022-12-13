@@ -64,5 +64,11 @@ export const refreshTokenVerification = async (req: Request, res: Response, next
         return
     }
 
+    const user = await  usersService.findUserByID(userId)
+    if(!user){
+        res.sendStatus(401)
+        return
+    }
+
     next()
 }

@@ -9,7 +9,7 @@ export const deviceSessionExist = async (req: Request, res: Response, next: Next
 
     const result = await usersService.findSessionByDeviceID(req.cookies?.refreshToken)
 
-    if (result) {
+    if (!result) {
         return res.sendStatus(404)
     }
 

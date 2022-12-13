@@ -12,8 +12,8 @@ export const sessionsInfoRepositoryInDB = {
         const result = await sessionsInfoCollection.deleteMany({ $and: [ {userId: userId},{deviceId: { $ne: deviceId }}]})
         return result.deletedCount === 1
     },
-    async deleteSessionByDeviceId(deviceId: string, userId: string): Promise<boolean>{
-        const result = await sessionsInfoCollection.deleteOne({deviceId: deviceId, userId: userId})
+    async deleteSessionByDeviceId(deviceId: string): Promise<boolean>{
+        const result = await sessionsInfoCollection.deleteOne({deviceId: deviceId})
         return result.deletedCount === 1
     },
     async createUserSession(sessionInfo: sessionInfoTypeInDB): Promise<sessionInfoTypeInDB | null> {
