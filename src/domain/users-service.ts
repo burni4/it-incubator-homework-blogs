@@ -199,10 +199,10 @@ export const usersService = {
         const delRes = await sessionsInfoRepositoryInDB.deleteAllSessionsExceptOne(result.deviceId, result.userId)
         return delRes
     },
-    async checkIsAUserDevice(refreshToken: string): Promise<boolean> {
+    async checkIsAUserDevice(refreshToken: string, deviceId: string): Promise<boolean> {
         const result = jwtService.getRefreshTokenPayload(refreshToken)
         if(!result) return false
-        return result.userId === await sessionsInfoRepositoryInDB.findUserIdByDeviceId(result.deviceId)
+        return result.userId === await sessionsInfoRepositoryInDB.findUserIdByDeviceId(deviceId)
     }
 }
 

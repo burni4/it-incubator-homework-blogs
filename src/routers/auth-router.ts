@@ -10,10 +10,12 @@ import {generatedTokensType, userDBType, userOutputType} from "../projectTypes";
 import {jwtService} from "../application/jwtService";
 import {authMiddleware, refreshTokenVerification} from "../middlewares/authorization-middleware";
 import {userTypeValidation, validationOfExistingUsers} from "../middlewares/input-users-validation-middleware";
+import {ipVerification} from "../middlewares/ip-verification-middleware";
 
 export const authRouter = Router({})
 
 authRouter.post('/login',
+    ipVerification,
     authTypeValidation,
     inputValidationMiddleware,
     async (req: Request<{},{},{loginOrEmail: string, password: string}>, res: Response) => {
@@ -72,6 +74,7 @@ authRouter.post('/logout',
 
 })
 authRouter.post('/registration-confirmation',
+    ipVerification,
     registrationConfirmationTypeValidation,
     validationOfExistingUsersByCode,
     inputValidationMiddleware,
@@ -86,6 +89,7 @@ authRouter.post('/registration-confirmation',
         }
     })
 authRouter.post('/registration-email-resending',
+    ipVerification,
     registrationResendingConfirmationTypeValidation,
     validationOfConfirmedUserByEmail,
     inputValidationMiddleware,
