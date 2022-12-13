@@ -33,9 +33,9 @@ securityRouter.delete('/devices/:deviceId',
         const sessionDeleted = usersService.deleteSession(req.cookies?.refreshToken)
 
         if (!sessionDeleted) {
-            return res.status(404)
+            return res.sendStatus(404)
         }
 
-        res.status(204)
+        res.sendStatus(204)
 
 })
