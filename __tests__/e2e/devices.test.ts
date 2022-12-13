@@ -86,6 +86,7 @@ describe('Devices', () => {
             users.user1.refreshToken = refreshToken
 
             const sessionsAfterLogin = await  sessionsInfoCollection.find({}).toArray()
+            console.log(sessionsAfterLogin)
             expect(sessionsAfterLogin.length).toBe(1)
 
     })

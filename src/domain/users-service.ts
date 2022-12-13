@@ -169,6 +169,9 @@ export const usersService = {
         if(!result) return false
         return await sessionsInfoRepositoryInDB.deleteSessionByDeviceId(result.deviceId)
     },
+    async deleteSessionByDeviceId(deviceId: string): Promise<boolean>{
+        return await sessionsInfoRepositoryInDB.deleteSessionByDeviceId(deviceId)
+    },
     async findSessionByDeviceID(refreshToken: string): Promise<sessionInfoTypeInDB | null>{
         const result = jwtService.getRefreshTokenPayload(refreshToken)
         if(!result) return null

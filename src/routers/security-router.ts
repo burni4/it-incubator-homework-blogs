@@ -33,7 +33,7 @@ securityRouter.delete('/devices/:deviceId',
     async (req: Request, res: Response) => {
 
 
-        const sessionDeleted = await usersService.deleteSession(req.cookies.refreshToken)
+        const sessionDeleted = await usersService.deleteSessionByDeviceId(req.params.deviceId)
 
         if (!sessionDeleted) {
             return res.sendStatus(404)

@@ -3,8 +3,7 @@ import {
     outputUsersWithPaginatorType,
     queryUserParams,
     userOutputType,
-    userDBType,
-    emailConfirmationType
+    userDBType
 } from "../projectTypes";
 
 export const usersRepositoryInDB = {
