@@ -18,24 +18,24 @@ authRouter.post('/login',
     ipVerification,
     authTypeValidation,
     inputValidationMiddleware,
-    async (req: Request<{},{},{loginOrEmail: string, password: string}>, res: Response) => {
+    async (req: Request<{}, {}, { loginOrEmail: string, password: string }>, res: Response) => {
 
         const ip = req.ip //|| req.headers['x-forwarded-for'] || req.socket.remoteAddress
         const userAgent = req.headers['user-agent'] || 'unknown device'
 
         const user: userOutputType | null = await usersService.checkCredentials(req.body.loginOrEmail, req.body.password)
-            if (user) {
+        if (user) {
 
-                const tokens: generatedTokensType | null = await jwtService.generateNewTokens(user.id, ip, userAgent)
+            const tokens: generatedTokensType | null = await jwtService.generateNewTokens(user.id, ip, userAgent)
 
-                if(!tokens) return res.sendStatus(401)
+            if (!tokens) return res.sendStatus(401)
 
-                res.cookie("refreshToken", tokens.refreshToken, {httpOnly: true, secure: true})
-                    .status(200).send({accessToken: tokens.accessToken})
-            } else {
-                res.sendStatus(401)
-            }
-})
+            res.cookie("refreshToken", tokens.refreshToken, {httpOnly: true, secure: true})
+                .status(200).send({accessToken: tokens.accessToken})
+        } else {
+            res.sendStatus(401)
+        }
+    })
 authRouter.post('/refresh-token',
     refreshTokenVerification,
     inputValidationMiddleware,
@@ -44,9 +44,9 @@ authRouter.post('/refresh-token',
         const ip = req.ip //|| req.headers['x-forwarded-for'] || req.socket.remoteAddress
         const userAgent = req.headers['user-agent'] || 'unknown device'
 
-        const tokens: generatedTokensType | null  = await jwtService.updateRefreshToken(ip, userAgent, req.cookies?.refreshToken)
+        const tokens: generatedTokensType | null = await jwtService.updateRefreshToken(ip, userAgent, req.cookies?.refreshToken)
 
-        if(!tokens) return res.sendStatus(401)
+        if (!tokens) return res.sendStatus(401)
 
         res.cookie("refreshToken", tokens.refreshToken, {httpOnly: true, secure: true})
             .status(200).send({accessToken: tokens.accessToken})
@@ -58,14 +58,14 @@ authRouter.post('/logout',
 
         const result: boolean = await usersService.deleteSession(req.cookies?.refreshToken)
 
-        if (!result){
+        if (!result) {
             return res.sendStatus(401)
         }
 
         res.clearCookie("refreshToken")
         return res.sendStatus(204)
 
-})
+    })
 authRouter.post('/registration-confirmation',
     ipVerification,
     registrationConfirmationTypeValidation,
@@ -77,7 +77,7 @@ authRouter.post('/registration-confirmation',
 
         if (mailConfirmed) {
             res.sendStatus(204)
-        }else{
+        } else {
             res.sendStatus(400)
         }
     })
@@ -92,7 +92,7 @@ authRouter.post('/registration-email-resending',
 
         if (mailSend) {
             res.sendStatus(204)
-        }else{
+        } else {
             res.sendStatus(400)
         }
 
@@ -104,18 +104,18 @@ authRouter.post('/registration',
     inputValidationMiddleware,
     async (req: Request, res: Response) => {
 
-        const user = await usersService.createUser(req.body.login,req.body.email,req.body.password)
+        const user = await usersService.createUser(req.body.login, req.body.email, req.body.password)
 
-        if (user){
+        if (user) {
             res.sendStatus(204)
-        }else {
+        } else {
             res.sendStatus(400)
         }
     })
 authRouter.get('/me',
     authMiddleware,
     inputValidationMiddleware,
-    async (req: Request<{},{},{user: userOutputType}>, res: Response) => {
+    async (req: Request<{}, {}, { user: userOutputType }>, res: Response) => {
 
         if (req.body.user) {
             const outputUser = {

@@ -37,7 +37,6 @@ export const ipVerification = async (req: Request, res: Response, next: NextFunc
     if (curConnection.expireDate > new Date()) {
 
         if(curConnection.connectionCount > 5){
-            connectionTable.splice(connectionTable.indexOf(curConnection), 1)
             return res.sendStatus(429)
         }
 

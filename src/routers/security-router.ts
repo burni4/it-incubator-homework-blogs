@@ -12,7 +12,6 @@ export const securityRouter = Router({})
 
 securityRouter.get('/devices',
     refreshTokenVerification,
-    inputValidationMiddleware,
     async (req: Request, res: Response) => {
         const foundDevices = await usersService.findUserDevicesByRefreshToken(req.cookies?.refreshToken)
         res.status(200).send(foundDevices)
@@ -20,9 +19,8 @@ securityRouter.get('/devices',
 
 securityRouter.delete('/devices',
     refreshTokenVerification,
-    inputValidationMiddleware,
     async (req: Request, res: Response) => {
-        const result = await  usersService.deleteAllSessionsExceptOne(req.cookies?.refreshToken)
+        await  usersService.deleteAllSessionsExceptOne(req.cookies?.refreshToken)
         res.sendStatus(204)
 })
 
@@ -35,7 +33,7 @@ securityRouter.delete('/devices/:deviceId',
     async (req: Request, res: Response) => {
 
 
-        const sessionDeleted = usersService.deleteSession(req.cookies?.refreshToken)
+        const sessionDeleted = await usersService.deleteSession(req.cookies.refreshToken)
 
         if (!sessionDeleted) {
             return res.sendStatus(404)
