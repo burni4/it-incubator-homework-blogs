@@ -179,7 +179,7 @@ export const usersService = {
     async findUserDevicesByRefreshToken(refreshToken: string): Promise<sessionInfoTypeInDB[]> {
         const result = jwtService.getRefreshTokenPayload(refreshToken)
         if(!result) return []
-        const foundSessions: sessionInfoTypeInDB[] | null = await sessionsInfoRepositoryInDB.findUserSession(result.userId, result.deviceId)
+        const foundSessions: sessionInfoTypeInDB[] | null = await sessionsInfoRepositoryInDB.findUserSessions(result.userId)
         if (!foundSessions) return []
         return foundSessions
     },

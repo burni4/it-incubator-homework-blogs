@@ -26,6 +26,12 @@ export const sessionsInfoRepositoryInDB = {
         const foundUserSessions: sessionInfoTypeInDB[] | null = await sessionsInfoCollection.find({userId: userId, deviceId: deviceId}, {projection:{_id:0, userId: 0, expireDate: 0}}).toArray()
         return foundUserSessions
     },
+    async findUserSessions(userId: string): Promise<sessionInfoTypeInDB[] | null> {
+        const foundUserSessions: sessionInfoTypeInDB[] | null = await sessionsInfoCollection.find({
+            userId: userId
+        }, {projection: {_id: 0, userId: 0, expireDate: 0}}).toArray()
+        return foundUserSessions
+    },
     async findUserIdByDeviceId(deviceId: string): Promise<string | null> {
         const foundUserSessions: sessionInfoTypeInDB | null = await sessionsInfoCollection.findOne({deviceId: deviceId}, {projection:{_id:0}})
         if(!foundUserSessions) return null
