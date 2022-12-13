@@ -38,7 +38,6 @@ export const ipVerification = async (req: Request, res: Response, next: NextFunc
 
         if(curConnection.connectionCount > 5){
             connectionTable.splice(connectionTable.indexOf(curConnection), 1)
-            console.log(connectionTable.indexOf(curConnection), ' BAN !!!!')
             return res.sendStatus(429)
         }
 
