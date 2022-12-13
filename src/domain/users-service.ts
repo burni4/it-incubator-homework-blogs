@@ -150,7 +150,7 @@ export const usersService = {
             createdAt: user.accountData.createdAt
         }
     },
-    async createUserSession(userId: string, ip: string, title: string): Promise<sessionInfoTypeInDB | null>{
+    async createUserSession(userId: string, ip: string, title: string, deviceId?: string): Promise<sessionInfoTypeInDB | null>{
 
         const issueDate = new Date()
 
@@ -159,7 +159,7 @@ export const usersService = {
             title: title,
             expireDate: add(issueDate, {seconds: 20}),
             lastActiveDate: issueDate,
-            deviceId: uuidv4(),
+            deviceId: deviceId || uuidv4(),
             userId: userId}
         await sessionsInfoRepositoryInDB.createUserSession(newSession)
         return  newSession

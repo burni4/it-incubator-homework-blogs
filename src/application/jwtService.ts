@@ -30,9 +30,9 @@ export const jwtService = {
             return null
         }
     },
-    async generateNewTokens(userId: string, ip: string, title: string): Promise<generatedTokensType | null>{
+    async generateNewTokens(userId: string, ip: string, title: string, deviceId?: string): Promise<generatedTokensType | null>{
 
-        const sessionInfo: sessionInfoTypeInDB | null = await usersService.createUserSession(userId, ip, title)
+        const sessionInfo: sessionInfoTypeInDB | null = await usersService.createUserSession(userId, ip, title, deviceId)
 
         if (!sessionInfo){
             return null
@@ -56,8 +56,9 @@ export const jwtService = {
             return null
         }
 
-        await sessionsInfoRepositoryInDB.deleteSessionByDeviceId(result.userId, result.deviceId)
-        const tokens : generatedTokensType | null = await  this.generateNewTokens(result.userId, ip, title)
+        await sessionsInfoRepositoryInDB.deleteSessionByDeviceId(result.deviceId)
+
+        const tokens : generatedTokensType | null = await  this.generateNewTokens(result.userId, ip, title, result.deviceId)
 
         return tokens
 
