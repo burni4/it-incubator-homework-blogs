@@ -10,7 +10,7 @@ securityRouter.get('/devices',
     refreshTokenVerification,
     inputValidationMiddleware,
     async (req: Request, res: Response) => {
-        const foundDevices = usersService.findUserDevicesByRefreshToken(req.cookies?.refreshToken)
+        const foundDevices = await usersService.findUserDevicesByRefreshToken(req.cookies?.refreshToken)
         res.status(200).send(foundDevices)
 })
 

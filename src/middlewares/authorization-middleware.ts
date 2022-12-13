@@ -50,7 +50,6 @@ export  const authMiddleware = async (req: Request, res: Response, next: NextFun
 }
 
 export const refreshTokenVerification = async (req: Request, res: Response, next: NextFunction) => {
-
     if (!req.cookies?.refreshToken) {
         res.sendStatus(401)
         return
