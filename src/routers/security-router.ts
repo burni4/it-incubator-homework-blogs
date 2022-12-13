@@ -26,6 +26,17 @@ securityRouter.delete('/devices/:deviceId',
     inputValidationMiddleware,
     async (req: Request, res: Response) => {
 
-    res.status(200)
+        const result: boolean = await usersService.checkIsAUserDevice(req.cookies?.refreshToken)
+        if (!result) {
+            return res.status(403)
+        }
+
+        const sessionDeleted = usersService.deleteSession(req.cookies?.refreshToken)
+
+        if (!sessionDeleted) {
+            return res.status(404)
+        }
+
+        res.status(204)
 
 })
