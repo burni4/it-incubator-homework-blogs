@@ -46,7 +46,7 @@ export const jwtService = {
         return tokens
 
     },
-    async updateRefreshToken(ip: string, title: string, refreshToken: string): Promise<generatedTokensType | null>{
+    async updateRefreshToken(refreshToken: string): Promise<generatedTokensType | null>{
 
         let result: any
 
@@ -58,7 +58,10 @@ export const jwtService = {
 
         await sessionsInfoRepositoryInDB.updateSessionInfo(result.deviceId)
 
-        const tokens : generatedTokensType | null = await  this.generateNewTokens(result.userId, ip, title, result.deviceId)
+        const tokens: generatedTokensType = {
+            accessToken: this.createAccessJWT(result.userId),
+            refreshToken: this.createRefreshJWT(result.userId, result.deviceId)
+        }
 
         return tokens
 

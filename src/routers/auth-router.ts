@@ -41,10 +41,7 @@ authRouter.post('/refresh-token',
     inputValidationMiddleware,
     async (req: Request, res: Response) => {
 
-        const ip = req.ip //|| req.headers['x-forwarded-for'] || req.socket.remoteAddress
-        const userAgent = req.headers['user-agent'] || 'unknown device'
-
-        const tokens: generatedTokensType | null = await jwtService.updateRefreshToken(ip, userAgent, req.cookies?.refreshToken)
+        const tokens: generatedTokensType | null = await jwtService.updateRefreshToken(req.cookies.refreshToken)
 
         if (!tokens) return res.sendStatus(401)
 
