@@ -13,14 +13,14 @@ export const securityRouter = Router({})
 securityRouter.get('/devices',
     refreshTokenVerification,
     async (req: Request, res: Response) => {
-        const foundDevices = await usersService.findUserDevicesByRefreshToken(req.cookies?.refreshToken)
+        const foundDevices = await usersService.findUserDevicesByRefreshToken(req.cookies.refreshToken)
         res.status(200).send(foundDevices)
 })
 
 securityRouter.delete('/devices',
     refreshTokenVerification,
     async (req: Request, res: Response) => {
-        await  usersService.deleteAllSessionsExceptOne(req.cookies?.refreshToken)
+        await  usersService.deleteAllSessionsExceptOne(req.cookies.refreshToken)
         res.sendStatus(204)
 })
 

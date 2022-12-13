@@ -34,8 +34,6 @@ export const ipVerification = async (req: Request, res: Response, next: NextFunc
 
     curConnection.connectionCount++
 
-    console.log(curConnection.connectionCount)
-
     if (curConnection.expireDate > new Date()) {
 
         if(curConnection.connectionCount > 4){

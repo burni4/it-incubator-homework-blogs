@@ -1,5 +1,5 @@
-import {postsCollection, sessionsInfoCollection} from "./db";
-import {sessionInfoTypeInDB} from "../projectTypes";
+import {blogsCollection, postsCollection, sessionsInfoCollection} from "./db";
+import {blogType, sessionInfoTypeInDB} from "../projectTypes";
 
 
 export const sessionsInfoRepositoryInDB = {
@@ -40,6 +40,11 @@ export const sessionsInfoRepositoryInDB = {
         const foundUserSessions: sessionInfoTypeInDB | null = await sessionsInfoCollection.findOne({deviceId: deviceId}, {projection:{_id:0}})
         if(!foundUserSessions) return null
         return foundUserSessions.userId
-    }
+    },
+    async updateSessionInfo(deviceId: string): Promise<boolean>{
+        const result = await sessionsInfoCollection.updateOne({deviceId: deviceId}, {$set: {
+                lastActiveDate: new Date()}})
+        return result.matchedCount === 1
+    },
 
 }

@@ -56,7 +56,7 @@ export const jwtService = {
             return null
         }
 
-        await sessionsInfoRepositoryInDB.deleteSessionByDeviceId(result.deviceId)
+        await sessionsInfoRepositoryInDB.updateSessionInfo(result.deviceId)
 
         const tokens : generatedTokensType | null = await  this.generateNewTokens(result.userId, ip, title, result.deviceId)
 
