@@ -4,7 +4,7 @@ import add from "date-fns/add";
 type connectionType = {
     endpoint: string
     ip: string
-    firstConnectionTime: Date
+    expireDate: Date
     connectionCount: number
 }
 
@@ -25,20 +25,27 @@ export const ipVerification = async (req: Request, res: Response, next: NextFunc
         const newConnection: connectionType = {
             endpoint: currentUrl,
             ip: currentIp,
-            firstConnectionTime: new Date(),
+            expireDate: add(new Date, {seconds: 10}),
             connectionCount: 1
         }
         connectionTable.push(newConnection)
         return next()
     }
 
-    if (curConnection.connectionCount >= 5 &&
-        add(curConnection.firstConnectionTime, {seconds: 10}) > new Date()) {
+    curConnection.connectionCount++
+
+    if (curConnection.expireDate > new Date()) {
+
+        if(curConnection.connectionCount > 5){
+            connectionTable.splice(connectionTable.indexOf(curConnection), 1)
+            console.log(connectionTable.indexOf(curConnection), ' BAN !!!!')
+            return res.sendStatus(429)
+        }
+
+    }else{
         connectionTable.splice(connectionTable.indexOf(curConnection), 1)
-        return res.status(429)
     }
 
-    curConnection.connectionCount++
     next()
 }
 

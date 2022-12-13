@@ -11,14 +11,14 @@ export const deviceSessionExist = async (req: Request, res: Response, next: Next
 
     if (session) return next()
 
-    res.sendStatus(404)
-    return
+    return res.sendStatus(404)
+
 
     const result: boolean = await usersService.checkIsAUserDevice(req.cookies?.refreshToken, req.params.deviceId)
     if (result) return next()
 
-    res.sendStatus(403)
-    return
+    return res.sendStatus(403)
+
 }
 
 
