@@ -29,8 +29,8 @@ securityRouter.delete('/devices',
 securityRouter.delete('/devices/:deviceId',
     deviceParamsValidation,
     deviceSessionExist,
-    checkIsAUserDevice,
     refreshTokenVerification,
+    checkIsAUserDevice,
     inputValidationMiddleware,
     async (req: Request, res: Response) => {
 
