@@ -70,7 +70,7 @@ export type sessionInfoTypeInDB = {
     ip: string
     title: string
     expireDate: Date
-    issueDate: Date
+    lastActiveDate: Date
     deviceId: string
     userId: string
 }

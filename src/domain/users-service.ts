@@ -158,7 +158,7 @@ export const usersService = {
             ip: ip,
             title: title,
             expireDate: add(issueDate, {seconds: 20}),
-            issueDate: issueDate,
+            lastActiveDate: issueDate,
             deviceId: uuidv4(),
             userId: userId}
         await sessionsInfoRepositoryInDB.createUserSession(newSession)
@@ -176,19 +176,12 @@ export const usersService = {
     async generateSalt() {
         return await bcrypt.genSalt(10)
     },
-    async findUserDevicesByRefreshToken(refreshToken: string): Promise<devicesOutputType[]> {
+    async findUserDevicesByRefreshToken(refreshToken: string): Promise<sessionInfoTypeInDB[]> {
         const result = jwtService.getRefreshTokenPayload(refreshToken)
         if(!result) return []
         const foundSessions: sessionInfoTypeInDB[] | null = await sessionsInfoRepositoryInDB.findUserSession(result.userId, result.deviceId)
         if (!foundSessions) return []
-        return foundSessions.map((session) => {
-            return {
-                ip: session.ip,
-                title: session.title,
-                lastActiveDate: session.issueDate.toISOString(),
-                deviceId: session.deviceId
-            }
-        })
+        return foundSessions
     },
     async deleteAllSessionsExceptOne(refreshToken: string): Promise<boolean>{
         const result = jwtService.getRefreshTokenPayload(refreshToken)
