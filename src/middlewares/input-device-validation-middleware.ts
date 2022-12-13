@@ -7,20 +7,27 @@ export const deviceParamsValidation = [
 
 export const deviceSessionExist = async (req: Request, res: Response, next: NextFunction) => {
 
-    const session = await usersService.findSessionByDeviceID(req.cookies?.refreshToken)
+    const result = await usersService.findSessionByDeviceID(req.cookies?.refreshToken)
 
-    if (session) return next()
+    if (!result) {
+        res.sendStatus(403)
+        return
+    }
 
-    return res.sendStatus(404)
+    next()
+}
+
+export const checkIsAUserDevice = async (req: Request, res: Response, next: NextFunction) => {
 
 
     const result: boolean = await usersService.checkIsAUserDevice(req.cookies?.refreshToken, req.params.deviceId)
-    if (result) return next()
+    if (!result) {
+        res.sendStatus(403)
+        return
+    }
 
-    return res.sendStatus(403)
-
+    next()
 }
-
 
 
 
