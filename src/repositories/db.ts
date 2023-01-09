@@ -1,15 +1,19 @@
 import * as dotenv from 'dotenv'
 import {MongoClient} from "mongodb";
+import mongoose from "mongoose";
 import {blogType, commentDBType, postType, sessionInfoTypeInDB, userDBType} from "../projectTypes";
 
 dotenv.config()
+mongoose.set('strictQuery', true)
 
 const mongoURILocalhost: string = "mongodb://0.0.0.0:27017"
+
+const dbName: string = "it-incubator-homework-blogs"
 
 const mongoUri = process.env.mongoURIAtlas || mongoURILocalhost;
 export const client = new MongoClient(mongoUri)
 
-export const db = client.db("it-incubator-homework-blogs")
+export const db = client.db(dbName)
 export const blogsCollection = db.collection<blogType>("blogs")
 export const postsCollection = db.collection<postType>("posts")
 export const usersCollection = db.collection<userDBType>("users")
@@ -21,8 +25,11 @@ export async function runDb(){
         await client.connect()
         await client.db("it-incubator-homework-blogs").command({ping: 1})
         console.log("Connected successfully to mongo server")
+        await mongoose.connect(mongoUri+`/`+dbName);
+        console.log("Connected to mongo server with mongoose successful")
     }catch {
         console.log("Can't connect to mongo server!!!")
         await client.close()
+        await mongoose.disconnect();
     }
 }
