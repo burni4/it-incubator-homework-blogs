@@ -109,6 +109,19 @@ authRouter.post('/registration',
             res.sendStatus(400)
         }
     })
+
+authRouter.post('/password-recovery',
+    ipVerification,
+    inputValidationMiddleware,
+    async (req: Request<{}, {}, {}>, res: Response) => {
+
+    })
+authRouter.post('/new-password',
+    ipVerification,
+    inputValidationMiddleware,
+    async (req: Request<{}, {}, {}>, res: Response) => {
+
+    })
 authRouter.get('/me',
     authMiddleware,
     inputValidationMiddleware,
