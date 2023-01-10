@@ -152,7 +152,7 @@ export const usersRepositoryInDB = {
     },
     async deleteAllUsers(): Promise<boolean>{
         const result = await usersCollection.deleteMany({})
-        UserPasswordRecoveryCodesModelClass.deleteMany({})
+        await UserPasswordRecoveryCodesModelClass.deleteMany({})
         return !!result.deletedCount
     },
     async addRecoveryPasswordCode(userPasswordRecoveryCode: UserPasswordRecoveryCodeTypeInDB): Promise<boolean> {
