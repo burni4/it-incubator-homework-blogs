@@ -1,9 +1,9 @@
-import {usersCollection} from "./db";
+import {UserPasswordRecoveryCodesModelClass, usersCollection} from "./db";
 import {
     outputUsersWithPaginatorType,
     queryUserParams,
     userOutputType,
-    userDBType
+    userDBType, UserPasswordRecoveryCodeTypeInDB
 } from "../projectTypes";
 
 export const usersRepositoryInDB = {
@@ -151,6 +151,19 @@ export const usersRepositoryInDB = {
     },
     async deleteAllUsers(): Promise<boolean>{
         const result = await usersCollection.deleteMany({})
+        await UserPasswordRecoveryCodesModelClass.deleteMany()
         return !!result.deletedCount
+    },
+    async addRecoveryPasswordCode(userPasswordRecoveryCode: UserPasswordRecoveryCodeTypeInDB): Promise<boolean> {
+
+        const recoveryPasswordCodeInstance = new UserPasswordRecoveryCodesModelClass()
+
+        recoveryPasswordCodeInstance.userId = userPasswordRecoveryCode.userId
+        recoveryPasswordCodeInstance.recoveryCode = userPasswordRecoveryCode.recoveryCode
+        recoveryPasswordCodeInstance.expirationDate = userPasswordRecoveryCode.expirationDate
+
+        await recoveryPasswordCodeInstance.save()
+
+        return true
     }
 }

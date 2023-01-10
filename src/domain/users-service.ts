@@ -6,13 +6,12 @@ import {
     outputUsersWithPaginatorType,
     queryUserParams,
     userOutputType,
-    userDBType, emailConfirmationType, sessionInfoTypeInDB, devicesOutputType
+    userDBType, emailConfirmationType, sessionInfoTypeInDB, devicesOutputType, UserPasswordRecoveryCodeTypeInDB
 } from "../projectTypes";
 import add from "date-fns/add";
 import {emailManager} from "../managers/email-manager";
 import {sessionsInfoRepositoryInDB} from "../repositories/sessionsInfo-repository";
 import {jwtService} from "../application/jwtService";
-import {sessionsInfoCollection} from "../repositories/db";
 
 export const usersService = {
     async findUsers(params: queryUserParams): Promise<outputUsersWithPaginatorType>{
@@ -137,21 +136,25 @@ export const usersService = {
 
         if(!user) return true
 
-        const newEmailConfirmation: emailConfirmationType = {
-            confirmationCode: uuidv4(),
-            expirationDate: add(new Date(), {hours: 1, minutes: 0}),
-            isConfirmed: false
+        const newPasswordRecoveryCodeObj: UserPasswordRecoveryCodeTypeInDB = {
+            userId: user.id,
+            recoveryCode: uuidv4(),
+            expirationDate: add(new Date(), {hours: 1, minutes: 0})
         }
 
-        const resUpdate: boolean = await usersRepositoryInDB.updateEmailConfirmationCode(user.id, newEmailConfirmation.confirmationCode)
+        const resUpdate: boolean = await usersRepositoryInDB.addRecoveryPasswordCode(newPasswordRecoveryCodeObj)
 
         if (!resUpdate) return false
 
         try {
-            await emailManager.sendEmailRecoveryPasswordMessage(newEmailConfirmation.confirmationCode, email)
+            await emailManager.sendEmailRecoveryPasswordMessage(newPasswordRecoveryCodeObj.recoveryCode, email)
         } catch {
             return false
         }
+        return true
+    },
+    async updatePasswordByRecoveryCode(newPassword: string,recoveryCode: string): Promise<boolean>{
+
         return true
     },
     async deleteUserByID(id: string): Promise<boolean>{

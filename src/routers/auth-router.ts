@@ -129,8 +129,15 @@ authRouter.post('/new-password',
     ipVerification,
     newPasswordTypeValidation,
     inputValidationMiddleware,
-    async (req: Request<{}, {}, {}>, res: Response) => {
+    async (req: Request<{}, {}, {newPassword: string, recoveryCode: string}>, res: Response) => {
 
+        const passwordUpdated: boolean = await usersService.updatePasswordByRecoveryCode(req.body.newPassword, req.body.recoveryCode)
+
+        if (passwordUpdated) {
+            res.sendStatus(204)
+        } else {
+            res.sendStatus(400)
+        }
     })
 authRouter.get('/me',
     authMiddleware,
