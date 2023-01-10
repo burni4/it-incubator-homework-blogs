@@ -1,10 +1,11 @@
-import {UserPasswordRecoveryCodesModelClass, usersCollection} from "./db";
+import {UserPasswordRecoveryCodesModelClass, usersCollection, UsersModelClass} from "./db";
 import {
     outputUsersWithPaginatorType,
     queryUserParams,
     userOutputType,
     userDBType, UserPasswordRecoveryCodeTypeInDB
 } from "../projectTypes";
+import {UserSchema} from "./mongoose-schemas";
 
 export const usersRepositoryInDB = {
     async findUserByID(idFromDB: string): Promise<userOutputType | null>{
@@ -175,7 +176,17 @@ export const usersRepositoryInDB = {
     async findByRecoveryCode(recoveryCode: string): Promise<UserPasswordRecoveryCodeTypeInDB | null> {
         return UserPasswordRecoveryCodesModelClass.findOne({recoveryCode: recoveryCode}).lean()
     },
-    async updateUserPassword(userId: string, newPassword: string): Promise<boolean> {
+    async updateUserPassword(userId: string, passwordHash: string, passwordSalt: string): Promise<boolean> {
+
+        const userInstance = await UsersModelClass.findOne({id: userId})
+
+        if(!userInstance) return false
+
+        userInstance.accountData.passwordHash = passwordHash
+        userInstance.accountData.passwordSalt = passwordSalt
+
+        await userInstance.save()
+
         return false
     },
     async findUserIdByRecoveryCode(recoveryCode: string): Promise<string | null> {
@@ -185,5 +196,11 @@ export const usersRepositoryInDB = {
         if (!result) return null
 
         return result.userId
+    },
+    async deleteAllSentUserRecoveryCodes(userId: string): Promise<boolean> {
+
+        const result = await UserPasswordRecoveryCodesModelClass.deleteMany({userId: userId})
+
+        return true
     }
 }

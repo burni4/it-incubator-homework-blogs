@@ -12,7 +12,6 @@ import add from "date-fns/add";
 import {emailManager} from "../managers/email-manager";
 import {sessionsInfoRepositoryInDB} from "../repositories/sessionsInfo-repository";
 import {jwtService} from "../application/jwtService";
-import {usersCollection} from "../repositories/db";
 
 export const usersService = {
     async findUsers(params: queryUserParams): Promise<outputUsersWithPaginatorType>{
@@ -164,7 +163,12 @@ export const usersService = {
 
         if (!userId) return false
 
-        const result = await usersRepositoryInDB.updateUserPassword(userId, newPassword)
+        const passwordSalt = await this.generateSalt()
+        const passwordHash = await this.generateHash(newPassword, passwordSalt)
+
+        const result = await usersRepositoryInDB.updateUserPassword(userId, passwordHash,passwordSalt)
+
+        const delResult = await usersRepositoryInDB.deleteAllSentUserRecoveryCodes(userId)
 
         return true
     },
@@ -238,6 +242,10 @@ export const usersService = {
         const result = jwtService.getRefreshTokenPayload(refreshToken)
         if(!result) return false
         return result.userId === await sessionsInfoRepositoryInDB.findUserIdByDeviceId(deviceId)
+    },
+    async deleteAllSentUserRecoveryCodes(userId: string): Promise<boolean> {
+        const result = usersRepositoryInDB.deleteAllSentUserRecoveryCodes(userId)
+        return !!result
     }
 }
 
