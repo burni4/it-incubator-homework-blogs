@@ -12,6 +12,7 @@ import add from "date-fns/add";
 import {emailManager} from "../managers/email-manager";
 import {sessionsInfoRepositoryInDB} from "../repositories/sessionsInfo-repository";
 import {jwtService} from "../application/jwtService";
+import {usersCollection} from "../repositories/db";
 
 export const usersService = {
     async findUsers(params: queryUserParams): Promise<outputUsersWithPaginatorType>{
@@ -154,6 +155,16 @@ export const usersService = {
         return true
     },
     async updatePasswordByRecoveryCode(newPassword: string,recoveryCode: string): Promise<boolean>{
+
+        const codeIsValid: boolean = await usersRepositoryInDB.recoveryCodeIsValid(recoveryCode)
+
+        if (!codeIsValid) return false
+
+        const userId = await usersRepositoryInDB.findUserIdByRecoveryCode(recoveryCode)
+
+        if (!userId) return false
+
+        const result = await usersRepositoryInDB.updateUserPassword(userId, newPassword)
 
         return true
     },

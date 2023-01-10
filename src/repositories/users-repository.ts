@@ -165,5 +165,25 @@ export const usersRepositoryInDB = {
         await recoveryPasswordCodeInstance.save()
 
         return true
+    },
+    async recoveryCodeIsValid(recoveryCode: string): Promise<boolean> {
+
+        const recoveryCodeObj = await this.findByRecoveryCode(recoveryCode)
+
+        return true
+    },
+    async findByRecoveryCode(recoveryCode: string): Promise<UserPasswordRecoveryCodeTypeInDB | null> {
+        return UserPasswordRecoveryCodesModelClass.findOne({recoveryCode: recoveryCode}).lean()
+    },
+    async updateUserPassword(userId: string, newPassword: string): Promise<boolean> {
+        return false
+    },
+    async findUserIdByRecoveryCode(recoveryCode: string): Promise<string | null> {
+
+        const result = await this.findByRecoveryCode(recoveryCode)
+
+        if (!result) return null
+
+        return result.userId
     }
 }
