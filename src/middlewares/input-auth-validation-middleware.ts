@@ -15,6 +15,17 @@ export const registrationResendingConfirmationTypeValidation = [
         .bail().matches('^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$').withMessage('Email not valid')
 ]
 
+export const passwordRecoveryTypeValidation = [
+    body('email').trim().exists({checkFalsy: true}).withMessage('The field [Email] must exist')
+        .bail().matches('^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$').withMessage('Email not valid')
+]
+
+export const newPasswordTypeValidation = [
+    body('newPassword').exists({checkFalsy: true}).withMessage('The field [newPassword] must exist')
+        .bail().isLength({min: 6, max: 20}).withMessage('New password length should be min 6 and max 20 symbols'),
+    body('recoveryCode').exists({checkFalsy: true}).withMessage('The field [recoveryCode] must exist')
+]
+
 export const validationOfExistingUsersByCode = async (req: Request, res: Response, next: NextFunction) => {
 
     const errors = []

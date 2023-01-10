@@ -47,6 +47,12 @@ export type emailConfirmationType = {
     isConfirmed: boolean
 
 }
+export type UserPasswordRecoveryCodeTypeInDB = {
+    userId: string
+    recoveryCode: string
+    expirationDate: Date
+
+}
 export type generatedTokensType = {
     accessToken: string
     refreshToken: string

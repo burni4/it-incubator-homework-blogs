@@ -1,7 +1,14 @@
 import * as dotenv from 'dotenv'
 import {MongoClient} from "mongodb";
 import mongoose from "mongoose";
-import {blogType, commentDBType, postType, sessionInfoTypeInDB, userDBType} from "../projectTypes";
+import {
+    blogType,
+    commentDBType,
+    postType,
+    sessionInfoTypeInDB,
+    userDBType
+} from "../projectTypes";
+import {UserPasswordRecovery} from "./mongoose-schemas";
 
 dotenv.config()
 mongoose.set('strictQuery', true)
@@ -19,6 +26,7 @@ export const postsCollection = db.collection<postType>("posts")
 export const usersCollection = db.collection<userDBType>("users")
 export const commentsCollection = db.collection<commentDBType>("comments")
 export const sessionsInfoCollection = db.collection<sessionInfoTypeInDB>("sessionsInfo")
+export const UserPasswordRecoveryCodesModelClass = mongoose.model('UserPasswordRecoveryCodes', UserPasswordRecovery);
 export async function runDb(){
 
     try {

@@ -1,7 +1,7 @@
 import {Request, Response, Router} from "express";
 import {inputValidationMiddleware} from "../middlewares/input-validation-middleware"
 import {
-    authTypeValidation,
+    authTypeValidation, newPasswordTypeValidation, passwordRecoveryTypeValidation,
     registrationConfirmationTypeValidation,
     registrationResendingConfirmationTypeValidation, validationOfConfirmedUserByEmail, validationOfExistingUsersByCode
 } from "../middlewares/input-auth-validation-middleware";
@@ -112,12 +112,22 @@ authRouter.post('/registration',
 
 authRouter.post('/password-recovery',
     ipVerification,
+    passwordRecoveryTypeValidation,
     inputValidationMiddleware,
-    async (req: Request<{}, {}, {}>, res: Response) => {
+    async (req: Request<{}, {}, {email: string}>, res: Response) => {
+
+        const mailSend: boolean = await usersService.sendPasswordRecoveryCodeOnEmail(req.body.email)
+
+        if (mailSend) {
+            res.sendStatus(204)
+        } else {
+            res.sendStatus(400)
+        }
 
     })
 authRouter.post('/new-password',
     ipVerification,
+    newPasswordTypeValidation,
     inputValidationMiddleware,
     async (req: Request<{}, {}, {}>, res: Response) => {
 

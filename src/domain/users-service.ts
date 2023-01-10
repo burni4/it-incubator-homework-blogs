@@ -131,6 +131,29 @@ export const usersService = {
         }
         return true
     },
+    async sendPasswordRecoveryCodeOnEmail(email: string): Promise<boolean>{
+
+        const user: userDBType | null = await this.findByLoginOrEmail(email)
+
+        if(!user) return true
+
+        const newEmailConfirmation: emailConfirmationType = {
+            confirmationCode: uuidv4(),
+            expirationDate: add(new Date(), {hours: 1, minutes: 0}),
+            isConfirmed: false
+        }
+
+        const resUpdate: boolean = await usersRepositoryInDB.updateEmailConfirmationCode(user.id, newEmailConfirmation.confirmationCode)
+
+        if (!resUpdate) return false
+
+        try {
+            await emailManager.sendEmailRecoveryPasswordMessage(newEmailConfirmation.confirmationCode, email)
+        } catch {
+            return false
+        }
+        return true
+    },
     async deleteUserByID(id: string): Promise<boolean>{
         return await usersRepositoryInDB.deleteUserByID(id)
     },
