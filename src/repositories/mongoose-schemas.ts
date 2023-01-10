@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import {userDBType, UserPasswordRecoveryCodeTypeInDB} from "../projectTypes";
 
-export const UserPasswordRecovery = new mongoose.Schema<UserPasswordRecoveryCodeTypeInDB>({
+export const UserPasswordRecoverySchema = new mongoose.Schema<UserPasswordRecoveryCodeTypeInDB>({
     userId: {type: String, required: true},
     recoveryCode: {type: String, required: true},
     expirationDate: {type: Date, required: true}

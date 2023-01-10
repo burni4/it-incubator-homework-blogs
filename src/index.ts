@@ -1,5 +1,5 @@
 import express, { Request, Response } from "express"
-import {runDb, sessionsInfoCollection} from "./repositories/db";
+import {runDb} from "./repositories/db";
 import bodyParser from 'body-parser'
 import cookieParser from 'cookie-parser'
 import {postsRouter} from "./routers/posts-router";

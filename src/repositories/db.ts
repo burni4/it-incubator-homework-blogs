@@ -8,10 +8,10 @@ import {
     sessionInfoTypeInDB,
     userDBType
 } from "../projectTypes";
-import {UserPasswordRecovery, UserSchema} from "./mongoose-schemas";
+import {UserPasswordRecoverySchema, UserSchema} from "./mongoose-schemas";
 
 dotenv.config()
-mongoose.set('strictQuery', true)
+mongoose.set('strictQuery', false)
 
 const mongoURILocalhost: string = "mongodb://0.0.0.0:27017"
 
@@ -26,7 +26,7 @@ export const postsCollection = db.collection<postType>("posts")
 export const usersCollection = db.collection<userDBType>("users")
 export const commentsCollection = db.collection<commentDBType>("comments")
 export const sessionsInfoCollection = db.collection<sessionInfoTypeInDB>("sessionsInfo")
-export const UserPasswordRecoveryCodesModelClass = mongoose.model('UserPasswordRecoveryCodes', UserPasswordRecovery);
+export const UserPasswordRecoveryCodesModelClass = mongoose.model('userPasswordRecoveryCodes', UserPasswordRecoverySchema);
 export const UsersModelClass = mongoose.model('users', UserSchema);
 export async function runDb(){
 
@@ -34,8 +34,9 @@ export async function runDb(){
         await client.connect()
         await client.db("it-incubator-homework-blogs").command({ping: 1})
         console.log("Connected successfully to mongo server")
-        await mongoose.connect(mongoUri+`/`+dbName);
+        await mongoose.connect(mongoUri+dbName);
         console.log("Connected to mongo server with mongoose successful")
+
     }catch {
         console.log("Can't connect to mongo server!!!")
         await client.close()
