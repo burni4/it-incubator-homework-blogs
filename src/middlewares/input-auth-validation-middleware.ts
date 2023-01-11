@@ -2,6 +2,7 @@ import {body} from "express-validator";
 import {NextFunction, Request, Response} from "express";
 import {usersService} from "../domain/users-service";
 import {userDBType} from "../projectTypes";
+import {usersRepositoryInDB} from "../repositories/users-repository";
 
 export const authTypeValidation = [
     body('loginOrEmail').exists({checkFalsy: true}).withMessage('The field [Login] must exist'),
@@ -25,6 +26,16 @@ export const newPasswordTypeValidation = [
         .bail().isLength({min: 6, max: 20}).withMessage('New password length should be min 6 and max 20 symbols'),
     body('recoveryCode').exists({checkFalsy: true}).withMessage('The field [recoveryCode] must exist')
 ]
+
+export const validationRecoveryCode = async (req: Request, res: Response, next: NextFunction) => {
+
+    const errors: any = []
+    const codeIsValid: boolean = await usersRepositoryInDB.recoveryCodeIsValid(req.body.recoveryCode)
+    if (!errors) errors.push({message: 'recovery code not valid', field: "recoveryCode"})
+    if (errors.length < 1) return next()
+    res.status(400).send({"errorsMessages": errors})
+
+}
 
 export const validationOfExistingUsersByCode = async (req: Request, res: Response, next: NextFunction) => {
 

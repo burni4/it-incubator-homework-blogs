@@ -1,9 +1,14 @@
 import {Request, Response, Router} from "express";
 import {inputValidationMiddleware} from "../middlewares/input-validation-middleware"
 import {
-    authTypeValidation, newPasswordTypeValidation, passwordRecoveryTypeValidation,
+    authTypeValidation,
+    newPasswordTypeValidation,
+    passwordRecoveryTypeValidation,
     registrationConfirmationTypeValidation,
-    registrationResendingConfirmationTypeValidation, validationOfConfirmedUserByEmail, validationOfExistingUsersByCode
+    registrationResendingConfirmationTypeValidation,
+    validationOfConfirmedUserByEmail,
+    validationOfExistingUsersByCode,
+    validationRecoveryCode
 } from "../middlewares/input-auth-validation-middleware";
 import {usersService} from "../domain/users-service";
 import {generatedTokensType, userOutputType} from "../projectTypes";
@@ -128,6 +133,7 @@ authRouter.post('/password-recovery',
 authRouter.post('/new-password',
     ipVerification,
     newPasswordTypeValidation,
+    validationRecoveryCode,
     inputValidationMiddleware,
     async (req: Request<{}, {}, {newPassword: string, recoveryCode: string}>, res: Response) => {
 

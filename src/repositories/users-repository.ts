@@ -169,8 +169,9 @@ export const usersRepositoryInDB = {
     },
     async recoveryCodeIsValid(recoveryCode: string): Promise<boolean> {
 
-        const recoveryCodeObj = await this.findByRecoveryCode(recoveryCode)
-
+        const recoveryCodeObj: UserPasswordRecoveryCodeTypeInDB | null = await this.findByRecoveryCode(recoveryCode)
+        if(!recoveryCodeObj) return false
+        if(recoveryCodeObj.expirationDate < new Date()) return false
         return true
     },
     async findByRecoveryCode(recoveryCode: string): Promise<UserPasswordRecoveryCodeTypeInDB | null> {
