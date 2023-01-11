@@ -1,4 +1,4 @@
-import {commentsCollection} from "./db";
+import {CommentsModelClass} from "./db";
 import {
     commentDBType,
     commentInputType,
@@ -9,7 +9,7 @@ import {
 
 export const commentsRepositoryInDB = {
     async findCommentByID(idFromDB: string): Promise<commentOutputType | null>{
-        const foundCommentInDB: commentDBType | null = await commentsCollection.findOne({ id : idFromDB }, {projection:{_id:0}})
+        const foundCommentInDB: commentDBType | null = await CommentsModelClass.findOne({ id : idFromDB }, {projection:{_id:0}})
         if(!foundCommentInDB){
             return null
         }
@@ -23,20 +23,20 @@ export const commentsRepositoryInDB = {
     },
     async createComment(newComment: commentDBType): Promise<commentDBType | null> {
         const newObjectComment: commentDBType = Object.assign({}, newComment);
-        await commentsCollection.insertOne(newComment)
+        await CommentsModelClass.create(newComment)
 
         return newObjectComment
     },
     async updateCommentByID(id: string, comment: commentInputType): Promise<boolean> {
-        const result = await commentsCollection.updateOne({id: id}, {$set: {content: comment.content}})
+        const result = await CommentsModelClass.updateOne({id: id}, {$set: {content: comment.content}})
         return result.matchedCount === 1
     },
     async deleteCommentByID(id: string): Promise<boolean> {
-        const result = await commentsCollection.deleteOne({id: id})
+        const result = await CommentsModelClass.deleteOne({id: id})
         return result.deletedCount === 1
     },
     async deleteAllComments(): Promise<boolean> {
-        const result = await commentsCollection.deleteMany({})
+        const result = await CommentsModelClass.deleteMany({})
         return !!result.deletedCount
     },
     async findAllCommentsByPostID(paginator: queryCommentParams, postId: string): Promise<outputCommentsWithPaginatorType> {
@@ -45,14 +45,14 @@ export const commentsRepositoryInDB = {
 
         const skipCount: number = (paginator.pageNumber - 1) * paginator.pageSize
 
-        const foundCommentsInDB = await commentsCollection.find(filter, {projection:{_id:0}})
+        const foundCommentsInDB = await CommentsModelClass.find(filter, {projection:{_id:0}}).lean()
             .sort({[paginator.sortBy]: paginator.sortDirection === 'asc' ?  1 : -1})
             .skip(skipCount)
             .limit(paginator.pageSize);
 
-        const totalCount = await commentsCollection.count(filter)
+        const totalCount = await CommentsModelClass.count(filter)
         const pageCount: number = Math.ceil(totalCount / paginator.pageSize)
-        const commentsArray = await foundCommentsInDB.toArray()
+        const commentsArray = foundCommentsInDB
 
         const outputComments: outputCommentsWithPaginatorType = {
             pagesCount: pageCount,

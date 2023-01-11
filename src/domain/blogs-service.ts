@@ -1,5 +1,5 @@
 import {blogsRepositoryInDB} from "../repositories/blogs-repository";
-import {blogType, outputBlogsWithPaginatorType, outputPostsWithPaginatorType, postType, queryBlogParams, queryPostParams} from "../projectTypes";
+import {blogDBType, outputBlogsWithPaginatorType, outputPostsWithPaginatorType, postDBType, queryBlogParams, queryPostParams} from "../projectTypes";
 import {postsService, queryPostParamsPaginator} from "./posts-service";
 
 export const blogsService = {
@@ -16,24 +16,24 @@ export const blogsService = {
 
         return postsService.findAllPosts(queryPostParamsPaginator(queryParams), id);
     },
-    async findBlogByID(id: string): Promise<blogType | null>{
+    async findBlogByID(id: string): Promise<blogDBType | null>{
         return await blogsRepositoryInDB.findBlogByID(id)
     },
     async deleteBlogByID(id: string): Promise<boolean>{
         return await blogsRepositoryInDB.deleteBlogByID(id)
     },
-    async createBlog(data: blogType): Promise<blogType>{
-        const newBlog: blogType = {
+    async createBlog(data: blogDBType): Promise<blogDBType>{
+        const newBlog: blogDBType = {
             id: String(+new Date()),
             name: data.name,
             description: data.description,
             websiteUrl: data.websiteUrl,
             createdAt: new Date().toISOString()
         }
-        const createdBlog: blogType = await blogsRepositoryInDB.createBlog(newBlog)
+        const createdBlog: blogDBType = await blogsRepositoryInDB.createBlog(newBlog)
         return createdBlog
     },
-    async createPostByBlogID(id: string, data: postType): Promise<postType | null>{
+    async createPostByBlogID(id: string, data: postDBType): Promise<postDBType | null>{
 
         const foundBlog = await blogsRepositoryInDB.findBlogByID(id)
 
@@ -44,7 +44,7 @@ export const blogsService = {
 
         return await postsService.createPost(data)
     },
-    async updateBlogByID(id: string, body: blogType): Promise<boolean>{
+    async updateBlogByID(id: string, body: blogDBType): Promise<boolean>{
         return blogsRepositoryInDB.updateBlogByID(id, body)
     },
     async deleteAllBlogs(): Promise<boolean>{

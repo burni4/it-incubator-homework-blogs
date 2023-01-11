@@ -1,6 +1,6 @@
 import add from "date-fns/add";
 
-export type postType = {
+export type postDBType = {
     id: string
     title: string
     shortDescription: string
@@ -10,7 +10,7 @@ export type postType = {
     createdAt: string
 }
 
-export type blogType = {
+export type blogDBType = {
     id: string
     name : string
     description : string
@@ -171,11 +171,11 @@ export type outputUsersWithPaginatorType = paginatorType & {
 }
 
 export type outputBlogsWithPaginatorType = paginatorType & {
-    items: blogType[]
+    items: blogDBType[]
 }
 
 export type outputPostsWithPaginatorType = paginatorType & {
-    items: postType[]
+    items: postDBType[]
 }
 
 export type outputCommentsWithPaginatorType = paginatorType & {

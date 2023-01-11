@@ -1,5 +1,5 @@
-import {postsCollection} from "./db";
-import {outputPostsWithPaginatorType, postType, queryPostParams} from "../projectTypes";
+import {PostsModelClass} from "./db";
+import {outputPostsWithPaginatorType, postDBType, queryPostParams} from "../projectTypes";
 
 export const postsRepositoryInDB = {
     async findAllPosts(paginator: queryPostParams, blogID?: string): Promise<outputPostsWithPaginatorType>{
@@ -12,14 +12,15 @@ export const postsRepositoryInDB = {
 
         const skipCount: number = (paginator.pageNumber - 1) * paginator.pageSize
 
-        const foundPostsInDB = await postsCollection.find(filter, {projection:{_id:0}})
+        const foundPostsInDB = await PostsModelClass.find(filter, {projection:{_id:0}})
             .sort({[paginator.sortBy]: paginator.sortDirection === 'asc' ?  1 : -1})
             .skip(skipCount)
-            .limit(paginator.pageSize);
+            .limit(paginator.pageSize)
+            .lean();
 
-        const totalCount = await postsCollection.count(filter)
+        const totalCount = await PostsModelClass.count(filter)
         const pageCount: number = Math.ceil(totalCount / paginator.pageSize)
-        const postsArray = await foundPostsInDB.toArray()
+        const postsArray = foundPostsInDB
 
         const outputPosts: outputPostsWithPaginatorType = {
             pagesCount: pageCount,
@@ -40,8 +41,8 @@ export const postsRepositoryInDB = {
         }
         return outputPosts
     },
-    async findPostByID(id: string): Promise<postType | null> {
-        const post = await postsCollection.findOne({id: id})
+    async findPostByID(id: string): Promise<postDBType | null> {
+        const post = await PostsModelClass.findOne({id: id})
         if (post) {
             return {
                 id: post.id,
@@ -56,18 +57,18 @@ export const postsRepositoryInDB = {
         return null
     },
     async deletePostByID(id: string): Promise<boolean>{
-            const result = await postsCollection.deleteOne({id: id})
+            const result = await PostsModelClass.deleteOne({id: id})
             return result.deletedCount === 1
     },
-    async createPost(newPost: postType): Promise<postType>{
+    async createPost(newPost: postDBType): Promise<postDBType>{
 
-        const newObjectPost: postType = Object.assign({}, newPost);
-        await postsCollection.insertOne(newPost)
+        const newObjectPost: postDBType = Object.assign({}, newPost);
+        await PostsModelClass.create(newPost)
 
         return newObjectPost
     },
-    async updatePostByID(id: string, body: postType): Promise<boolean>{
-        const result = await postsCollection.updateOne({id: id}, {$set: {
+    async updatePostByID(id: string, body: postDBType): Promise<boolean>{
+        const result = await PostsModelClass.updateOne({id: id}, {$set: {
             title: body.title,
             shortDescription: body.shortDescription,
             content: body.content,
@@ -76,7 +77,7 @@ export const postsRepositoryInDB = {
         return result.matchedCount === 1
     },
     async deleteAllPosts(): Promise<boolean>{
-        const result = await postsCollection.deleteMany({})
+        const result = await PostsModelClass.deleteMany({})
         return !!result.deletedCount
     }
 }

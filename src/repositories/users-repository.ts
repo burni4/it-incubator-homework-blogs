@@ -1,15 +1,14 @@
-import {UserPasswordRecoveryCodesModelClass, usersCollection, UsersModelClass} from "./db";
+import {UserPasswordRecoveryCodesModelClass, UsersModelClass} from "./db";
 import {
     outputUsersWithPaginatorType,
     queryUserParams,
     userOutputType,
     userDBType, UserPasswordRecoveryCodeTypeInDB
 } from "../projectTypes";
-import {UserSchema} from "./mongoose-schemas";
 
 export const usersRepositoryInDB = {
     async findUserByID(idFromDB: string): Promise<userOutputType | null>{
-        const foundUsersInDB: userDBType | null = await usersCollection.findOne({ id : idFromDB }, {projection:{_id:0}})
+        const foundUsersInDB: userDBType | null = await UsersModelClass.findOne({ id : idFromDB }, {projection:{_id:0}})
         if(!foundUsersInDB){
            return null
         }
@@ -36,14 +35,14 @@ export const usersRepositoryInDB = {
 
         const skipCount: number = (paginator.pageNumber - 1) * paginator.pageSize
 
-        const foundUsersInDB = await usersCollection.find(filter, {projection:{_id:0}})
+        const foundUsersInDB = await UsersModelClass.find(filter, {projection:{_id:0}}).lean()
             .sort({[paginator.sortBy]: paginator.sortDirection === 'asc' ?  1 : -1})
             .skip(skipCount)
             .limit(paginator.pageSize);
 
-        const totalCount = await usersCollection.count(filter)
+        const totalCount = await UsersModelClass.count(filter)
         const pageCount: number = Math.ceil(totalCount / paginator.pageSize)
-        const usersArrayFromDB = await foundUsersInDB.toArray()
+        const usersArrayFromDB = foundUsersInDB
 
         const usersArray: outputUsersWithPaginatorType = {
             pagesCount: pageCount,
@@ -62,13 +61,13 @@ export const usersRepositoryInDB = {
         return usersArray
     },
     async deleteUserByID(id: string): Promise<boolean>{
-        const result = await usersCollection.deleteOne({id: id})
+        const result = await UsersModelClass.deleteOne({id: id})
         return result.deletedCount === 1
     },
     async findByLoginOrEmail(loginOrEmail: string): Promise<userDBType | null>{
         const filter = {$or: [{"accountData.login" : { $regex: loginOrEmail, $options: "i" }},
                 {"accountData.email" : { $regex: loginOrEmail, $options: "i" }}]}
-        const user: userDBType | null = await usersCollection.findOne(filter)
+        const user: userDBType | null = await UsersModelClass.findOne(filter)
         if (user) {
             return {
                 id: user.id,
@@ -90,7 +89,7 @@ export const usersRepositoryInDB = {
     },
     async findByEmail(email: string): Promise<userDBType | null>{
 
-        const user: userDBType | null = await usersCollection.findOne({"accountData.email": email})
+        const user: userDBType | null = await UsersModelClass.findOne({"accountData.email": email})
 
         if(user){
             return user
@@ -101,7 +100,7 @@ export const usersRepositoryInDB = {
     },
     async findByLogin(login: string): Promise<userDBType | null>{
 
-        const user: userDBType | null = await usersCollection.findOne({"accountData.login": login})
+        const user: userDBType | null = await UsersModelClass.findOne({"accountData.login": login})
 
         if(user){
             return user
@@ -112,7 +111,7 @@ export const usersRepositoryInDB = {
     },
     async findByPasswordHash(passwordHash: string): Promise<userDBType | null>{
 
-        const user: userDBType | null = await usersCollection.findOne({"accountData.passwordHash": passwordHash})
+        const user: userDBType | null = await UsersModelClass.findOne({"accountData.passwordHash": passwordHash})
 
         if(user){
             return user
@@ -123,7 +122,7 @@ export const usersRepositoryInDB = {
     },
     async findUserByConfirmationCode(code: string): Promise<userDBType | null>{
 
-        const user: userDBType | null = await usersCollection.findOne({"emailConfirmation.confirmationCode": code})
+        const user: userDBType | null = await UsersModelClass.findOne({"emailConfirmation.confirmationCode": code})
 
         if(user){
             return user
@@ -134,24 +133,25 @@ export const usersRepositoryInDB = {
     },
     async updateConfirmation(id: string): Promise<boolean>{
 
-        let result = await  usersCollection.updateOne({id: id},{$set:{'emailConfirmation.isConfirmed': true}})
+        let result = await  UsersModelClass.updateOne({id: id},{$set:{'emailConfirmation.isConfirmed': true}})
         return result.modifiedCount === 1
 
     },
     async updateEmailConfirmationCode(id: string, confirmationCode: string): Promise<boolean> {
 
-        let result = await usersCollection.updateOne({id: id}, {$set: {'emailConfirmation.confirmationCode': confirmationCode}})
+        let result = await UsersModelClass.updateOne({id: id}, {$set: {'emailConfirmation.confirmationCode': confirmationCode}})
         return result.modifiedCount === 1
 
     },
     async createUser(newUser: userDBType): Promise<userDBType | null> {
         const newObjectUser: userDBType = Object.assign({}, newUser);
-        await usersCollection.insertOne(newUser)
+
+        await UsersModelClass.create(newUser)
 
         return newObjectUser
     },
     async deleteAllUsers(): Promise<boolean>{
-        const result = await usersCollection.deleteMany({})
+        const result = await UsersModelClass.deleteMany({})
         await UserPasswordRecoveryCodesModelClass.deleteMany({})
         return !!result.deletedCount
     },
