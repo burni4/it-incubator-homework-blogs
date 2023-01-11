@@ -31,7 +31,7 @@ export const validationRecoveryCode = async (req: Request, res: Response, next: 
 
     const errors: any = []
     const codeIsValid: boolean = await usersRepositoryInDB.recoveryCodeIsValid(req.body.recoveryCode)
-    if (!errors) errors.push({message: 'recovery code not valid', field: "recoveryCode"})
+    if (!codeIsValid) errors.push({message: 'recovery code not valid', field: "recoveryCode"})
     if (errors.length < 1) return next()
     res.status(400).send({"errorsMessages": errors})
 
