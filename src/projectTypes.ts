@@ -10,6 +10,19 @@ export type postDBType = {
     createdAt: string
 }
 
+export class BlogClass {
+    id: string
+    createdAt: string
+
+    constructor(public name: string,
+                public description: string,
+                public websiteUrl: string
+    ) {
+        this.id = String(+new Date())
+        this.createdAt = new Date().toISOString()
+    }
+}
+
 export type blogDBType = {
     id: string
     name : string

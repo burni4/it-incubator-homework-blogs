@@ -8,87 +8,56 @@ import {postTypeValidation} from "../middlewares/input-posts-validation-middlewa
 
 export const blogsRouter = Router({});
 
-blogsRouter.get('/', async (req: Request<{},{},{}, queryBlogParams>, res: Response) => {
-
-    const foundBlogs= await blogsService.findAllBlogs(req.query);
-    res.send(foundBlogs);
-
-})
-
-blogsRouter.get('/:id/posts',
-    blogParamsValidation,
-    async (req: Request<{id:string},{},{}, queryPostParams>, res: Response) => {
-
-    const foundPosts = await blogsService.findAllPostsByBlogID(req.params.id, req.query);
-
-    if(!foundPosts){
-        res.sendStatus(404);
-    }else {
-        res.send(foundPosts);
-    }
-})
-
-blogsRouter.get('/:id', async (req: Request, res: Response) => {
-
-    const blog = await blogsService.findBlogByID(req.params.id)
-    if (blog) {
-        res.send(blog);
-    } else {
-        res.send(404);
+class BlogsController {
+    async getBlogs(req: Request<{}, {}, {}, queryBlogParams>, res: Response) {
+        const foundBlogs = await blogsService.findAllBlogs(req.query);
+        res.send(foundBlogs);
     }
 
-})
+    async getAllPostsByBlogID(req: Request<{ id: string }, {}, {}, queryPostParams>, res: Response) {
+        const foundPosts = await blogsService.findAllPostsByBlogID(req.params.id, req.query);
 
-blogsRouter.post('/',
-    basicAuthMiddleware,
-    blogTypeValidation,
-    inputValidationMiddleware,
-    async (req: Request, res: Response) => {
+        if (!foundPosts) {
+            res.sendStatus(404);
+        } else {
+            res.send(foundPosts);
+        }
+    }
+    async getBlogByID(req: Request, res: Response) {
 
+        const blog = await blogsService.findBlogByID(req.params.id)
+        if (blog) {
+            res.send(blog);
+        } else {
+            res.send(404);
+        }
+    }
+
+    async createBlog(req: Request, res: Response) {
         const newBlog = await blogsService.createBlog(req.body)
-
         res.status(201).send(newBlog);
+    }
 
-    })
+    async createPostByBlogID(req: Request, res: Response) {
 
-blogsRouter.post('/:id/posts',
-    basicAuthMiddleware,
-    blogParamsValidation,
-    postTypeValidation,
-    inputValidationMiddleware,
-    async (req: Request, res: Response) => {
+        const newBlog = await blogsService.createPostByBlogID(req.params.id, req.body)
 
-        const newBlog = await blogsService.createPostByBlogID(req.params.id,req.body)
-
-        if(!newBlog){
+        if (!newBlog) {
             res.sendStatus(404)
             return;
-        }else{
+        } else {
             res.status(201).send(newBlog);
         }
-
-    })
-
-blogsRouter.put('/:id',
-    basicAuthMiddleware,
-    blogTypeValidation,
-    inputValidationMiddleware,
-    async (req: Request, res: Response) => {
-
+    }
+    async updateBlogByID(req: Request, res: Response) {
         const isUpdated = await blogsService.updateBlogByID(req.params.id, req.body)
-
         if (isUpdated) {
             res.sendStatus(204);
         } else {
             res.sendStatus(404);
         }
-
-    })
-
-blogsRouter.delete('/:id',
-    basicAuthMiddleware,
-    blogParamsValidation,
-    async (req: Request, res: Response) => {
+    }
+    async deleteBlogByID(req: Request, res: Response) {
 
         const isDeleted = await blogsService.deleteBlogByID(req.params.id)
         if (isDeleted) {
@@ -96,4 +65,38 @@ blogsRouter.delete('/:id',
         } else {
             res.sendStatus(404);
         }
-    })
+    }
+}
+const blogsController = new BlogsController()
+
+blogsRouter.get('/', blogsController.getBlogs)
+
+blogsRouter.get('/:id/posts',
+    blogParamsValidation,
+    blogsController.getAllPostsByBlogID)
+
+blogsRouter.get('/:id', blogsController.getBlogByID)
+
+blogsRouter.post('/',
+    basicAuthMiddleware,
+    blogTypeValidation,
+    inputValidationMiddleware,
+    blogsController.createBlog)
+
+blogsRouter.post('/:id/posts',
+    basicAuthMiddleware,
+    blogParamsValidation,
+    postTypeValidation,
+    inputValidationMiddleware,
+    blogsController.createPostByBlogID)
+
+blogsRouter.put('/:id',
+    basicAuthMiddleware,
+    blogTypeValidation,
+    inputValidationMiddleware,
+    blogsController.updateBlogByID)
+
+blogsRouter.delete('/:id',
+    basicAuthMiddleware,
+    blogParamsValidation,
+    blogsController.deleteBlogByID)

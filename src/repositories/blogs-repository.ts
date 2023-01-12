@@ -1,7 +1,7 @@
 import {BlogsModelClass} from "./db";
-import {blogDBType, outputBlogsWithPaginatorType, queryBlogParams} from "../projectTypes";
+import {BlogClass, blogDBType, outputBlogsWithPaginatorType, queryBlogParams} from "../projectTypes";
 
-export const blogsRepositoryInDB = {
+class BlogsRepositoryInDB {
     async findAllBlogs(paginator: queryBlogParams): Promise<outputBlogsWithPaginatorType>{
         let filter = {}
         if(paginator.searchNameTerm){
@@ -34,7 +34,7 @@ export const blogsRepositoryInDB = {
             })
         }
         return outputBlogs
-    },
+    }
     async findBlogByID(id: string): Promise<blogDBType | null>{
         const blog = await BlogsModelClass.findOne({id: id})
         if(blog){
@@ -47,32 +47,28 @@ export const blogsRepositoryInDB = {
             }
         }
         return null
-    },
+    }
     async deleteBlogByID(id: string): Promise<boolean>{
         const result = await BlogsModelClass.deleteOne({id: id})
         return result.deletedCount === 1
-    },
+    }
     async createBlog(data: blogDBType): Promise<blogDBType>{
-        const newBlog: blogDBType = {
-            id: String(+new Date()),
-            name: data.name,
-            description: data.description,
-            websiteUrl: data.websiteUrl,
-            createdAt: new Date().toISOString()
-        }
+        const newBlog = new BlogClass(data.name, data.description, data.websiteUrl)
         const newObjectBlog: blogDBType = Object.assign({}, newBlog);
         await BlogsModelClass.create(newBlog)
 
         return newObjectBlog
-    },
+    }
     async updateBlogByID(id: string, body: blogDBType): Promise<boolean>{
         const result = await BlogsModelClass.updateOne({id: id}, {$set: {
             name: body.name,
             youtubeUrl: body.websiteUrl}})
         return result.matchedCount === 1
-    },
+    }
     async deleteAllBlogs(): Promise<boolean>{
         const result = await BlogsModelClass.deleteMany({})
         return !!result.deletedCount
     }
 }
+
+export const blogsRepositoryInDB = new BlogsRepositoryInDB()
