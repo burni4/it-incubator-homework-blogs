@@ -2,20 +2,27 @@ import {Request, Response, Router} from "express";
 import {inputValidationMiddleware} from "../middlewares/input-validation-middleware"
 import {blogParamsValidation, blogTypeValidation} from "../middlewares/input-blogs-validation-middleware"
 import {basicAuthMiddleware} from "../middlewares/authorization-middleware";
-import {blogsService} from "../domain/blogs-service";
+import {BlogsService} from "../domain/blogs-service";
 import {queryBlogParams, queryPostParams} from "../projectTypes";
 import {postTypeValidation} from "../middlewares/input-posts-validation-middleware";
 
 export const blogsRouter = Router({});
 
 class BlogsController {
+
+    blogsService: BlogsService
+
+    constructor() {
+        this.blogsService = new BlogsService()
+    }
+
     async getBlogs(req: Request<{}, {}, {}, queryBlogParams>, res: Response) {
-        const foundBlogs = await blogsService.findAllBlogs(req.query);
+        const foundBlogs = await this.blogsService.findAllBlogs(req.query);
         res.send(foundBlogs);
     }
 
     async getAllPostsByBlogID(req: Request<{ id: string }, {}, {}, queryPostParams>, res: Response) {
-        const foundPosts = await blogsService.findAllPostsByBlogID(req.params.id, req.query);
+        const foundPosts = await this.blogsService.findAllPostsByBlogID(req.params.id, req.query);
 
         if (!foundPosts) {
             res.sendStatus(404);
@@ -25,7 +32,7 @@ class BlogsController {
     }
     async getBlogByID(req: Request, res: Response) {
 
-        const blog = await blogsService.findBlogByID(req.params.id)
+        const blog = await this.blogsService.findBlogByID(req.params.id)
         if (blog) {
             res.send(blog);
         } else {
@@ -34,13 +41,13 @@ class BlogsController {
     }
 
     async createBlog(req: Request, res: Response) {
-        const newBlog = await blogsService.createBlog(req.body)
+        const newBlog = await this.blogsService.createBlog(req.body)
         res.status(201).send(newBlog);
     }
 
     async createPostByBlogID(req: Request, res: Response) {
 
-        const newBlog = await blogsService.createPostByBlogID(req.params.id, req.body)
+        const newBlog = await this.blogsService.createPostByBlogID(req.params.id, req.body)
 
         if (!newBlog) {
             res.sendStatus(404)
@@ -50,7 +57,7 @@ class BlogsController {
         }
     }
     async updateBlogByID(req: Request, res: Response) {
-        const isUpdated = await blogsService.updateBlogByID(req.params.id, req.body)
+        const isUpdated = await this.blogsService.updateBlogByID(req.params.id, req.body)
         if (isUpdated) {
             res.sendStatus(204);
         } else {
@@ -59,7 +66,7 @@ class BlogsController {
     }
     async deleteBlogByID(req: Request, res: Response) {
 
-        const isDeleted = await blogsService.deleteBlogByID(req.params.id)
+        const isDeleted = await this.blogsService.deleteBlogByID(req.params.id)
         if (isDeleted) {
             res.sendStatus(204);
         } else {
