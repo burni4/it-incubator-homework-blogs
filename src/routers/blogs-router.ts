@@ -5,16 +5,12 @@ import {basicAuthMiddleware} from "../middlewares/authorization-middleware";
 import {BlogsService} from "../domain/blogs-service";
 import {queryBlogParams, queryPostParams} from "../projectTypes";
 import {postTypeValidation} from "../middlewares/input-posts-validation-middleware";
+import {blogsController} from "../composition-root";
 
 export const blogsRouter = Router({});
 
-class BlogsController {
-
-    blogsService: BlogsService
-
-    constructor() {
-        this.blogsService = new BlogsService()
-    }
+export class BlogsController {
+    constructor(protected blogsService: BlogsService) {}
 
     async getBlogs(req: Request<{}, {}, {}, queryBlogParams>, res: Response) {
         const foundBlogs = await this.blogsService.findAllBlogs(req.query);
@@ -74,7 +70,6 @@ class BlogsController {
         }
     }
 }
-const blogsController = new BlogsController()
 
 blogsRouter.get('/', blogsController.getBlogs.bind(blogsController))
 

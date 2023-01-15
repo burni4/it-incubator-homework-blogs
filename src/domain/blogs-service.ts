@@ -1,15 +1,15 @@
-import {blogsRepositoryInDB} from "../repositories/blogs-repository";
+import {BlogsRepositoryInDB} from "../repositories/blogs-repository";
 import {blogDBType, outputBlogsWithPaginatorType, outputPostsWithPaginatorType, postDBType, queryBlogParams, queryPostParams} from "../projectTypes";
 import {postsService, queryPostParamsPaginator} from "./posts-service";
 
 export class BlogsService {
-
+    constructor(protected blogsRepositoryInDB: BlogsRepositoryInDB) {}
     async findAllBlogs(queryParams: queryBlogParams): Promise<outputBlogsWithPaginatorType>{
-        return blogsRepositoryInDB.findAllBlogs(queryBlogParamsPaginator(queryParams));
+        return this.blogsRepositoryInDB.findAllBlogs(queryBlogParamsPaginator(queryParams));
     }
     async findAllPostsByBlogID(id: string, queryParams: queryPostParams): Promise<outputPostsWithPaginatorType | null>{
 
-        const foundBlog = await blogsRepositoryInDB.findBlogByID(id)
+        const foundBlog = await this.blogsRepositoryInDB.findBlogByID(id)
 
         if(!foundBlog){
             return null
@@ -18,10 +18,10 @@ export class BlogsService {
         return postsService.findAllPosts(queryPostParamsPaginator(queryParams), id);
     }
     async findBlogByID(id: string): Promise<blogDBType | null>{
-        return await blogsRepositoryInDB.findBlogByID(id)
+        return await this.blogsRepositoryInDB.findBlogByID(id)
     }
     async deleteBlogByID(id: string): Promise<boolean>{
-        return await blogsRepositoryInDB.deleteBlogByID(id)
+        return await this.blogsRepositoryInDB.deleteBlogByID(id)
     }
     async createBlog(data: blogDBType): Promise<blogDBType>{
         const newBlog: blogDBType = {
@@ -31,12 +31,12 @@ export class BlogsService {
             websiteUrl: data.websiteUrl,
             createdAt: new Date().toISOString()
         }
-        const createdBlog: blogDBType = await blogsRepositoryInDB.createBlog(newBlog)
+        const createdBlog: blogDBType = await this.blogsRepositoryInDB.createBlog(newBlog)
         return createdBlog
     }
     async createPostByBlogID(id: string, data: postDBType): Promise<postDBType | null>{
 
-        const foundBlog = await blogsRepositoryInDB.findBlogByID(id)
+        const foundBlog = await this.blogsRepositoryInDB.findBlogByID(id)
 
         if(!foundBlog){
           return null
@@ -46,10 +46,10 @@ export class BlogsService {
         return await postsService.createPost(data)
     }
     async updateBlogByID(id: string, body: blogDBType): Promise<boolean>{
-        return blogsRepositoryInDB.updateBlogByID(id, body)
+        return this.blogsRepositoryInDB.updateBlogByID(id, body)
     }
     async deleteAllBlogs(): Promise<boolean>{
-        return blogsRepositoryInDB.deleteAllBlogs()
+        return this.blogsRepositoryInDB.deleteAllBlogs()
     }
 }
 const queryBlogParamsPaginator = (queryParams: queryBlogParams):queryBlogParams => {
