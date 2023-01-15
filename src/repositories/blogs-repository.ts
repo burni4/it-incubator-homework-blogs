@@ -1,7 +1,7 @@
 import {BlogsModelClass} from "./db";
 import {BlogClass, blogDBType, outputBlogsWithPaginatorType, queryBlogParams} from "../projectTypes";
 
-class BlogsRepositoryInDB {
+export class BlogsRepositoryInDB {
     async findAllBlogs(paginator: queryBlogParams): Promise<outputBlogsWithPaginatorType>{
         let filter = {}
         if(paginator.searchNameTerm){

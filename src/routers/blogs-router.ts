@@ -69,34 +69,34 @@ class BlogsController {
 }
 const blogsController = new BlogsController()
 
-blogsRouter.get('/', blogsController.getBlogs)
+blogsRouter.get('/', blogsController.getBlogs.bind(blogsController))
 
 blogsRouter.get('/:id/posts',
     blogParamsValidation,
-    blogsController.getAllPostsByBlogID)
+    blogsController.getAllPostsByBlogID.bind(blogsController))
 
-blogsRouter.get('/:id', blogsController.getBlogByID)
+blogsRouter.get('/:id', blogsController.getBlogByID.bind(blogsController))
 
 blogsRouter.post('/',
     basicAuthMiddleware,
     blogTypeValidation,
     inputValidationMiddleware,
-    blogsController.createBlog)
+    blogsController.createBlog.bind(blogsController))
 
 blogsRouter.post('/:id/posts',
     basicAuthMiddleware,
     blogParamsValidation,
     postTypeValidation,
     inputValidationMiddleware,
-    blogsController.createPostByBlogID)
+    blogsController.createPostByBlogID.bind(blogsController))
 
 blogsRouter.put('/:id',
     basicAuthMiddleware,
     blogTypeValidation,
     inputValidationMiddleware,
-    blogsController.updateBlogByID)
+    blogsController.updateBlogByID.bind(blogsController))
 
 blogsRouter.delete('/:id',
     basicAuthMiddleware,
     blogParamsValidation,
-    blogsController.deleteBlogByID)
+    blogsController.deleteBlogByID.bind(blogsController))
