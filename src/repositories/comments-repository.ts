@@ -21,7 +21,7 @@ export const commentsRepositoryInDB = {
             userId: foundCommentInDB.userId,
             userLogin: foundCommentInDB.userLogin,
             createdAt: foundCommentInDB.createdAt,
-            likesInfo: {likesCount: 0, dislikesCount: 0, myStatus: LikeStatus.None}
+            likesInfo: await this.getCommentLikesInfo(foundCommentInDB.userId,foundCommentInDB.id)
         }
     },
     async createComment(newComment: commentDBType): Promise<commentDBType | null> {
@@ -62,16 +62,16 @@ export const commentsRepositoryInDB = {
             page: paginator.pageNumber,
             pageSize: paginator.pageSize,
             totalCount: totalCount,
-            items: commentsArray.map((comment) => {
+            items: await Promise.all(commentsArray.map(async (comment) => {
                 return {
                     id: comment.id,
                     content: comment.content,
                     userId: comment.userId,
                     userLogin: comment.userLogin,
                     createdAt: comment.createdAt,
-                    likesInfo: {likesCount: 0, dislikesCount: 0, myStatus: LikeStatus.None}
+                    likesInfo: await this.getCommentLikesInfo(comment.userId,comment.id)
                 }
-            })
+            }))
         }
         return outputComments
     },
@@ -119,6 +119,27 @@ export const commentsRepositoryInDB = {
             commentInstance.likedUsersId.splice(likeIndex, 1)
         }
 
+        await commentInstance.save()
+
+        return true
+    },
+    async removeLikeAndDislike(userId: string, commentId: string): Promise<boolean> {
+
+        const commentInstance = await CommentsModelClass.findOne({id: commentId})
+
+        if (!commentInstance) return false
+
+        const likeIndex = commentInstance.likedUsersId.indexOf(userId)
+
+        if(likeIndex >= 0){
+            commentInstance.likedUsersId.splice(likeIndex, 1)
+        }
+
+        const dislikeIndex = commentInstance.dislikedUsersId.indexOf(userId)
+
+        if(dislikeIndex >= 0){
+            commentInstance.likedUsersId.splice(likeIndex, 1)
+        }
         await commentInstance.save()
 
         return true

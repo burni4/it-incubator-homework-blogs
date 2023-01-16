@@ -5,7 +5,7 @@ import {authMiddleware} from "../middlewares/authorization-middleware";
 import {
     commentParamsValidation,
     commentTypeValidation,
-    commentValidationOwnerID
+    commentValidationOwnerID, likeStatusTypeValidation
 } from "../middlewares/input-comments-validation-middleware";
 import {commentOutputType} from "../projectTypes";
 
@@ -75,9 +75,23 @@ commentsRouter.delete('/:id',
 commentsRouter.put('/:id/like-status',
     authMiddleware,
     commentParamsValidation,
-    commentValidationOwnerID,
+    likeStatusTypeValidation,
     inputValidationMiddleware,
     async (req: Request, res: Response) => {
 
+        const foundComment: commentOutputType | null = await commentsService.findCommentByID(req.params.id);
+
+        if(!foundComment) {
+            res.sendStatus(404);
+            return
+        }
+
+        const result = await commentsService.setLikeStatus(req.body.likeStatus,req.params.id, req.body.user.id)
+
+        if (result) {
+            res.sendStatus(204);
+        } else {
+            res.sendStatus(404);
+        }
 
 })

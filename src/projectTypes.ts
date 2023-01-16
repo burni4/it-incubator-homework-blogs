@@ -1,4 +1,4 @@
-export enum LikeStatus {'None', 'Like', 'Dislike'}
+export enum LikeStatus {None = 'None', Like = 'Like', Dislike = 'Dislike'}
 
 export type postDBType = {
     id: string

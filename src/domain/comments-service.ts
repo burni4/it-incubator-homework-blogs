@@ -2,7 +2,9 @@ import {commentsRepositoryInDB} from "../repositories/comments-repository";
 import {
     commentDBType,
     commentInputType,
-    commentOutputType, LikeStatus, outputCommentsWithPaginatorType,
+    commentOutputType,
+    LikeStatus,
+    outputCommentsWithPaginatorType,
     queryCommentParams,
     userOutputType
 } from "../projectTypes";
@@ -67,6 +69,20 @@ export const commentsService = {
 
         return await commentsRepositoryInDB.findAllCommentsByPostID(queryCommentParamsPaginator(queryParams), postId);
     },
+    async setLikeStatus(likeStatus: LikeStatus, commentId: string, userId: string): Promise<boolean>{
+
+        let res: boolean = true
+
+        if(likeStatus === LikeStatus.Like){
+            res = await commentsRepositoryInDB.likeTheComment(userId, commentId)
+        }else if(likeStatus === LikeStatus.Dislike){
+            res = await commentsRepositoryInDB.dislikeTheComment(userId, commentId)
+        }else {
+            res = await commentsRepositoryInDB.removeLikeAndDislike(userId, commentId)
+        }
+
+        return res
+    }
 }
 
 const queryCommentParamsPaginator = (queryParams: queryCommentParams):queryCommentParams => {
