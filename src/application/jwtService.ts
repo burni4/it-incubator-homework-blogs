@@ -9,10 +9,10 @@ const JWT_SECRET = process.env.JWT_SECRET || JWT_SECRET_LOCAL;
 
 export const jwtService = {
     createAccessJWT(userId: string){
-        return jwt.sign({userId: userId}, JWT_SECRET, {expiresIn: '10s'})
+        return jwt.sign({userId: userId}, JWT_SECRET, {expiresIn: '10m'})
     },
     createRefreshJWT(userId: string, deviceId: string){
-        return  jwt.sign({userId: userId, deviceId: deviceId}, JWT_SECRET, {expiresIn: '20s'})
+        return  jwt.sign({userId: userId, deviceId: deviceId}, JWT_SECRET, {expiresIn: '20m'})
     },
     getUserIdByToken(token: string){
         try{
