@@ -1,4 +1,4 @@
-import add from "date-fns/add";
+export enum LikeStatus {'None', 'Like', 'Dislike'}
 
 export type postDBType = {
     id: string
@@ -165,6 +165,8 @@ export type commentDBType = {
     userLogin : string
     createdAt: string
     postId: string
+    likedUsersId: string[],
+    dislikedUsersId: string[]
 }
 
 export type commentOutputType = {
@@ -173,8 +175,13 @@ export type commentOutputType = {
     userId : string
     userLogin : string
     createdAt: string
+    likesInfo: LikesInfoOutputType
 }
-
+export type LikesInfoOutputType = {
+    likesCount: Number,
+    dislikesCount: Number,
+    myStatus: LikeStatus
+}
 export type commentInputType = {
     content : string
 }

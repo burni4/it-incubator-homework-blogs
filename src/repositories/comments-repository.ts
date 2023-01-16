@@ -2,10 +2,12 @@ import {CommentsModelClass} from "./db";
 import {
     commentDBType,
     commentInputType,
-    commentOutputType,outputCommentsWithPaginatorType, queryCommentParams
+    commentOutputType,
+    LikesInfoOutputType,
+    LikeStatus,
+    outputCommentsWithPaginatorType,
+    queryCommentParams
 } from "../projectTypes";
-
-
 
 export const commentsRepositoryInDB = {
     async findCommentByID(idFromDB: string): Promise<commentOutputType | null>{
@@ -18,7 +20,8 @@ export const commentsRepositoryInDB = {
             content: foundCommentInDB.content,
             userId: foundCommentInDB.userId,
             userLogin: foundCommentInDB.userLogin,
-            createdAt: foundCommentInDB.createdAt
+            createdAt: foundCommentInDB.createdAt,
+            likesInfo: {likesCount: 0, dislikesCount: 0, myStatus: LikeStatus.None}
         }
     },
     async createComment(newComment: commentDBType): Promise<commentDBType | null> {
@@ -65,10 +68,81 @@ export const commentsRepositoryInDB = {
                     content: comment.content,
                     userId: comment.userId,
                     userLogin: comment.userLogin,
-                    createdAt: comment.createdAt
+                    createdAt: comment.createdAt,
+                    likesInfo: {likesCount: 0, dislikesCount: 0, myStatus: LikeStatus.None}
                 }
             })
         }
         return outputComments
+    },
+    async likeTheComment(userId: string, commentId: string): Promise<boolean> {
+
+        const commentInstance = await CommentsModelClass.findOne({id: commentId})
+
+        if (!commentInstance) return false
+
+        const likeIndex = commentInstance.likedUsersId.indexOf(userId)
+
+        if(likeIndex < 0){
+            commentInstance.likedUsersId.push(userId)
+        }else {
+            commentInstance.likedUsersId.splice(likeIndex, 1)
+        }
+
+        const dislikeIndex = commentInstance.dislikedUsersId.indexOf(userId)
+
+        if(dislikeIndex >= 0){
+            commentInstance.likedUsersId.splice(likeIndex, 1)
+        }
+
+        await commentInstance.save()
+
+        return true
+    },
+    async dislikeTheComment(userId: string, commentId: string): Promise<boolean> {
+
+        const commentInstance = await CommentsModelClass.findOne({id: commentId})
+
+        if (!commentInstance) return false
+
+        const dislikeIndex = commentInstance.dislikedUsersId.indexOf(userId)
+
+        if(dislikeIndex < 0){
+            commentInstance.likedUsersId.push(userId)
+        }else {
+            commentInstance.likedUsersId.splice(dislikeIndex, 1)
+        }
+
+        const likeIndex = commentInstance.likedUsersId.indexOf(userId)
+
+        if(likeIndex >= 0){
+            commentInstance.likedUsersId.splice(likeIndex, 1)
+        }
+
+        await commentInstance.save()
+
+        return true
+    },
+    async getCommentLikesInfo(userId: string, commentId: string): Promise<LikesInfoOutputType> {
+
+        let likesInfo: LikesInfoOutputType = {likesCount: 0, dislikesCount: 0, myStatus: LikeStatus.None}
+
+        const commentInstance = await CommentsModelClass.findOne({id: commentId})
+
+        if (!commentInstance) return likesInfo
+
+        likesInfo.likesCount = commentInstance.likedUsersId.length
+        likesInfo.dislikesCount = commentInstance.dislikedUsersId.length
+
+        const likeIndex = commentInstance.likedUsersId.indexOf(userId)
+        const dislikeIndex = commentInstance.dislikedUsersId.indexOf(userId)
+
+        if(likeIndex >= 0){
+            likesInfo.myStatus = LikeStatus.Like
+        }else if(dislikeIndex >= 0){
+            likesInfo.myStatus = LikeStatus.Dislike
+        }
+
+        return likesInfo
     }
 }

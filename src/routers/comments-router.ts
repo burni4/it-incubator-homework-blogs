@@ -72,3 +72,12 @@ commentsRouter.delete('/:id',
         }
 
 })
+commentsRouter.put('/:id/like-status',
+    authMiddleware,
+    commentParamsValidation,
+    commentValidationOwnerID,
+    inputValidationMiddleware,
+    async (req: Request, res: Response) => {
+
+
+})

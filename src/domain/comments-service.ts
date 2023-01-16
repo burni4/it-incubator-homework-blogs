@@ -2,7 +2,7 @@ import {commentsRepositoryInDB} from "../repositories/comments-repository";
 import {
     commentDBType,
     commentInputType,
-    commentOutputType, outputCommentsWithPaginatorType,
+    commentOutputType, LikeStatus, outputCommentsWithPaginatorType,
     queryCommentParams,
     userOutputType
 } from "../projectTypes";
@@ -38,7 +38,9 @@ export const commentsService = {
             userId : user.id,
             userLogin : user.login,
             createdAt: new Date().toISOString(),
-            postId: postId
+            postId: postId,
+            likedUsersId: [],
+            dislikedUsersId: []
         }
 
         const newCommentInDB = await commentsRepositoryInDB.createComment(newComment)
@@ -51,7 +53,8 @@ export const commentsService = {
             content : newCommentInDB.content,
             userId : newCommentInDB.userId,
             userLogin : newCommentInDB.userLogin,
-            createdAt: newCommentInDB.createdAt
+            createdAt: newCommentInDB.createdAt,
+            likesInfo: {likesCount: 0, dislikesCount: 0, myStatus: LikeStatus.None}
         }
     },
     async findAllCommentsByPostID(postId: string, queryParams: queryCommentParams): Promise<outputCommentsWithPaginatorType | null>{

@@ -54,7 +54,9 @@ export const CommentSchema = new mongoose.Schema<commentDBType>({
     userId: {type: String, required: true},
     userLogin: {type: String, required: true},
     createdAt: {type: String, required: true},
-    postId: {type: String, required: true}
+    postId: {type: String, required: true},
+    likedUsersId: [{type: String}],
+    dislikedUsersId: [{type: String}]
 });
 
 export const SessionInfoSchema = new mongoose.Schema<sessionInfoTypeInDB>({
