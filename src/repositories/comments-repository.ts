@@ -85,8 +85,6 @@ export const commentsRepositoryInDB = {
 
         if(likeIndex < 0){
             commentInstance.likedUsersId.push(userId)
-        }else {
-            commentInstance.likedUsersId.splice(likeIndex, 1)
         }
 
         const dislikeIndex = commentInstance.dislikedUsersId.indexOf(userId)
@@ -109,8 +107,6 @@ export const commentsRepositoryInDB = {
 
         if(dislikeIndex < 0){
             commentInstance.dislikedUsersId.push(userId)
-        }else {
-            commentInstance.dislikedUsersId.splice(dislikeIndex, 1)
         }
 
         const likeIndex = commentInstance.likedUsersId.indexOf(userId)
