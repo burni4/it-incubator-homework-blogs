@@ -92,7 +92,7 @@ export const commentsRepositoryInDB = {
         const dislikeIndex = commentInstance.dislikedUsersId.indexOf(userId)
 
         if(dislikeIndex >= 0){
-            commentInstance.likedUsersId.splice(likeIndex, 1)
+            commentInstance.dislikedUsersId.splice(likeIndex, 1)
         }
 
         await commentInstance.save()
@@ -108,9 +108,9 @@ export const commentsRepositoryInDB = {
         const dislikeIndex = commentInstance.dislikedUsersId.indexOf(userId)
 
         if(dislikeIndex < 0){
-            commentInstance.likedUsersId.push(userId)
+            commentInstance.dislikedUsersId.push(userId)
         }else {
-            commentInstance.likedUsersId.splice(dislikeIndex, 1)
+            commentInstance.dislikedUsersId.splice(dislikeIndex, 1)
         }
 
         const likeIndex = commentInstance.likedUsersId.indexOf(userId)
@@ -138,7 +138,7 @@ export const commentsRepositoryInDB = {
         const dislikeIndex = commentInstance.dislikedUsersId.indexOf(userId)
 
         if(dislikeIndex >= 0){
-            commentInstance.likedUsersId.splice(likeIndex, 1)
+            commentInstance.dislikedUsersId.splice(likeIndex, 1)
         }
         await commentInstance.save()
 
