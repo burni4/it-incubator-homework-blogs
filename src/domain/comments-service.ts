@@ -8,7 +8,7 @@ import {
     queryCommentParams,
     userOutputType
 } from "../projectTypes";
-import {postsRepositoryInDB} from "../repositories/posts-repository";
+import {postsRepositoryInDB} from "../composition-root";
 
 export const commentsService = {
     async deleteCommentByID(id: string, user: userOutputType): Promise<boolean>{

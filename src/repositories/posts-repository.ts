@@ -1,7 +1,7 @@
 import {PostsModelClass} from "./db";
 import {outputPostsWithPaginatorType, postDBType, queryPostParams} from "../projectTypes";
 
-export const postsRepositoryInDB = {
+export class PostsRepositoryInDB {
     async findAllPosts(paginator: queryPostParams, blogID?: string): Promise<outputPostsWithPaginatorType>{
 
         let filter = {}
@@ -40,7 +40,7 @@ export const postsRepositoryInDB = {
             })
         }
         return outputPosts
-    },
+    }
     async findPostByID(id: string): Promise<postDBType | null> {
         const post = await PostsModelClass.findOne({id: id})
         if (post) {
@@ -55,18 +55,18 @@ export const postsRepositoryInDB = {
             }
         }
         return null
-    },
+    }
     async deletePostByID(id: string): Promise<boolean>{
             const result = await PostsModelClass.deleteOne({id: id})
             return result.deletedCount === 1
-    },
+    }
     async createPost(newPost: postDBType): Promise<postDBType>{
 
         const newObjectPost: postDBType = Object.assign({}, newPost);
         await PostsModelClass.create(newPost)
 
         return newObjectPost
-    },
+    }
     async updatePostByID(id: string, body: postDBType): Promise<boolean>{
         const result = await PostsModelClass.updateOne({id: id}, {$set: {
             title: body.title,
@@ -75,7 +75,7 @@ export const postsRepositoryInDB = {
             blogId: body.blogId}})
 
         return result.matchedCount === 1
-    },
+    }
     async deleteAllPosts(): Promise<boolean>{
         const result = await PostsModelClass.deleteMany({})
         return !!result.deletedCount

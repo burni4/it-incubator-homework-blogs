@@ -1,6 +1,7 @@
 import {BlogsRepositoryInDB} from "../repositories/blogs-repository";
 import {blogDBType, outputBlogsWithPaginatorType, outputPostsWithPaginatorType, postDBType, queryBlogParams, queryPostParams} from "../projectTypes";
-import {postsService, queryPostParamsPaginator} from "./posts-service";
+import {queryPostParamsPaginator} from "./posts-service";
+import {postsService} from "../composition-root";
 
 export class BlogsService {
     constructor(protected blogsRepositoryInDB: BlogsRepositoryInDB) {}

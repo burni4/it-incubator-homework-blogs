@@ -1,18 +1,19 @@
-import {postsRepositoryInDB} from "../repositories/posts-repository";
 import {blogsRepositoryInDB} from "../repositories/blogs-repository";
 import {outputPostsWithPaginatorType, postDBType, queryPostParams} from "../projectTypes";
+import {PostsRepositoryInDB} from "../repositories/posts-repository";
 
 
-export const postsService = {
+export class PostsService {
+    constructor(protected postsRepositoryInDB: PostsRepositoryInDB) {}
     async findAllPosts(queryParams: queryPostParams, blogId?: string): Promise<outputPostsWithPaginatorType>{
-        return postsRepositoryInDB.findAllPosts(queryPostParamsPaginator(queryParams), blogId);
-    },
+        return this.postsRepositoryInDB.findAllPosts(queryPostParamsPaginator(queryParams), blogId);
+    }
     async findPostByID(id: string): Promise<postDBType | null> {
-        return postsRepositoryInDB.findPostByID(id)
-    },
+        return this.postsRepositoryInDB.findPostByID(id)
+    }
     async deletePostByID(id: string): Promise<boolean>{
-        return postsRepositoryInDB.deletePostByID(id)
-    },
+        return this.postsRepositoryInDB.deletePostByID(id)
+    }
     async createPost(data: postDBType): Promise<postDBType | null >{
 
         const foundBlog = await blogsRepositoryInDB.findBlogByID(data.blogId)
@@ -29,15 +30,15 @@ export const postsService = {
             blogName:  String(foundBlog.name),
             createdAt: new Date().toISOString()
         }
-        const createdPost: postDBType = await postsRepositoryInDB.createPost(newPost)
+        const createdPost: postDBType = await this.postsRepositoryInDB.createPost(newPost)
 
         return createdPost
-    },
+    }
     async updatePostByID(id: string, body: postDBType): Promise<boolean>{
-        return postsRepositoryInDB.updatePostByID(id, body)
-    },
+        return this.postsRepositoryInDB.updatePostByID(id, body)
+    }
     async deleteAllPosts(): Promise<boolean>{
-        return postsRepositoryInDB.deleteAllPosts()
+        return this.postsRepositoryInDB.deleteAllPosts()
     }
 }
 

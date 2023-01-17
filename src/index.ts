@@ -9,10 +9,10 @@ import {authRouter} from "./routers/auth-router";
 import {securityRouter} from "./routers/security-router";
 import {commentsRouter} from "./routers/comments-router";
 import {blogsRepositoryInDB} from "./repositories/blogs-repository";
-import {postsRepositoryInDB} from "./repositories/posts-repository";
 import {usersRepositoryInDB} from "./repositories/users-repository";
 import {commentsRepositoryInDB} from "./repositories/comments-repository";
 import {sessionsInfoRepositoryInDB} from "./repositories/sessionsInfo-repository";
+import {postsRepositoryInDB} from "./composition-root";
 
 export const app = express()
 const port = process.env.PORT || 3000
