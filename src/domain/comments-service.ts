@@ -14,11 +14,11 @@ export const commentsService = {
     async deleteCommentByID(id: string, user: userOutputType): Promise<boolean>{
         return await commentsRepositoryInDB.deleteCommentByID(id)
     },
-    async findCommentByID(id: string): Promise<commentOutputType | null>{
-        return await commentsRepositoryInDB.findCommentByID(id)
+    async findCommentByID(id: string, userId: string = ''): Promise<commentOutputType | null>{
+        return await commentsRepositoryInDB.findCommentByID(id, userId)
     },
     async checkOwnerComment(user: userOutputType, commentId: string): Promise<boolean>{
-        const result: commentOutputType | null = await this.findCommentByID(commentId)
+        const result: commentOutputType | null = await this.findCommentByID(commentId, user.id)
         if(!result || result.userId !== user.id){
             return false
         }
@@ -59,7 +59,7 @@ export const commentsService = {
             likesInfo: {likesCount: 0, dislikesCount: 0, myStatus: LikeStatus.None}
         }
     },
-    async findAllCommentsByPostID(postId: string, queryParams: queryCommentParams): Promise<outputCommentsWithPaginatorType | null>{
+    async findAllCommentsByPostID(postId: string, queryParams: queryCommentParams, userId: string = ''): Promise<outputCommentsWithPaginatorType | null>{
 
         const foundPost = await postsRepositoryInDB.findPostByID(postId)
 
@@ -67,7 +67,7 @@ export const commentsService = {
             return null
         }
 
-        return await commentsRepositoryInDB.findAllCommentsByPostID(queryCommentParamsPaginator(queryParams), postId);
+        return await commentsRepositoryInDB.findAllCommentsByPostID(queryCommentParamsPaginator(queryParams), postId, userId);
     },
     async setLikeStatus(likeStatus: LikeStatus, commentId: string, userId: string): Promise<boolean>{
 

@@ -1,7 +1,7 @@
 import {Request, Response, Router} from "express";
 import {inputValidationMiddleware} from "../middlewares/input-validation-middleware"
 import {commentsService} from "../domain/comments-service";
-import {authMiddleware} from "../middlewares/authorization-middleware";
+import {authMiddleware, authMiddlewareGetUser} from "../middlewares/authorization-middleware";
 import {
     commentParamsValidation,
     commentTypeValidation,
@@ -12,11 +12,18 @@ import {commentOutputType} from "../projectTypes";
 export const commentsRouter = Router({});
 
 commentsRouter.get('/:id',
+    authMiddlewareGetUser,
     commentParamsValidation,
     inputValidationMiddleware,
     async (req: Request, res: Response) => {
 
-        const foundComment: commentOutputType | null = await commentsService.findCommentByID(req.params.id);
+        let userId: string = ''
+
+        if(req.body.user){
+            userId = req.body.user.id
+        }
+
+        const foundComment: commentOutputType | null = await commentsService.findCommentByID(req.params.id, userId);
 
         if(!foundComment){
             res.sendStatus(404);

@@ -1,5 +1,5 @@
 import {Request, Response, Router} from "express";
-import {authMiddleware, basicAuthMiddleware} from "../middlewares/authorization-middleware";
+import {authMiddleware, authMiddlewareGetUser, basicAuthMiddleware} from "../middlewares/authorization-middleware";
 import {inputValidationMiddleware} from "../middlewares/input-validation-middleware";
 import {
     postParamsValidation,
@@ -7,7 +7,7 @@ import {
     postTypeValidationBlogID
 } from "../middlewares/input-posts-validation-middleware";
 import {postsService} from "../domain/posts-service";
-import {queryPostParams} from "../projectTypes";
+import {commentOutputType, queryCommentParams, queryPostParams, userOutputType} from "../projectTypes";
 import {commentTypeValidation, commentValidationOwnerID} from "../middlewares/input-comments-validation-middleware";
 import {commentsService} from "../domain/comments-service";
 
@@ -87,8 +87,9 @@ postsRouter.post('/:id/comments',
     })
 
 postsRouter.get('/:id/comments',
+    authMiddlewareGetUser,
     postParamsValidation,
-    async (req: Request<{id:string},{},{}, queryPostParams>, res: Response) => {
+    async (req: Request<{id: string}, any, {user: userOutputType | null}, any>, res: Response) => {
 
         const post = await postsService.findPostByID(req.params.id)
 
@@ -97,7 +98,13 @@ postsRouter.get('/:id/comments',
             return
         }
 
-        const foundPosts = await commentsService.findAllCommentsByPostID(req.params.id, req.query);
+        let userId: string = ''
+
+        if(req.body.user){
+            userId = req.body.user.id
+        }
+
+        const foundPosts = await commentsService.findAllCommentsByPostID(req.params.id, req.query, userId);
 
         if(!foundPosts){
             res.sendStatus(404);

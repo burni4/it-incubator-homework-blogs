@@ -10,7 +10,7 @@ import {
 } from "../projectTypes";
 
 export const commentsRepositoryInDB = {
-    async findCommentByID(idFromDB: string): Promise<commentOutputType | null>{
+    async findCommentByID(idFromDB: string, userId: string): Promise<commentOutputType | null>{
         const foundCommentInDB: commentDBType | null = await CommentsModelClass.findOne({ id : idFromDB }, {projection:{_id:0}})
         if(!foundCommentInDB){
             return null
@@ -21,7 +21,7 @@ export const commentsRepositoryInDB = {
             userId: foundCommentInDB.userId,
             userLogin: foundCommentInDB.userLogin,
             createdAt: foundCommentInDB.createdAt,
-            likesInfo: await this.getCommentLikesInfo(foundCommentInDB.userId,foundCommentInDB.id)
+            likesInfo: await this.getCommentLikesInfo(userId, foundCommentInDB.id)
         }
     },
     async createComment(newComment: commentDBType): Promise<commentDBType | null> {
@@ -42,7 +42,7 @@ export const commentsRepositoryInDB = {
         const result = await CommentsModelClass.deleteMany({})
         return !!result.deletedCount
     },
-    async findAllCommentsByPostID(paginator: queryCommentParams, postId: string): Promise<outputCommentsWithPaginatorType> {
+    async findAllCommentsByPostID(paginator: queryCommentParams, postId: string, userId: string): Promise<outputCommentsWithPaginatorType> {
 
         const filter = {postId: postId}
 
@@ -69,7 +69,7 @@ export const commentsRepositoryInDB = {
                     userId: comment.userId,
                     userLogin: comment.userLogin,
                     createdAt: comment.createdAt,
-                    likesInfo: await this.getCommentLikesInfo(comment.userId,comment.id)
+                    likesInfo: await this.getCommentLikesInfo(userId, comment.id)
                 }
             }))
         }
@@ -158,7 +158,9 @@ export const commentsRepositoryInDB = {
         const likeIndex = commentInstance.likedUsersId.indexOf(userId)
         const dislikeIndex = commentInstance.dislikedUsersId.indexOf(userId)
 
-        if(likeIndex >= 0){
+        if (!userId){
+            likesInfo.myStatus = LikeStatus.None
+        }else if(likeIndex >= 0){
             likesInfo.myStatus = LikeStatus.Like
         }else if(dislikeIndex >= 0){
             likesInfo.myStatus = LikeStatus.Dislike
