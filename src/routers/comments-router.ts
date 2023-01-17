@@ -12,7 +12,7 @@ import {commentOutputType} from "../projectTypes";
 export const commentsRouter = Router({});
 
 commentsRouter.get('/:id',
-    //authMiddlewareGetUser,
+    authMiddlewareGetUser,
     commentParamsValidation,
     inputValidationMiddleware,
     async (req: Request, res: Response) => {
