@@ -65,6 +65,7 @@ export  const authMiddlewareGetUser = async (req: Request, res: Response, next: 
 
     req.body.user = user
 
+    next()
 
 }
 
