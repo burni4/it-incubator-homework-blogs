@@ -87,7 +87,7 @@ postsRouter.post('/:id/comments',
     })
 
 postsRouter.get('/:id/comments',
-    authMiddlewareGetUser,
+    //authMiddlewareGetUser,
     postParamsValidation,
     async (req: Request, res: Response) => {
 
