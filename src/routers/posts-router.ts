@@ -89,7 +89,7 @@ postsRouter.post('/:id/comments',
 postsRouter.get('/:id/comments',
     authMiddlewareGetUser,
     postParamsValidation,
-    async (req: Request<{id: string}, any, {user: userOutputType | null}, any>, res: Response) => {
+    async (req: Request<{id: string}, any, {user: any}, any>, res: Response) => {
 
         const post = await postsService.findPostByID(req.params.id)
 
