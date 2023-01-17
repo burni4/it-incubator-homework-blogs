@@ -1,7 +1,7 @@
 import {blogsRepositoryInDB} from "../../src/repositories/blogs-repository";
 import request from "supertest";
 import {app} from "../../src";
-import {sessionsInfoCollection} from "../../src/repositories/db";
+import {SessionsInfosModelClass} from "../../src/repositories/db";
 
 
 describe('Devices', () => {
@@ -29,7 +29,7 @@ describe('Devices', () => {
                 .delete(testingUrl)
 
             expect(response.statusCode).toBe(204)
-            const sessions = await  sessionsInfoCollection.find({}).toArray()
+            const sessions = await  SessionsInfosModelClass.find({}).lean()
             expect(sessions.length).toBe(0)
         })
     })
@@ -64,7 +64,7 @@ describe('Devices', () => {
 
     describe('login 4 users', () => {
         it('should return access and refresh tokens', async () => {
-            const sessionsBeforeLogin = await  sessionsInfoCollection.find({}).toArray()
+            const sessionsBeforeLogin = await  SessionsInfosModelClass.find({}).lean()
             expect(sessionsBeforeLogin.length).toBe(0)
 
             const response = await request(app)
@@ -85,7 +85,7 @@ describe('Devices', () => {
             users.user1.accessToken = accessToken
             users.user1.refreshToken = refreshToken
 
-            const sessionsAfterLogin = await  sessionsInfoCollection.find({}).toArray()
+            const sessionsAfterLogin = await  SessionsInfosModelClass.find({}).lean()
             console.log(sessionsAfterLogin)
             expect(sessionsAfterLogin.length).toBe(1)
 
