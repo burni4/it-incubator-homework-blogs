@@ -2,7 +2,7 @@ import {CommentsModelClass, PostsModelClass} from "./db";
 import {
     ExtendedLikesInfoOutputType,
     LikesInfoOutputType,
-    LikeStatus,
+    LikeStatus, NewestLikesType,
     outputPostsWithPaginatorType,
     PostDBType,
     PostDBTypeOutputType,
@@ -173,7 +173,14 @@ export class PostsRepositoryInDB {
 
         extendedLikesInfo.likesCount = postInstance.likedUsers.length
         extendedLikesInfo.dislikesCount = postInstance.dislikedUsers.length
-        extendedLikesInfo.newestLikes = postInstance.likedUsers.slice(-3)
+        extendedLikesInfo.newestLikes = postInstance.likedUsers.slice(-3).map( (elem) => {
+        return {
+            addedAt: elem.addedAt,
+            userId: elem.userId,
+            login: elem.login
+        }
+    }
+)
 
         if (!user) {
             extendedLikesInfo.myStatus = LikeStatus.None
