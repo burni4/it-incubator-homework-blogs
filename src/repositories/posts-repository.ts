@@ -175,10 +175,10 @@ export class PostsRepositoryInDB {
         extendedLikesInfo.dislikesCount = postInstance.dislikedUsers.length
         extendedLikesInfo.newestLikes = postInstance.likedUsers.sort((x, y) => {
             if (x.addedAt < y.addedAt) {
-                return -1;
+                return 1;
             }
             if (x.addedAt > y.addedAt) {
-                return 1;
+                return -1;
             }
             return 0;
         }).slice(-3).map((elem) => {
