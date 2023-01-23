@@ -1,8 +1,8 @@
 import mongoose from "mongoose";
 import {
     blogDBType,
-    commentDBType,
-    postDBType,
+    commentDBType, NewestLikesType, PostDBType,
+    PostDBTypeOutputType,
     sessionInfoTypeInDB,
     userDBType,
     UserPasswordRecoveryCodeTypeInDB
@@ -38,15 +38,31 @@ export const BlogSchema = new mongoose.Schema<blogDBType>({
     createdAt: {type: String, required: true}
 });
 
-export const PostSchema = new mongoose.Schema<postDBType>({
+export const PostSchema = new mongoose.Schema<PostDBType>({
     id: {type: String, required: true},
     title: {type: String, required: true},
     shortDescription: {type: String, required: true},
     content: {type: String, required: true},
     blogId: {type: String, required: true},
     blogName: {type: String, required: true},
-    createdAt: {type: String, required: true}
+    createdAt: {type: String, required: true},
+    likedUsers: [{
+        type: {
+            addedAt: {type: String, required: true},
+            userId: {type: String, required: true},
+            login: {type: String, required: true}
+        }
+    }],
+    dislikedUsers: [{
+        type: {
+            addedAt: {type: String, required: true},
+            userId: {type: String, required: true},
+            login: {type: String, required: true}
+        }
+    }]
 });
+
+
 
 export const CommentSchema = new mongoose.Schema<commentDBType>({
     id: {type: String, required: true},

@@ -1,8 +1,18 @@
-import {PostsModelClass} from "./db";
-import {outputPostsWithPaginatorType, postDBType, queryPostParams} from "../projectTypes";
+import {CommentsModelClass, PostsModelClass} from "./db";
+import {
+    ExtendedLikesInfoOutputType,
+    LikesInfoOutputType,
+    LikeStatus,
+    outputPostsWithPaginatorType,
+    PostDBType,
+    PostDBTypeOutputType,
+    queryPostParams, userOutputType
+} from "../projectTypes";
+import {injectable} from "inversify";
 
+@injectable()
 export class PostsRepositoryInDB {
-    async findAllPosts(paginator: queryPostParams, blogID?: string): Promise<outputPostsWithPaginatorType>{
+    async findAllPosts(paginator: queryPostParams, blogID?: string, user?: userOutputType): Promise<outputPostsWithPaginatorType>{
 
         let filter = {}
 
@@ -27,7 +37,7 @@ export class PostsRepositoryInDB {
             page: paginator.pageNumber,
             pageSize: paginator.pageSize,
             totalCount: totalCount,
-            items: postsArray.map((post) => {
+            items: await Promise.all(postsArray.map(async (post) => {
                 return {
                     id: post.id,
                     title: post.title,
@@ -35,13 +45,14 @@ export class PostsRepositoryInDB {
                     content: post.content,
                     blogId: post.blogId,
                     blogName: post.blogName,
-                    createdAt: post.createdAt
+                    createdAt: post.createdAt,
+                    extendedLikesInfo: await this.getLikesInfo(user, post.id)
                 }
-            })
+            }))
         }
         return outputPosts
     }
-    async findPostByID(id: string): Promise<postDBType | null> {
+    async findPostByID(id: string, user?: userOutputType): Promise<PostDBTypeOutputType | null> {
         const post = await PostsModelClass.findOne({id: id})
         if (post) {
             return {
@@ -52,6 +63,7 @@ export class PostsRepositoryInDB {
                 blogId: post.blogId,
                 blogName: post.blogName,
                 createdAt: post.createdAt,
+                extendedLikesInfo: await this.getLikesInfo(user, id)
             }
         }
         return null
@@ -60,14 +72,28 @@ export class PostsRepositoryInDB {
             const result = await PostsModelClass.deleteOne({id: id})
             return result.deletedCount === 1
     }
-    async createPost(newPost: postDBType): Promise<postDBType>{
+    async createPost(newPost: PostDBType): Promise<PostDBTypeOutputType>{
 
-        const newObjectPost: postDBType = Object.assign({}, newPost);
+        const newObjectPost: PostDBType = Object.assign({}, newPost);
         await PostsModelClass.create(newPost)
 
-        return newObjectPost
+        return {
+            id: newPost.id,
+            title: newPost.title,
+            shortDescription: newPost.shortDescription,
+            content: newPost.content,
+            blogId: newPost.blogId,
+            blogName: newPost.blogName,
+            createdAt: newPost.createdAt,
+            extendedLikesInfo: {
+                likesCount: 0,
+                dislikesCount: 0,
+                myStatus: LikeStatus.None,
+                newestLikes: []
+            }
+        }
     }
-    async updatePostByID(id: string, body: postDBType): Promise<boolean>{
+    async updatePostByID(id: string, body: PostDBTypeOutputType): Promise<boolean>{
         const result = await PostsModelClass.updateOne({id: id}, {$set: {
             title: body.title,
             shortDescription: body.shortDescription,
@@ -79,5 +105,84 @@ export class PostsRepositoryInDB {
     async deleteAllPosts(): Promise<boolean>{
         const result = await PostsModelClass.deleteMany({})
         return !!result.deletedCount
+    }
+    async likeTheComment(user: userOutputType, postId: string): Promise<boolean> {
+
+        const postInstance = await PostsModelClass.findOne({id: postId})
+        if (!postInstance) return false
+
+        const foundLike = postInstance.likedUsers.find((info) => info.userId === user.id)
+
+        if (!foundLike) {
+            postInstance.likedUsers.push({
+                addedAt: new Date().toISOString(),
+                userId: user.id,
+                login: user.login
+            })
+        }
+
+        postInstance.dislikedUsers = postInstance.dislikedUsers.filter((info) => info.userId !== user.id)
+
+        postInstance.save()
+
+        return true
+    }
+    async dislikeTheComment(user: userOutputType, postId: string): Promise<boolean> {
+
+        const postInstance = await PostsModelClass.findOne({id: postId})
+        if (!postInstance) return false
+
+        const foundDislike = postInstance.dislikedUsers.find((info) => info.userId === user.id)
+
+        if (!foundDislike) {
+            postInstance.dislikedUsers.push({
+                addedAt: new Date().toISOString(),
+                userId: user.id,
+                login: user.login
+            })
+        }
+
+        postInstance.likedUsers = postInstance.likedUsers.filter((info) => info.userId !== user.id)
+
+        postInstance.save()
+
+        return true
+    }
+    async removeLikeAndDislike(user: userOutputType, postId: string): Promise<boolean> {
+
+        const postInstance = await PostsModelClass.findOne({id: postId})
+        if (!postInstance) return false
+
+        postInstance.likedUsers = postInstance.likedUsers.filter((info) => info.userId !== user.id)
+        postInstance.dislikedUsers = postInstance.dislikedUsers.filter((info) => info.userId !== user.id)
+
+        return true
+    }
+    async getLikesInfo(user: userOutputType | undefined | null, postId: string): Promise<ExtendedLikesInfoOutputType> {
+
+        let extendedLikesInfo: ExtendedLikesInfoOutputType = {
+            likesCount: 0,
+            dislikesCount: 0,
+            myStatus: LikeStatus.None,
+            newestLikes: []
+        }
+
+        const postInstance = await PostsModelClass.findOne({id: postId})
+
+        if (!postInstance) return extendedLikesInfo
+
+        extendedLikesInfo.likesCount = postInstance.likedUsers.length
+        extendedLikesInfo.dislikesCount = postInstance.dislikedUsers.length
+        extendedLikesInfo.newestLikes = postInstance.likedUsers.slice(-3)
+
+        if (!user) {
+            extendedLikesInfo.myStatus = LikeStatus.None
+        } else if (postInstance.likedUsers.find((info) => info.userId === user.id)) {
+            extendedLikesInfo.myStatus = LikeStatus.Like
+        } else if (postInstance.dislikedUsers.find((info) => info.userId === user.id)) {
+            extendedLikesInfo.myStatus = LikeStatus.Dislike
+        }
+
+        return extendedLikesInfo
     }
 }

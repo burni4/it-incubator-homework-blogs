@@ -1,21 +1,22 @@
 import {PostsService} from "../domain/posts-service";
 import {Request, Response} from "express";
-import {queryPostParams} from "../projectTypes";
 import {commentsService} from "../domain/comments-service";
+import {inject, injectable} from "inversify";
 
+@injectable()
 export class PostsController {
-    constructor(protected postsService: PostsService) {
+    constructor(@inject(PostsService) protected postsService: PostsService) {
     }
 
-    async findAllPosts(req: Request<{}, {}, {}, queryPostParams>, res: Response) {
+    async findAllPosts(req: Request, res: Response) {
 
-        const foundProducts = await this.postsService.findAllPosts(req.query)
+        const foundProducts = await this.postsService.findAllPosts(req.query as any,"", req.body.user)
         res.send(foundProducts);
 
     }
     async findPostByID(req: Request, res: Response) {
 
-        const post = await this.postsService.findPostByID(req.params.id)
+        const post = await this.postsService.findPostByID(req.params.id, req.body.user)
         if (post) {
             res.send(post);
         } else {
@@ -98,4 +99,24 @@ export class PostsController {
             res.sendStatus(404);
         }
     }
+
+    async setLikeStatus(req: Request, res: Response) {
+
+        const post = await this.postsService.findPostByID(req.params.id)
+
+        if(!post){
+            res.sendStatus(404)
+            return
+        }
+
+        const result = await this.postsService.setLikeStatus(req.body.likeStatus,req.params.id, req.body.user)
+
+        if (result) {
+            res.sendStatus(204);
+        } else {
+            res.sendStatus(404);
+        }
+
+    }
+
 }

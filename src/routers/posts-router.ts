@@ -1,4 +1,4 @@
-import {Request, Response, Router} from "express";
+import {Router} from "express";
 import {authMiddleware, authMiddlewareGetUser, basicAuthMiddleware} from "../middlewares/authorization-middleware";
 import {inputValidationMiddleware} from "../middlewares/input-validation-middleware";
 import {
@@ -6,14 +6,18 @@ import {
     postTypeValidation,
     postTypeValidationBlogID
 } from "../middlewares/input-posts-validation-middleware";
-import {commentTypeValidation} from "../middlewares/input-comments-validation-middleware";
+import {commentTypeValidation, likeStatusTypeValidation} from "../middlewares/input-comments-validation-middleware";
 import {postsController} from "../composition-root";
 
 export const postsRouter = Router({});
 
-postsRouter.get('/', postsController.findAllPosts.bind(postsController))
+postsRouter.get('/',
+    authMiddlewareGetUser,
+    postsController.findAllPosts.bind(postsController))
 
-postsRouter.get('/:id', postsController.findPostByID.bind(postsController))
+postsRouter.get('/:id',
+    authMiddlewareGetUser,
+    postsController.findPostByID.bind(postsController))
 
 postsRouter.delete('/:id',
     basicAuthMiddleware,
@@ -45,3 +49,10 @@ postsRouter.put('/:id',
     postTypeValidation,
     inputValidationMiddleware,
     postsController.updatePostByID.bind(postsController))
+
+postsRouter.put('/:id/like-status',
+    authMiddleware,
+    postTypeValidation,
+    likeStatusTypeValidation,
+    inputValidationMiddleware,
+    postsController.setLikeStatus.bind(postsController))

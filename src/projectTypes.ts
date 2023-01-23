@@ -1,6 +1,6 @@
 export enum LikeStatus {None = 'None', Like = 'Like', Dislike = 'Dislike'}
 
-export type postDBType = {
+export type PostDBType = {
     id: string
     title: string
     shortDescription: string
@@ -8,6 +8,19 @@ export type postDBType = {
     blogId: string
     blogName: string
     createdAt: string
+    likedUsers: NewestLikesType[],
+    dislikedUsers: NewestLikesType[]
+}
+
+export type PostDBTypeOutputType = {
+    id: string
+    title: string
+    shortDescription: string
+    content: string
+    blogId: string
+    blogName: string
+    createdAt: string
+    extendedLikesInfo: ExtendedLikesInfoOutputType
 }
 
 export class BlogClass {
@@ -182,6 +195,12 @@ export type LikesInfoOutputType = {
     dislikesCount: Number,
     myStatus: LikeStatus
 }
+
+export type NewestLikesType = {
+    addedAt: string,
+    userId: string,
+    login: string
+}
 export type commentInputType = {
     content : string
 }
@@ -195,9 +214,13 @@ export type outputBlogsWithPaginatorType = paginatorType & {
 }
 
 export type outputPostsWithPaginatorType = paginatorType & {
-    items: postDBType[]
+    items: PostDBTypeOutputType[]
 }
 
 export type outputCommentsWithPaginatorType = paginatorType & {
     items: commentOutputType[]
+}
+
+export type ExtendedLikesInfoOutputType = LikesInfoOutputType & {
+    newestLikes: NewestLikesType[]
 }

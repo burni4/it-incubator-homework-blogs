@@ -96,6 +96,7 @@ export const commentsRepositoryInDB = {
         await commentInstance.save()
 
         return true
+
     },
     async dislikeTheComment(userId: string, commentId: string): Promise<boolean> {
 

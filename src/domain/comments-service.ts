@@ -9,7 +9,6 @@ import {
     userOutputType
 } from "../projectTypes";
 import {postsRepositoryInDB} from "../composition-root";
-
 export const commentsService = {
     async deleteCommentByID(id: string, user: userOutputType): Promise<boolean>{
         return await commentsRepositoryInDB.deleteCommentByID(id)
@@ -71,18 +70,17 @@ export const commentsService = {
     },
     async setLikeStatus(likeStatus: LikeStatus, commentId: string, userId: string): Promise<boolean>{
 
-        let res: boolean = true
-
-        if(likeStatus === LikeStatus.Like){
-            res = await commentsRepositoryInDB.likeTheComment(userId, commentId)
-        }else if(likeStatus === LikeStatus.Dislike){
-            res = await commentsRepositoryInDB.dislikeTheComment(userId, commentId)
-        }else {
-            res = await commentsRepositoryInDB.removeLikeAndDislike(userId, commentId)
+        if (likeStatus === LikeStatus.Like) {
+            return await commentsRepositoryInDB.likeTheComment(userId, commentId)
         }
 
-        return res
+        if (likeStatus === LikeStatus.Dislike) {
+            return await commentsRepositoryInDB.dislikeTheComment(userId, commentId)
+        }
+
+        return await commentsRepositoryInDB.removeLikeAndDislike(userId, commentId)
     }
+
 }
 
 const queryCommentParamsPaginator = (queryParams: queryCommentParams):queryCommentParams => {

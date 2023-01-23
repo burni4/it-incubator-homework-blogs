@@ -1,7 +1,7 @@
 import {body, param} from "express-validator";
 import {NextFunction, Request, Response} from "express";
 import {commentsService} from "../domain/comments-service";
-import {commentOutputType, LikeStatus} from "../projectTypes";
+import {commentOutputType} from "../projectTypes";
 
 
 export const commentTypeValidation = [

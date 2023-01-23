@@ -1,5 +1,5 @@
 import {BlogsRepositoryInDB} from "../repositories/blogs-repository";
-import {blogDBType, outputBlogsWithPaginatorType, outputPostsWithPaginatorType, postDBType, queryBlogParams, queryPostParams} from "../projectTypes";
+import {blogDBType, outputBlogsWithPaginatorType, outputPostsWithPaginatorType, PostDBTypeOutputType, queryBlogParams, queryPostParams} from "../projectTypes";
 import {queryPostParamsPaginator} from "./posts-service";
 import {postsService} from "../composition-root";
 
@@ -35,7 +35,7 @@ export class BlogsService {
         const createdBlog: blogDBType = await this.blogsRepositoryInDB.createBlog(newBlog)
         return createdBlog
     }
-    async createPostByBlogID(id: string, data: postDBType): Promise<postDBType | null>{
+    async createPostByBlogID(id: string, data: PostDBTypeOutputType): Promise<PostDBTypeOutputType | null>{
 
         const foundBlog = await this.blogsRepositoryInDB.findBlogByID(id)
 
