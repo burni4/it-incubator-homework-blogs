@@ -1,5 +1,9 @@
 import {body, param} from "express-validator";
 import {blogsRepositoryInDB} from "../repositories/blogs-repository";
+import {NextFunction, Request, Response} from "express";
+import {commentOutputType} from "../projectTypes";
+import {commentsService} from "../domain/comments-service";
+import {postsService} from "../composition-root";
 
 export const postTypeValidation = [
     body('title').trim().exists({checkFalsy: true}).withMessage('The field [title] must exist')
@@ -23,6 +27,18 @@ export const postTypeValidationBlogID = body('blogId').exists({checkFalsy: true}
 export const postParamsValidation = [
     param('id').exists({checkFalsy: true}).withMessage('Param [id] not found')
 ]
+
+export const postValidationID = async (req: Request, res: Response, next: NextFunction) => {
+
+    const foundPost = await postsService.findPostByID(req.params.id);
+
+    if(!foundPost) {
+        res.sendStatus(404);
+        return
+    }
+
+    next()
+}
 
 
 

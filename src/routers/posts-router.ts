@@ -4,7 +4,7 @@ import {inputValidationMiddleware} from "../middlewares/input-validation-middlew
 import {
     postParamsValidation,
     postTypeValidation,
-    postTypeValidationBlogID
+    postTypeValidationBlogID, postValidationID
 } from "../middlewares/input-posts-validation-middleware";
 import {commentTypeValidation, likeStatusTypeValidation} from "../middlewares/input-comments-validation-middleware";
 import {postsController} from "../composition-root";
@@ -54,5 +54,6 @@ postsRouter.put('/:id/like-status',
     authMiddleware,
     postTypeValidation,
     likeStatusTypeValidation,
+    postValidationID,
     inputValidationMiddleware,
     postsController.setLikeStatus.bind(postsController))
