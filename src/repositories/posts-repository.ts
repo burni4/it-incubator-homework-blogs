@@ -115,7 +115,7 @@ export class PostsRepositoryInDB {
 
         if (!foundLike) {
             postInstance.likedUsers.push({
-                addedAt: new Date().toISOString(),
+                addedAt: new Date().toString(),
                 userId: user.id,
                 login: user.login
             })
