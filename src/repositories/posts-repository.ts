@@ -115,7 +115,7 @@ export class PostsRepositoryInDB {
 
         if (!foundLike) {
             postInstance.likedUsers.push({
-                addedAt: new Date().toString(),
+                addedAt: new Date().toISOString(),
                 userId: user.id,
                 login: user.login
             })
@@ -173,7 +173,7 @@ export class PostsRepositoryInDB {
 
         extendedLikesInfo.likesCount = postInstance.likedUsers.length
         extendedLikesInfo.dislikesCount = postInstance.dislikedUsers.length
-        extendedLikesInfo.newestLikes = postInstance.likedUsers.sort((x, y) => {
+        extendedLikesInfo.newestLikes = postInstance.likedUsers.slice(-3).sort((x, y) => {
             if (x.addedAt < y.addedAt) {
                 return -1;
             }
@@ -181,7 +181,7 @@ export class PostsRepositoryInDB {
                 return 1;
             }
             return 0;
-        }).slice(-3).map((elem) => {
+        }).map((elem) => {
             return {
                 addedAt: elem.addedAt,
                 userId: elem.userId,
