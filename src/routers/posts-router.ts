@@ -52,7 +52,6 @@ postsRouter.put('/:id',
 
 postsRouter.put('/:id/like-status',
     authMiddleware,
-    postTypeValidation,
     likeStatusTypeValidation,
     postValidationID,
     inputValidationMiddleware,
