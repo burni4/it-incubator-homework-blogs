@@ -173,15 +173,18 @@ export class PostsRepositoryInDB {
 
         extendedLikesInfo.likesCount = postInstance.likedUsers.length
         extendedLikesInfo.dislikesCount = postInstance.dislikedUsers.length
-        extendedLikesInfo.newestLikes = postInstance.likedUsers.slice(-3).sort((x, y) => {
-            if (x.addedAt < y.addedAt) {
+        extendedLikesInfo.newestLikes = postInstance.likedUsers.sort((x, y) => {
+            const dateX = Date.parse(x.addedAt)
+            const dateY = Date.parse(y.addedAt)
+
+            if (dateX < dateY) {
                 return -1;
             }
-            if (x.addedAt > y.addedAt) {
+            if (dateX > dateY) {
                 return 1;
             }
             return 0;
-        }).map((elem) => {
+        }).slice(-3).map((elem) => {
             return {
                 addedAt: elem.addedAt,
                 userId: elem.userId,
