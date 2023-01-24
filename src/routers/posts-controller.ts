@@ -10,8 +10,8 @@ export class PostsController {
 
     async findAllPosts(req: Request, res: Response) {
 
-        const foundProducts = await this.postsService.findAllPosts(req.query as any,"", req.body.user)
-        res.send(foundProducts);
+        const foundPosts = await this.postsService.findAllPosts(req.query as any,undefined, req.body.user)
+        res.send(foundPosts);
 
     }
     async findPostByID(req: Request, res: Response) {

@@ -1,5 +1,13 @@
 import {BlogsRepositoryInDB} from "../repositories/blogs-repository";
-import {blogDBType, outputBlogsWithPaginatorType, outputPostsWithPaginatorType, PostDBTypeOutputType, queryBlogParams, queryPostParams} from "../projectTypes";
+import {
+    blogDBType,
+    outputBlogsWithPaginatorType,
+    outputPostsWithPaginatorType,
+    PostDBTypeOutputType,
+    queryBlogParams,
+    queryPostParams,
+    userOutputType
+} from "../projectTypes";
 import {queryPostParamsPaginator} from "./posts-service";
 import {postsService} from "../composition-root";
 
@@ -8,7 +16,7 @@ export class BlogsService {
     async findAllBlogs(queryParams: queryBlogParams): Promise<outputBlogsWithPaginatorType>{
         return this.blogsRepositoryInDB.findAllBlogs(queryBlogParamsPaginator(queryParams));
     }
-    async findAllPostsByBlogID(id: string, queryParams: queryPostParams): Promise<outputPostsWithPaginatorType | null>{
+    async findAllPostsByBlogID(id: string, queryParams: queryPostParams, user?: userOutputType): Promise<outputPostsWithPaginatorType | null>{
 
         const foundBlog = await this.blogsRepositoryInDB.findBlogByID(id)
 
@@ -16,7 +24,7 @@ export class BlogsService {
             return null
         }
 
-        return postsService.findAllPosts(queryPostParamsPaginator(queryParams), id);
+        return postsService.findAllPosts(queryPostParamsPaginator(queryParams), id, user);
     }
     async findBlogByID(id: string): Promise<blogDBType | null>{
         return await this.blogsRepositoryInDB.findBlogByID(id)

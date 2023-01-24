@@ -11,8 +11,8 @@ export class BlogsController {
         res.send(foundBlogs);
     }
 
-    async getAllPostsByBlogID(req: Request<{ id: string }, {}, {}, queryPostParams>, res: Response) {
-        const foundPosts = await this.blogsService.findAllPostsByBlogID(req.params.id, req.query);
+    async getAllPostsByBlogID(req: Request, res: Response) {
+        const foundPosts = await this.blogsService.findAllPostsByBlogID(req.params.id, req.query as any, req.body.user);
 
         if (!foundPosts) {
             res.sendStatus(404);
