@@ -106,7 +106,7 @@ export class PostsRepositoryInDB {
         const result = await PostsModelClass.deleteMany({})
         return !!result.deletedCount
     }
-    async likeTheComment(user: userOutputType, postId: string): Promise<boolean> {
+    async likeThePost(user: userOutputType, postId: string): Promise<boolean> {
 
         const postInstance = await PostsModelClass.findOne({id: postId})
         if (!postInstance) return false
@@ -127,7 +127,7 @@ export class PostsRepositoryInDB {
 
         return true
     }
-    async dislikeTheComment(user: userOutputType, postId: string): Promise<boolean> {
+    async dislikeThePost(user: userOutputType, postId: string): Promise<boolean> {
 
         const postInstance = await PostsModelClass.findOne({id: postId})
         if (!postInstance) return false
@@ -178,10 +178,10 @@ export class PostsRepositoryInDB {
             const dateY = Date.parse(y.addedAt)
 
             if (dateX < dateY) {
-                return -1;
+                return 1;
             }
             if (dateX > dateY) {
-                return 1;
+                return -1;
             }
             return 0;
         }).slice(-3).map((elem) => {

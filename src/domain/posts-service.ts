@@ -52,11 +52,11 @@ export class PostsService {
     async setLikeStatus(likeStatus: LikeStatus, postId: string, user: userOutputType): Promise<boolean>{
 
         if (likeStatus === LikeStatus.Like) {
-            return await this.postsRepositoryInDB.likeTheComment(user, postId)
+            return await this.postsRepositoryInDB.likeThePost(user, postId)
         }
 
         if (likeStatus === LikeStatus.Dislike) {
-            return await this.postsRepositoryInDB.dislikeTheComment(user, postId)
+            return await this.postsRepositoryInDB.dislikeThePost(user, postId)
         }
 
         return await this.postsRepositoryInDB.removeLikeAndDislike(user, postId)
