@@ -156,6 +156,8 @@ export class PostsRepositoryInDB {
         postInstance.likedUsers = postInstance.likedUsers.filter((info) => info.userId !== user.id)
         postInstance.dislikedUsers = postInstance.dislikedUsers.filter((info) => info.userId !== user.id)
 
+        postInstance.save()
+
         return true
     }
     async getLikesInfo(user: userOutputType | undefined | null, postId: string): Promise<ExtendedLikesInfoOutputType> {
