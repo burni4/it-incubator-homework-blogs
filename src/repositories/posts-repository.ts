@@ -184,7 +184,7 @@ export class PostsRepositoryInDB {
                 return -1;
             }
             return 0;
-        }).slice(-3).map((elem) => {
+        }).slice(3).map((elem) => {
             return {
                 addedAt: elem.addedAt,
                 userId: elem.userId,
